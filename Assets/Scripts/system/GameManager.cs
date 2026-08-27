@@ -53,12 +53,28 @@ public class GameManager : MonoBehaviour
     public bool IsGameOver { get; private set; } = false;
     public bool IsGameClear { get; private set; } = false;
 
+    // --- 他クラスへの公開（UIManager / CountdownTimer などが参照する）---
+    public static GameManager Instance { get; private set; }
+    public int EnemiesPassed => enemiesPassed;
+    public int MaxEnemyPasses => maxEnemyPasses;
+    public float RemainingTime => Mathf.Max(0f, gameClearTime - gameTimeElapsed);
+
+    void Awake()
+    {
+        Instance = this;
+
+        // 【重要】IsGameActive と timeScale はグローバルな状態なので、
+        // 前のシーンの値を持ち越さないよう必ず Awake で戻す。
+        // Start に置くと、敗北後に別ステージへ入ったとき Weapon.Update() が
+        // 冒頭で return して武器が一発も撃たなくなる。
+        IsGameActive = true;
+        Time.timeScale = 1f;
+    }
+
     void Start()
     {
         Debug.Log("DEBUG_CRASH_CHECK: GameManager.Start() 実行開始");
 
-        IsGameActive = true;
-        Time.timeScale = 1f;
         enemiesPassed = 0;
 
         // ▼▼▼ 修正点 ▼▼▼ ゲーム開始時にUIを初期化
