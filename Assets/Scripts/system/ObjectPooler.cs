@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,22 +8,22 @@ using Random = UnityEngine.Random;
 public class ObjectPooler : MonoBehaviour
 {
     // =================================================================
-    // yC³‰ÓŠ 1zƒVƒ“ƒOƒ‹ƒgƒ“ƒCƒ“ƒXƒ^ƒ“ƒX‚Ì’Ç‰Á
+    // ã€ä¿®æ­£ç®‡æ‰€ 1ã€‘ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®è¿½åŠ 
     // =================================================================
     public static ObjectPooler Instance { get; private set; }
 
     [Serializable]
     public class PoolItem
     {
-        [Tooltip("¶¬‚·‚éƒAƒCƒeƒ€‚ÌƒvƒŒƒnƒu")]
+        [Tooltip("ç”Ÿæˆã™ã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã®ãƒ—ãƒ¬ãƒãƒ–")]
         public GameObject prefab;
-        [Tooltip("‰Šú¶¬”")]
+        [Tooltip("åˆæœŸç”Ÿæˆæ•°")]
         public int size;
         [NonSerialized] public List<GameObject> pool;
     }
 
     [Header("Pool Settings")]
-    [Tooltip("ŠÇ—‚·‚é‚·‚×‚Ä‚Ì“G‚ÌƒvƒŒƒnƒuİ’è")]
+    [Tooltip("ç®¡ç†ã™ã‚‹ã™ã¹ã¦ã®æ•µã®ãƒ—ãƒ¬ãƒãƒ–è¨­å®š")]
     [SerializeField]
     private List<PoolItem> poolItems = new List<PoolItem>();
 
@@ -33,38 +33,38 @@ public class ObjectPooler : MonoBehaviour
 
     private void Awake()
     {
-        // yC³z: ƒVƒ“ƒOƒ‹ƒgƒ“‰»‚ğAwake‚ÌÅ‰‚ÉŠmÀ‚ÉÀs‚·‚é
+        // ã€ä¿®æ­£ã€‘: ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–ã‚’Awakeã®æœ€åˆã«ç¢ºå®Ÿã«å®Ÿè¡Œã™ã‚‹
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
-        Instance = this; // ššš ObjectPooler.Instance ‚ªİ’è‚³‚ê‚é ššš
+        Instance = this; // â˜…â˜…â˜… ObjectPooler.Instance ãŒè¨­å®šã•ã‚Œã‚‹ â˜…â˜…â˜…
 
-        // ƒCƒ“ƒXƒ^ƒ“ƒX‰» (ƒv[ƒ‹‹@”\‚Ì‰Šú‰»)
+        // ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ– (ãƒ—ãƒ¼ãƒ«æ©Ÿèƒ½ã®åˆæœŸåŒ–)
         instanceToPrefabMap = new Dictionary<GameObject, GameObject>();
 
-        // ƒIƒuƒWƒFƒNƒg¶¬‚µ‚Ä–¼‘O‚Â‚¯‚Ä•Ï”‚ÉŠi”[
+        // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç”Ÿæˆã—ã¦åå‰ã¤ã‘ã¦å¤‰æ•°ã«æ ¼ç´
         poolContainer = new GameObject("Object Pool Container");
 
-        // yd—vz: ƒv[ƒ‹ƒIƒuƒWƒFƒNƒg‚Ì¶¬‚ÍStart()‚ÉˆÚ“®‚µAQÆƒ~ƒX‚É‚æ‚éƒNƒ‰ƒbƒVƒ…‚ğ–h‚®
-        // CreatePooler(); // <-- ‚±‚±‚©‚çíœ
+        // ã€é‡è¦ã€‘: ãƒ—ãƒ¼ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç”Ÿæˆã¯Start()ã«ç§»å‹•ã—ã€å‚ç…§ãƒŸã‚¹ã«ã‚ˆã‚‹ã‚¯ãƒ©ãƒƒã‚·ãƒ¥ã‚’é˜²ã
+        // CreatePooler(); // <-- ã“ã“ã‹ã‚‰å‰Šé™¤
     }
 
     private void Start()
     {
-        // y’Ç‰Áz: ƒv[ƒ‹¶¬‚ğStart()‚ÉˆÚ“®‚·‚é
+        // ã€è¿½åŠ ã€‘: ãƒ—ãƒ¼ãƒ«ç”Ÿæˆã‚’Start()ã«ç§»å‹•ã™ã‚‹
         CreatePooler();
-        Debug.Log("DEBUG_POOL: ObjectPooler‚ªƒv[ƒ‹¶¬‚ğŠ®—¹‚µ‚Ü‚µ‚½B");
+        Debug.Log("DEBUG_POOL: ObjectPoolerãŒãƒ—ãƒ¼ãƒ«ç”Ÿæˆã‚’å®Œäº†ã—ã¾ã—ãŸã€‚");
     }
 
     private void CreatePooler()
     {
-        foreach (PoolItem item in poolItems) // foreach‚Å’¼Úitem‚ğ‘€ì‰Â”\‚É
+        foreach (PoolItem item in poolItems) // foreachã§ç›´æ¥itemã‚’æ“ä½œå¯èƒ½ã«
         {
             if (item.prefab == null) continue;
 
-            item.pool = new List<GameObject>(); // ƒŠƒXƒg‚ğ‰Šú‰»
+            item.pool = new List<GameObject>(); // ãƒªã‚¹ãƒˆã‚’åˆæœŸåŒ–
 
             for (int j = 0; j < item.size; j++)
             {
@@ -90,14 +90,14 @@ public class ObjectPooler : MonoBehaviour
 
     public GameObject GetObjectFromPool(GameObject prefab)
     {
-        // w’è‚³‚ê‚½ƒvƒŒƒnƒu‚ÌPoolItem‚ğ’T‚·‚½‚ß‚Ìƒ‹[ƒv
-        foreach (PoolItem item in poolItems) // foreach‚ÅƒAƒNƒZƒX
+        // æŒ‡å®šã•ã‚ŒãŸãƒ—ãƒ¬ãƒãƒ–ã®PoolItemã‚’æ¢ã™ãŸã‚ã®ãƒ«ãƒ¼ãƒ—
+        foreach (PoolItem item in poolItems) // foreachã§ã‚¢ã‚¯ã‚»ã‚¹
         {
             if (item.prefab == prefab)
             {
                 List<GameObject> currentPool = item.pool;
 
-                // ƒv[ƒ‹“à‚Ì”ñ•\¦ƒIƒuƒWƒFƒNƒg‚ğ’T‚·
+                // ãƒ—ãƒ¼ãƒ«å†…ã®éè¡¨ç¤ºã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ¢ã™
                 for (int j = 0; j < currentPool.Count; j++)
                 {
                     if (currentPool[j] != null && !currentPool[j].activeInHierarchy)
@@ -106,18 +106,18 @@ public class ObjectPooler : MonoBehaviour
                     }
                 }
 
-                // ‘«‚è‚È‚¢ê‡‚Í¶¬‚µAƒv[ƒ‹‚É’Ç‰Á‚µ‚Ä•Ô‚·
+                // è¶³ã‚Šãªã„å ´åˆã¯ç”Ÿæˆã—ã€ãƒ—ãƒ¼ãƒ«ã«è¿½åŠ ã—ã¦è¿”ã™
                 GameObject newInstance = CreateObject(prefab);
                 currentPool.Add(newInstance);
 
-                // item‚ªclass‚É‚È‚Á‚½‚½‚ßA‚±‚Ìsi\‘¢‘Ì‚Å•K—v‚¾‚Á‚½XVˆ—j‚Í•s—v‚É‚È‚è‚Ü‚·
+                // itemãŒclassã«ãªã£ãŸãŸã‚ã€ã“ã®è¡Œï¼ˆæ§‹é€ ä½“ã§å¿…è¦ã ã£ãŸæ›´æ–°å‡¦ç†ï¼‰ã¯ä¸è¦ã«ãªã‚Šã¾ã™
                 // poolItems[i] = currentItem; 
 
                 return newInstance;
             }
         }
 
-        // ƒv[ƒ‹İ’è‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡
+        // ãƒ—ãƒ¼ãƒ«è¨­å®šãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆ
         Debug.LogError($"Pool setting for prefab {prefab.name} not found.");
         return null;
     }

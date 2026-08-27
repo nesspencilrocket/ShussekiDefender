@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,83 +6,83 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
 
-    //’e‚ÌˆÚ“®‘¬“x
+    //å¼¾ã®ç§»å‹•é€Ÿåº¦
     [SerializeField] private float moveSpeed = 10f;
-    //ƒ_ƒ[ƒW”­¶‹——£
+    //ãƒ€ãƒ¡ãƒ¼ã‚¸ç™ºç”Ÿè·é›¢
     [SerializeField] private float damageDistance = 0.1f;
-    //ƒ^[ƒQƒbƒgŠi”[
+    //ã‚¿ãƒ¼ã‚²ãƒƒãƒˆæ ¼ç´
     private Enemy enemyTarget;
-    //ƒ_ƒ[ƒW
+    //ãƒ€ãƒ¡ãƒ¼ã‚¸
     private float damage;
 
 
-    //‚±‚Ì’e‚ğŠÇ—‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg
+    //ã“ã®å¼¾ã‚’ç®¡ç†ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
     private WeaponControl bulletControl;
 
     private void Start()
     {
-        // Start‚ÍˆÀ‘S‚Ì‚½‚ß‹ó‚Ì‚Ü‚Ü
+        // Startã¯å®‰å…¨ã®ãŸã‚ç©ºã®ã¾ã¾
     }
 
     void Update()
     {
-        // yC³zƒ^[ƒQƒbƒg‚ª—LŒø‚©A‚»‚Ìƒgƒ‰ƒ“ƒXƒtƒH[ƒ€‚ª‚Ü‚¾‘¶İ‚·‚é‚©Šm”F
+        // ã€ä¿®æ­£ã€‘ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒæœ‰åŠ¹ã‹ã€ãã®ãƒˆãƒ©ãƒ³ã‚¹ãƒ•ã‚©ãƒ¼ãƒ ãŒã¾ã å­˜åœ¨ã™ã‚‹ã‹ç¢ºèª
         if (enemyTarget != null && enemyTarget.transform != null)
         {
-            //’e‚ğ“®‚©‚·
+            //å¼¾ã‚’å‹•ã‹ã™
             MoveBullet();
         }
         else
         {
-            // ƒ^[ƒQƒbƒg‚ªÁ‚¦‚½ê‡A’e‚ğ–³Œø‰»‚µ‚Äƒv[ƒ‹‚É–ß‚·
+            // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒæ¶ˆãˆãŸå ´åˆã€å¼¾ã‚’ç„¡åŠ¹åŒ–ã—ã¦ãƒ—ãƒ¼ãƒ«ã«æˆ»ã™
             ResetAndReturnToPool();
         }
     }
 
     private void MoveBullet()
     {
-        //Œ»İ’n‚©‚ç–Ú“I’n‚Ü‚Åˆê’è‘¬“x‚ÅˆÚ“®
+        //ç¾åœ¨åœ°ã‹ã‚‰ç›®çš„åœ°ã¾ã§ä¸€å®šé€Ÿåº¦ã§ç§»å‹•
         transform.position = Vector2.MoveTowards(transform.position,
             enemyTarget.transform.position, moveSpeed * Time.deltaTime);
 
-        //’e‚Æ“G‚Ì‹——£Šm”F
+        //å¼¾ã¨æ•µã®è·é›¢ç¢ºèª
         CheckDistance();
     }
 
     /// <summary>
-    /// ’e‚Æ“G‚Ì‹——£‚ğŠm”F‚µ‚Ä‹ß‚¯‚ê‚Îƒ_ƒ[ƒW
+    /// å¼¾ã¨æ•µã®è·é›¢ã‚’ç¢ºèªã—ã¦è¿‘ã‘ã‚Œã°ãƒ€ãƒ¡ãƒ¼ã‚¸
     /// </summary>
     private void CheckDistance()
     {
-        // ƒ^[ƒQƒbƒg‚ª—LŒø‚©ÄŠm”F
+        // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒæœ‰åŠ¹ã‹å†ç¢ºèª
         if (enemyTarget == null)
         {
             ResetAndReturnToPool();
             return;
         }
 
-        //“G‚Æ‚Ì‹——£
+        //æ•µã¨ã®è·é›¢
         float distanceToTarget = (enemyTarget.transform.position -
             transform.position).magnitude;
 
-        //\•ª‹ß‚Ã‚¢‚½‚ç
+        //ååˆ†è¿‘ã¥ã„ãŸã‚‰
         if (distanceToTarget < damageDistance)
         {
-            // yC³zenemyTarget.enemyHP‚ªnull‚Å‚È‚¢‚©ƒ`ƒFƒbƒN (d—v)
+            // ã€ä¿®æ­£ã€‘enemyTarget.enemyHPãŒnullã§ãªã„ã‹ãƒã‚§ãƒƒã‚¯ (é‡è¦)
             if (enemyTarget.enemyHP != null)
             {
-                //ƒ_ƒ[ƒW
+                //ãƒ€ãƒ¡ãƒ¼ã‚¸
                 enemyTarget.enemyHP.ReduceHP(damage);
             }
 
-            //’e‚Ìİ’è‚ğ‰Šú‰»‚µAƒv[ƒ‹‚É–ß‚·
+            //å¼¾ã®è¨­å®šã‚’åˆæœŸåŒ–ã—ã€ãƒ—ãƒ¼ãƒ«ã«æˆ»ã™
             ResetAndReturnToPool();
         }
     }
 
 
     /// <summary>
-    /// UŒ‚‘ÎÛ‚ğİ’è‚·‚é
+    /// æ”»æ’ƒå¯¾è±¡ã‚’è¨­å®šã™ã‚‹
     /// </summary>
     /// <param name="enemy"></param>
     public void SetTargetEnemy(Enemy enemy)
@@ -92,34 +92,34 @@ public class Bullet : MonoBehaviour
 
 
     /// <summary>
-    /// ’e‚Ì‰Šúİ’è(’e‚ÌŠÇ—ÒAƒ_ƒ[ƒW)
+    /// å¼¾ã®åˆæœŸè¨­å®š(å¼¾ã®ç®¡ç†è€…ã€ãƒ€ãƒ¡ãƒ¼ã‚¸)
     /// </summary>
     public void BulletInitialization(WeaponControl weaponControl, float damage)
     {
-        //ˆø”‚ğ•Ï”‚ÉŠi”[
+        //å¼•æ•°ã‚’å¤‰æ•°ã«æ ¼ç´
         bulletControl = weaponControl;
         this.damage = damage;
 
-        // ResetBullet‚ÍŠO•”‚©‚ç‚ÌTargetİ’è‘O‚És‚¤‚×‚«‚È‚Ì‚ÅA
-        // ‚±‚±‚Å‚ÍŒÄ‚Î‚¸‚ÉAResetBulletWithTargetReset‚ğg‚¤
+        // ResetBulletã¯å¤–éƒ¨ã‹ã‚‰ã®Targetè¨­å®šå‰ã«è¡Œã†ã¹ããªã®ã§ã€
+        // ã“ã“ã§ã¯å‘¼ã°ãšã«ã€ResetBulletWithTargetResetã‚’ä½¿ã†
     }
 
     /// <summary>
-    /// ’e‚ğƒv[ƒ‹‚É–ß‚·Û‚Ìˆ—‚ğ‚Ü‚Æ‚ß‚é
+    /// å¼¾ã‚’ãƒ—ãƒ¼ãƒ«ã«æˆ»ã™éš›ã®å‡¦ç†ã‚’ã¾ã¨ã‚ã‚‹
     /// </summary>
     private void ResetAndReturnToPool()
     {
-        // ’e‚Ìİ’è‚ğ‰Šú‰»
+        // å¼¾ã®è¨­å®šã‚’åˆæœŸåŒ–
         if (bulletControl != null)
         {
             bulletControl.ResetBullet();
         }
 
-        // ƒ^[ƒQƒbƒg‚ğ‰ğœ
+        // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’è§£é™¤
         enemyTarget = null;
         transform.localRotation = Quaternion.identity;
 
-        // ƒv[ƒ‹‚É–ß‚·
+        // ãƒ—ãƒ¼ãƒ«ã«æˆ»ã™
         ObjectPooler.ReturnToPool(gameObject);
     }
 }

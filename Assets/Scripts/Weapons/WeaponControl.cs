@@ -1,28 +1,28 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
 
 public class WeaponControl : MonoBehaviour
 {
-    //�e�𐶐�����ʒu
+    //弾を生成する位置
     [SerializeField] private Transform bulletSpawnPos;
-    //������i�[
+    //武器を格納
     private Weapon weapon;
-    //�ݒ�p�̒e�_���[�W
+    //設定用の弾ダメージ
     [SerializeField] private float damage = 2f;
-    //�A�b�v�O���[�h����ۂ͂�����̕ϐ��̐��l��ύX����
+    //アップグレードする際はこちらの変数の数値を変更する
     [NonSerialized] public float bulletDamage;
 
-    //�����p
+    //生成用
     [SerializeField] public GameObject fireBullet;
 
-    //���˂̊Ԋu
+    //発射の間隔
     [SerializeField] private float firingInterval = 2f;
     private float nextFireTime;
     [NonSerialized] public float delay;
 
-    //�e�̃v�[��
+    //弾のプール
     private ObjectPooler pooler;
 
     private void Start()
@@ -32,7 +32,7 @@ public class WeaponControl : MonoBehaviour
 
         if (pooler == null)
         {
-            Debug.LogError("�O���[�o���� ObjectPooler ���V�[���Ɍ�����܂���B�ݒu���m�F���Ă��������B");
+            Debug.LogError("グローバルな ObjectPooler がシーンに見つかりません。設置を確認してください。");
         }
 
         bulletDamage = damage;
@@ -41,55 +41,55 @@ public class WeaponControl : MonoBehaviour
 
     private void Update()
     {
-        // ������ ���W�b�N��啝�ɃV���v���� ������
-        // 1. ���̔��ˎ��Ԃ����Ă��邩�H
-        // 2. �U���Ώۂ̓G�͑��݂��邩�H
+        // ★★★ ロジックを大幅にシンプル化 ★★★
+        // 1. 次の発射時間が来ているか？
+        // 2. 攻撃対象の敵は存在するか？
         if (Time.time > nextFireTime && weapon.currentEnemyTarget != null)
         {
-            // ��L�Q�𖞂�������A���ˏ������Ăяo��
+            // 上記２つを満たしたら、発射処理を呼び出す
             Fire();
-            // ���̔��ˎ��Ԃ��X�V
+            // 次の発射時間を更新
             nextFireTime = Time.time + delay;
         }
     }
 
     /// <summary>
-    /// ������ �V�������˃��\�b�h ������
-    /// �e���v�[������擾���A�ݒ肵�Ĕ��˂���܂ł���x�ɍs��
+    /// ★★★ 新しい発射メソッド ★★★
+    /// 弾をプールから取得し、設定して発射するまでを一度に行う
     /// </summary>
     private void Fire()
     {
-        // �v���n�u��v�[���[���ݒ肳��Ă��Ȃ���Ώ����𒆒f
-        if (fireBullet == null || pooler == null) // �� �����Ƀu���[�N�|�C���g
+        // プレハブやプーラーが設定されていなければ処理を中断
+        if (fireBullet == null || pooler == null) // ← ここにブレークポイント
         {
             return;
         }
 
-        // �v�[������e���擾
+        // プールから弾を取得
         GameObject newBulletObject = pooler.GetObjectFromPool(fireBullet);
         if (newBulletObject == null) return;
 
-        // �e�̈ʒu�ƌ������A���ˌ�(bulletSpawnPos)�ɍ��킹��
+        // 弾の位置と向きを、発射口(bulletSpawnPos)に合わせる
         newBulletObject.transform.position = bulletSpawnPos.position;
         newBulletObject.transform.rotation = bulletSpawnPos.rotation;
 
-        // �e�̃R���|�[�l���g���擾
+        // 弾のコンポーネントを取得
         Bullet bullet = newBulletObject.GetComponent<Bullet>();
         if (bullet != null)
         {
-            // �e�̏����ݒ���s���A�^�[�Q�b�g���Z�b�g����
+            // 弾の初期設定を行い、ターゲットをセットする
             bullet.BulletInitialization(this, bulletDamage);
             bullet.SetTargetEnemy(weapon.currentEnemyTarget);
-            // �e��\������
+            // 弾を表示する
             newBulletObject.SetActive(true);
         }
     }
 
-    // ResetBullet���\�b�h��Bullet�X�N���v�g����Ăяo�����\�������邽�߁A�c���Ă����܂��B
-    // ���g����ł���肠��܂���B
+    // ResetBulletメソッドはBulletスクリプトから呼び出される可能性があるため、残しておきます。
+    // 中身が空でも問題ありません。
     public void ResetBullet()
     {
-        // ���̃��\�b�h�͈ȑO�̃��W�b�N�Ŏg���Ă��܂������A
-        // �V�������W�b�N�ł͕s�v�ɂȂ�܂����B
+        // このメソッドは以前のロジックで使われていましたが、
+        // 新しいロジックでは不要になりました。
     }
 }

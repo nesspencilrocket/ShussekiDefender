@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 //https://docs.unity3d.com/Manual/editor-CustomEditors.html

@@ -1,99 +1,99 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class ScenarioManager : MonoBehaviour
 {
-    // --- ƒCƒ“ƒXƒyƒNƒ^[‚Åİ’è‚·‚éUIƒp[ƒc ---
-    [Header("UIƒp[ƒc‚ÌŠ„‚è“–‚Ä")]
-    public Text mainTextField;           // •¶Í‚ğ•\¦‚·‚éƒeƒLƒXƒg
-    public Button[] actionButtons;       // 6‚Â‚Ìƒ{ƒ^ƒ“”z—ñ
-    public Text[] buttonLabels;          // Šeƒ{ƒ^ƒ“‚Ìƒ‰ƒxƒ‹ƒeƒLƒXƒgi‰æ‘œ‚Ì‚İ‚È‚ç•s—v‰Âj
+    // --- ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼ã§è¨­å®šã™ã‚‹UIãƒ‘ãƒ¼ãƒ„ ---
+    [Header("UIãƒ‘ãƒ¼ãƒ„ã®å‰²ã‚Šå½“ã¦")]
+    public Text mainTextField;           // æ–‡ç« ã‚’è¡¨ç¤ºã™ã‚‹ãƒ†ã‚­ã‚¹ãƒˆ
+    public Button[] actionButtons;       // 6ã¤ã®ãƒœã‚¿ãƒ³é…åˆ—
+    public Text[] buttonLabels;          // å„ãƒœã‚¿ãƒ³ã®ãƒ©ãƒ™ãƒ«ãƒ†ã‚­ã‚¹ãƒˆï¼ˆç”»åƒã®ã¿ãªã‚‰ä¸è¦å¯ï¼‰
 
-    // --- ƒVƒiƒŠƒIƒf[ƒ^‚Ì\‘¢’è‹` ---
+    // --- ã‚·ãƒŠãƒªã‚ªãƒ‡ãƒ¼ã‚¿ã®æ§‹é€ å®šç¾© ---
     [System.Serializable]
     public class ButtonOption
     {
-        public string buttonText;        // ƒ{ƒ^ƒ“‚É•\¦‚·‚é•¶š
-        public int nextScenarioIndex;    // ‚±‚Ìƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚É”ò‚ÔƒVƒiƒŠƒIID
-        public Sprite buttonImage;       // ƒ{ƒ^ƒ“‚Ì‰æ‘œ‚ğ•Ï‚¦‚½‚¢ê‡iƒIƒvƒVƒ‡ƒ“j
+        public string buttonText;        // ãƒœã‚¿ãƒ³ã«è¡¨ç¤ºã™ã‚‹æ–‡å­—
+        public int nextScenarioIndex;    // ã“ã®ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸæ™‚ã«é£›ã¶ã‚·ãƒŠãƒªã‚ªID
+        public Sprite buttonImage;       // ãƒœã‚¿ãƒ³ã®ç”»åƒã‚’å¤‰ãˆãŸã„å ´åˆï¼ˆã‚ªãƒ—ã‚·ãƒ§ãƒ³ï¼‰
     }
 
     [System.Serializable]
     public class ScenarioData
     {
         [TextArea(3, 5)]
-        public string mainText;          // •\¦‚³‚ê‚éƒƒCƒ“‚Ì•¶Í
-        public List<ButtonOption> options; // ‚±‚Ìê–Ê‚Å—LŒø‚Èƒ{ƒ^ƒ“İ’èƒŠƒXƒg
+        public string mainText;          // è¡¨ç¤ºã•ã‚Œã‚‹ãƒ¡ã‚¤ãƒ³ã®æ–‡ç« 
+        public List<ButtonOption> options; // ã“ã®å ´é¢ã§æœ‰åŠ¹ãªãƒœã‚¿ãƒ³è¨­å®šãƒªã‚¹ãƒˆ
     }
 
-    // --- ƒf[ƒ^–{‘Ì ---
-    [Header("ƒVƒiƒŠƒIƒf[ƒ^İ’è")]
+    // --- ãƒ‡ãƒ¼ã‚¿æœ¬ä½“ ---
+    [Header("ã‚·ãƒŠãƒªã‚ªãƒ‡ãƒ¼ã‚¿è¨­å®š")]
     public List<ScenarioData> scenarioList;
 
-    // Œ»İ‚Ìisó‹µ
+    // ç¾åœ¨ã®é€²è¡ŒçŠ¶æ³
     private int currentIndex = 0;
 
     void Start()
     {
-        // Å‰‚ÉID 0 ‚ÌƒVƒiƒŠƒI‚ğ•\¦
+        // æœ€åˆã«ID 0 ã®ã‚·ãƒŠãƒªã‚ªã‚’è¡¨ç¤º
         ShowScenario(0);
     }
 
-    // ƒVƒiƒŠƒI‚ğ•\¦EXV‚·‚éŠÖ”
+    // ã‚·ãƒŠãƒªã‚ªã‚’è¡¨ç¤ºãƒ»æ›´æ–°ã™ã‚‹é–¢æ•°
     public void ShowScenario(int index)
     {
-        // ƒCƒ“ƒfƒbƒNƒX‚ª”ÍˆÍŠO‚È‚çƒGƒ‰[‰ñ”ğ
+        // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãŒç¯„å›²å¤–ãªã‚‰ã‚¨ãƒ©ãƒ¼å›é¿
         if (index < 0 || index >= scenarioList.Count)
         {
-            Debug.LogError("w’è‚³‚ê‚½ƒVƒiƒŠƒIID‚ª‘¶İ‚µ‚Ü‚¹‚ñ: " + index);
+            Debug.LogError("æŒ‡å®šã•ã‚ŒãŸã‚·ãƒŠãƒªã‚ªIDãŒå­˜åœ¨ã—ã¾ã›ã‚“: " + index);
             return;
         }
 
         currentIndex = index;
         ScenarioData currentData = scenarioList[index];
 
-        // 1. ƒƒCƒ“ƒeƒLƒXƒg‚ÌXV
+        // 1. ãƒ¡ã‚¤ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã®æ›´æ–°
         mainTextField.text = currentData.mainText;
 
-        // 2. ƒ{ƒ^ƒ“‚ÌXVi6‚Â‚Ìƒ{ƒ^ƒ“‚ğƒ‹[ƒv‚µ‚Äİ’èj
+        // 2. ãƒœã‚¿ãƒ³ã®æ›´æ–°ï¼ˆ6ã¤ã®ãƒœã‚¿ãƒ³ã‚’ãƒ«ãƒ¼ãƒ—ã—ã¦è¨­å®šï¼‰
         for (int i = 0; i < actionButtons.Length; i++)
         {
-            // ƒf[ƒ^ƒŠƒXƒg‚Éİ’è‚ª‚ ‚éê‡‚¾‚¯ƒ{ƒ^ƒ“‚ğ—LŒø‰»
+            // ãƒ‡ãƒ¼ã‚¿ãƒªã‚¹ãƒˆã«è¨­å®šãŒã‚ã‚‹å ´åˆã ã‘ãƒœã‚¿ãƒ³ã‚’æœ‰åŠ¹åŒ–
             if (i < currentData.options.Count)
             {
                 actionButtons[i].gameObject.SetActive(true);
 
-                // ƒ{ƒ^ƒ“‚Ì•¶šXV
+                // ãƒœã‚¿ãƒ³ã®æ–‡å­—æ›´æ–°
                 if (buttonLabels.Length > i && buttonLabels[i] != null)
                 {
                     buttonLabels[i].text = currentData.options[i].buttonText;
                 }
 
-                // ƒ{ƒ^ƒ“‚Ì‰æ‘œ‚ğ•Ï‚¦‚½‚¢ê‡‚Ìˆ——áiSprite‚ªİ’è‚³‚ê‚Ä‚¢‚ê‚Îj
+                // ãƒœã‚¿ãƒ³ã®ç”»åƒã‚’å¤‰ãˆãŸã„å ´åˆã®å‡¦ç†ä¾‹ï¼ˆSpriteãŒè¨­å®šã•ã‚Œã¦ã„ã‚Œã°ï¼‰
                 if (currentData.options[i].buttonImage != null)
                 {
                     actionButtons[i].GetComponent<Image>().sprite = currentData.options[i].buttonImage;
                 }
 
-                // ƒ{ƒ^ƒ“ƒNƒŠƒbƒN‚Ì“®ì‚ğ“o˜^
-                // ’ˆÓ: ƒ‹[ƒv“à‚Ì•Ï”‚ğƒNƒ[ƒWƒƒ‚ÅƒLƒƒƒvƒ`ƒƒ‚·‚é‚½‚ß‚Éƒ[ƒJƒ‹•Ï”‚É’u‚­
+                // ãƒœã‚¿ãƒ³ã‚¯ãƒªãƒƒã‚¯æ™‚ã®å‹•ä½œã‚’ç™»éŒ²
+                // æ³¨æ„: ãƒ«ãƒ¼ãƒ—å†…ã®å¤‰æ•°ã‚’ã‚¯ãƒ­ãƒ¼ã‚¸ãƒ£ã§ã‚­ãƒ£ãƒ—ãƒãƒ£ã™ã‚‹ãŸã‚ã«ãƒ­ãƒ¼ã‚«ãƒ«å¤‰æ•°ã«ç½®ã
                 int nextIndex = currentData.options[i].nextScenarioIndex;
-                actionButtons[i].onClick.RemoveAllListeners(); // ‘O‚ÌƒCƒxƒ“ƒg‚ğíœ
+                actionButtons[i].onClick.RemoveAllListeners(); // å‰ã®ã‚¤ãƒ™ãƒ³ãƒˆã‚’å‰Šé™¤
                 actionButtons[i].onClick.AddListener(() => OnOptionClicked(nextIndex));
             }
             else
             {
-                // İ’è‚ª‚È‚¢ƒ{ƒ^ƒ“‚Í”ñ•\¦‚É‚·‚é
+                // è¨­å®šãŒãªã„ãƒœã‚¿ãƒ³ã¯éè¡¨ç¤ºã«ã™ã‚‹
                 actionButtons[i].gameObject.SetActive(false);
             }
         }
     }
 
-    // ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚Ìˆ—
+    // ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸæ™‚ã®å‡¦ç†
     void OnOptionClicked(int nextIndex)
     {
-        // w’è‚³‚ê‚½Ÿ‚ÌƒVƒiƒŠƒIID‚ÖˆÚ“®
+        // æŒ‡å®šã•ã‚ŒãŸæ¬¡ã®ã‚·ãƒŠãƒªã‚ªIDã¸ç§»å‹•
         ShowScenario(nextIndex);
     }
 }

@@ -1,78 +1,78 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    // ‚±‚Ì•Ší‚ÌUŒ‚”ÍˆÍ
+    // ã“ã®æ­¦å™¨ã®æ”»æ’ƒç¯„å›²
     public float attackRange = 3f;
 
-    // ƒGƒlƒ~[‚ğŠi”[‚·‚éƒŠƒXƒg
+    // ã‚¨ãƒãƒŸãƒ¼ã‚’æ ¼ç´ã™ã‚‹ãƒªã‚¹ãƒˆ
     private List<Enemy> enemies;
-    // UŒ‚”ÍˆÍ“à‚É‚¢‚éƒ^[ƒQƒbƒg‚ğ1‘ÌŠi”[‚·‚é
+    // æ”»æ’ƒç¯„å›²å†…ã«ã„ã‚‹ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’1ä½“æ ¼ç´ã™ã‚‹
     [NonSerialized] public Enemy currentEnemyTarget;
 
     public WeaponUpgrade weaponUpgrade;
 
     void Start()
     {
-        // ƒvƒŒƒCŠJn‚É”’l‚ğ‡‚í‚¹‚é
+        // ãƒ—ãƒ¬ã‚¤é–‹å§‹æ™‚ã«æ•°å€¤ã‚’åˆã‚ã›ã‚‹
         GetComponent<CircleCollider2D>().radius = attackRange;
 
         enemies = new List<Enemy>();
 
         weaponUpgrade = GetComponent<WeaponUpgrade>();
 
-        // y’Ç‰ÁzƒCƒxƒ“ƒg‚Ìw“Ç‚ğŠJn
+        // ã€è¿½åŠ ã€‘ã‚¤ãƒ™ãƒ³ãƒˆã®è³¼èª­ã‚’é–‹å§‹
         EnemyHP.OnEnemyDead += RemoveInvalidEnemy;
         Enemy.OnReachedGoal += RemoveInvalidEnemy;
     }
 
-    // y’Ç‰ÁzƒV[ƒ“‚ğˆÚ“®‚·‚éÛ‚ÉƒCƒxƒ“ƒgw“Ç‚ğ‰ğœ (ƒƒ‚ƒŠƒŠ[ƒN–h~)
+    // ã€è¿½åŠ ã€‘ã‚·ãƒ¼ãƒ³ã‚’ç§»å‹•ã™ã‚‹éš›ã«ã‚¤ãƒ™ãƒ³ãƒˆè³¼èª­ã‚’è§£é™¤ (ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯é˜²æ­¢)
     private void OnDestroy()
     {
-        // Nullƒ`ƒFƒbƒN‚ÍƒCƒxƒ“ƒg‚ÌŒÄ‚Ño‚µ‘¤‚ÅˆÀ‘S‚Éˆ—‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ª‘½‚¢‚ªA–¾¦“I‚É‰ğœ‚·‚é
+        // Nullãƒã‚§ãƒƒã‚¯ã¯ã‚¤ãƒ™ãƒ³ãƒˆã®å‘¼ã³å‡ºã—å´ã§å®‰å…¨ã«å‡¦ç†ã•ã‚Œã¦ã„ã‚‹ã“ã¨ãŒå¤šã„ãŒã€æ˜ç¤ºçš„ã«è§£é™¤ã™ã‚‹
         EnemyHP.OnEnemyDead -= RemoveInvalidEnemy;
         Enemy.OnReachedGoal -= RemoveInvalidEnemy;
     }
 
     void Update()
     {
-        // yd—vzƒQ[ƒ€‚ªƒAƒNƒeƒBƒu‚Å‚È‚¢ê‡‚Íˆ—‚µ‚È‚¢
+        // ã€é‡è¦ã€‘ã‚²ãƒ¼ãƒ ãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã§ãªã„å ´åˆã¯å‡¦ç†ã—ãªã„
         if (!GameManager.IsGameActive) return;
 
-        // ƒ^[ƒQƒbƒg‚ğæ“¾‚·‚é
+        // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’å–å¾—ã™ã‚‹
         GetCurrentTarget();
     }
 
     private void GetCurrentTarget()
     {
-        // yC³z–³Œø‚È“GiHP 0ˆÈ‰º‚È‚Çj‚ğƒŠƒXƒg‚©‚ç”rœ‚µ‚Ä‚©‚çAƒ^[ƒQƒbƒg‚ğ‘I‚Ô
+        // ã€ä¿®æ­£ã€‘ç„¡åŠ¹ãªæ•µï¼ˆHP 0ä»¥ä¸‹ãªã©ï¼‰ã‚’ãƒªã‚¹ãƒˆã‹ã‚‰æ’é™¤ã—ã¦ã‹ã‚‰ã€ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’é¸ã¶
         CleanEnemyList();
 
-        // ƒŠƒXƒg‚É“G‚ª‚¢‚È‚¢?
+        // ãƒªã‚¹ãƒˆã«æ•µãŒã„ãªã„?
         if (enemies.Count <= 0)
         {
-            // İ’è‚ğnull‚É
+            // è¨­å®šã‚’nullã«
             currentEnemyTarget = null;
             return;
         }
 
-        // yC³zƒŠƒXƒg‚ÌÅ‰‚Ì“G‚ğİ’è (Å‘Oü‚É‚¢‚é“G‚ğUŒ‚‚·‚éƒƒWƒbƒN)
+        // ã€ä¿®æ­£ã€‘ãƒªã‚¹ãƒˆã®æœ€åˆã®æ•µã‚’è¨­å®š (æœ€å‰ç·šã«ã„ã‚‹æ•µã‚’æ”»æ’ƒã™ã‚‹ãƒ­ã‚¸ãƒƒã‚¯)
         currentEnemyTarget = enemies[0];
     }
 
     /// <summary>
-    /// y’Ç‰Áz€–S‚Ü‚½‚Í”ñƒAƒNƒeƒBƒu‚È“G‚ğƒŠƒXƒg‚©‚çíœ‚·‚é
+    /// ã€è¿½åŠ ã€‘æ­»äº¡ã¾ãŸã¯éã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªæ•µã‚’ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤ã™ã‚‹
     /// </summary>
     private void CleanEnemyList()
     {
-        // ƒŠƒXƒg‚©‚ç–³Œø‚È“G‚ğ‚·‚×‚Äíœ‚·‚é
-        // 1. EnemyƒRƒ“ƒ|[ƒlƒ“ƒg‚ªnull‚É‚È‚Á‚Ä‚¢‚é (ƒv[ƒ‹‚É–ß‚³‚ê‚½)
-        // 2. EnemyHP‚ªnullA‚Ü‚½‚ÍHP‚ª0ˆÈ‰º‚Å‚ ‚é
+        // ãƒªã‚¹ãƒˆã‹ã‚‰ç„¡åŠ¹ãªæ•µã‚’ã™ã¹ã¦å‰Šé™¤ã™ã‚‹
+        // 1. Enemyã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒnullã«ãªã£ã¦ã„ã‚‹ (ãƒ—ãƒ¼ãƒ«ã«æˆ»ã•ã‚ŒãŸ)
+        // 2. EnemyHPãŒnullã€ã¾ãŸã¯HPãŒ0ä»¥ä¸‹ã§ã‚ã‚‹
 
-        // ƒŠƒXƒg‚ğ‹t‡‚Éƒ`ƒFƒbƒN‚µ‚ÄAíœ‚µ‚Ä‚àƒCƒ“ƒfƒbƒNƒX‚ª‹¶‚í‚È‚¢‚æ‚¤‚É‚·‚é
+        // ãƒªã‚¹ãƒˆã‚’é€†é †ã«ãƒã‚§ãƒƒã‚¯ã—ã¦ã€å‰Šé™¤ã—ã¦ã‚‚ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãŒç‹‚ã‚ãªã„ã‚ˆã†ã«ã™ã‚‹
         for (int i = enemies.Count - 1; i >= 0; i--)
         {
             Enemy enemy = enemies[i];
@@ -85,14 +85,14 @@ public class Weapon : MonoBehaviour
     }
 
     /// <summary>
-    /// y’Ç‰Áz“G‚ª“|‚³‚ê‚½i€–S/ƒS[ƒ‹jƒCƒxƒ“ƒg‚ª”­¶‚µ‚½‚Æ‚«‚ÉƒŠƒXƒg‚ğƒNƒŠ[ƒ“ƒAƒbƒv
+    /// ã€è¿½åŠ ã€‘æ•µãŒå€’ã•ã‚ŒãŸï¼ˆæ­»äº¡/ã‚´ãƒ¼ãƒ«ï¼‰ã‚¤ãƒ™ãƒ³ãƒˆãŒç™ºç”Ÿã—ãŸã¨ãã«ãƒªã‚¹ãƒˆã‚’ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—
     /// </summary>
     private void RemoveInvalidEnemy()
     {
-        // ƒCƒxƒ“ƒg”­¶‚É‘¦À‚Éƒ^[ƒQƒbƒgƒŠƒZƒbƒg‚ÆƒŠƒXƒgƒNƒŠ[ƒ“ƒAƒbƒv‚ğ‚İ‚é
+        // ã‚¤ãƒ™ãƒ³ãƒˆç™ºç”Ÿæ™‚ã«å³åº§ã«ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãƒªã‚»ãƒƒãƒˆã¨ãƒªã‚¹ãƒˆã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ—ã‚’è©¦ã¿ã‚‹
         CleanEnemyList();
 
-        // Œ»İ‚Ìƒ^[ƒQƒbƒg‚ª–³Œø‚É‚È‚Á‚Ä‚¢‚½‚çA‘¦À‚Énull‚É‚·‚é
+        // ç¾åœ¨ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒç„¡åŠ¹ã«ãªã£ã¦ã„ãŸã‚‰ã€å³åº§ã«nullã«ã™ã‚‹
         if (currentEnemyTarget == null || currentEnemyTarget.enemyHP == null || currentEnemyTarget.enemyHP.currentHP <= 0)
         {
             currentEnemyTarget = null;
@@ -101,19 +101,19 @@ public class Weapon : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        //‰~‚ÌƒMƒYƒ‚i”­¶ˆÊ’uF”¼Œaj
+        //å††ã®ã‚®ã‚ºãƒ¢ï¼ˆç™ºç”Ÿä½ç½®ï¼šåŠå¾„ï¼‰
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //UŒ‚”ÍˆÍ‚É“ü‚Á‚½‚Æ‚«‚Ìˆ—
+        //æ”»æ’ƒç¯„å›²ã«å…¥ã£ãŸã¨ãã®å‡¦ç†
         if (collision.CompareTag("Enemy"))
         {
-            //ƒŠƒXƒg‚ÉŠi”[‚·‚é
+            //ãƒªã‚¹ãƒˆã«æ ¼ç´ã™ã‚‹
             Enemy enemy = collision.GetComponent<Enemy>();
-            // yC³zNullƒ`ƒFƒbƒN‚ğ’Ç‰Á
+            // ã€ä¿®æ­£ã€‘Nullãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ 
             if (enemy != null && !enemies.Contains(enemy))
             {
                 enemies.Add(enemy);
@@ -123,15 +123,15 @@ public class Weapon : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        //UŒ‚”ÍˆÍ‚©‚ço‚½‚Æ‚«‚Ìˆ—
+        //æ”»æ’ƒç¯„å›²ã‹ã‚‰å‡ºãŸã¨ãã®å‡¦ç†
         if (collision.CompareTag("Enemy"))
         {
             Enemy enemy = collision.GetComponent<Enemy>();
 
-            //ƒŠƒXƒg‚Ì’†‚Éˆø”‚Ì—v‘f‚ª‚ ‚é‚©”»’è
+            //ãƒªã‚¹ãƒˆã®ä¸­ã«å¼•æ•°ã®è¦ç´ ãŒã‚ã‚‹ã‹åˆ¤å®š
             if (enemies.Contains(enemy))
             {
-                //‚¢‚é‚È‚çƒŠƒXƒg‚©‚çíœ
+                //ã„ã‚‹ãªã‚‰ãƒªã‚¹ãƒˆã‹ã‚‰å‰Šé™¤
                 enemies.Remove(enemy);
             }
         }

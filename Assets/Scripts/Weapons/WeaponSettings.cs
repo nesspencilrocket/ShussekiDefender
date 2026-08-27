@@ -1,12 +1,12 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 [CreateAssetMenu(menuName = "Weapon")]
 public class WeaponSettings : ScriptableObject
 {
-    //•Ší‚ÌƒvƒŒƒtƒ@ƒu
+    //æ­¦å™¨ã®ãƒ—ãƒ¬ãƒ•ã‚¡ãƒ–
     public GameObject TurretPrefab;
-    //ƒRƒXƒg
+    //ã‚³ã‚¹ãƒˆ
     public int TurretShopCost;
-    //UI•\¦—p‚ÌŠG
+    //UIè¡¨ç¤ºç”¨ã®çµµ
     public Sprite TurretSprite;
 }

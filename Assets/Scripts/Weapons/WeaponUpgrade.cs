@@ -1,13 +1,13 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System;
 
 public class WeaponUpgrade : MonoBehaviour
 {
 
     [SerializeField] private int upgradeCost;
-    [SerializeField] private int addCost;//ƒRƒXƒg‘‰Á
-    [SerializeField] private float addDamage;//‘‰Áƒ_ƒ[ƒW
-    [SerializeField] private float decreaseInterval;//ƒCƒ“ƒ^[ƒoƒ‹Œ¸­
+    [SerializeField] private int addCost;//ã‚³ã‚¹ãƒˆå¢—åŠ 
+    [SerializeField] private float addDamage;//å¢—åŠ ãƒ€ãƒ¡ãƒ¼ã‚¸
+    [SerializeField] private float decreaseInterval;//ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒ«æ¸›å°‘
 
     private WeaponControl weaponControl;
     [NonSerialized] public int currentUpgradeCost;
@@ -16,20 +16,20 @@ public class WeaponUpgrade : MonoBehaviour
 
     void Start()
     {
-        //•Ï”‚ÉŠi”[
+        //å¤‰æ•°ã«æ ¼ç´
         weaponControl = GetComponent<WeaponControl>();
-        //İ’è—p‚Ì”’lİ’è
+        //è¨­å®šç”¨ã®æ•°å€¤è¨­å®š
         currentUpgradeCost = upgradeCost;
-        //ƒŒƒxƒ‹‚Ìİ’è
+        //ãƒ¬ãƒ™ãƒ«ã®è¨­å®š
         level = 1;
     }
 
     public void UpgradeWeapon()
     {
-        //ƒRƒCƒ“‚ªƒRƒXƒg‚æ‚è‚ ‚é‚Ì‚©”»’è
+        //ã‚³ã‚¤ãƒ³ãŒã‚³ã‚¹ãƒˆã‚ˆã‚Šã‚ã‚‹ã®ã‹åˆ¤å®š
         if (CurrencyManager.instance.totalCoins >= currentUpgradeCost)
         {
-            //”\—Í‹­‰»
+            //èƒ½åŠ›å¼·åŒ–
             weaponControl.bulletDamage += addDamage;
             weaponControl.delay -= decreaseInterval;
 
@@ -40,17 +40,17 @@ public class WeaponUpgrade : MonoBehaviour
 
     private void UpdateUpgrade()
     {
-        //ƒRƒCƒ“‚ğŒ¸‚ç‚·
+        //ã‚³ã‚¤ãƒ³ã‚’æ¸›ã‚‰ã™
         CurrencyManager.instance.RemoveCoins(currentUpgradeCost);
-        //Ÿ‚Ì‹­‰»‚É‚©‚©‚éƒRƒCƒ“‚ğ‘‚â‚·
+        //æ¬¡ã®å¼·åŒ–ã«ã‹ã‹ã‚‹ã‚³ã‚¤ãƒ³ã‚’å¢—ã‚„ã™
         currentUpgradeCost += addCost;
-        //ƒŒƒxƒ‹‚Ì”’l‚ğã‚°‚é
+        //ãƒ¬ãƒ™ãƒ«ã®æ•°å€¤ã‚’ä¸Šã’ã‚‹
         level++;
     }
 
     public int GetSellValue()
     {
-        //intŒ^‚ÉŠÛ‚ß‚Ä•Ô‚·
+        //intå‹ã«ä¸¸ã‚ã¦è¿”ã™
         return Mathf.RoundToInt(currentUpgradeCost * 0.5f);
     }
 

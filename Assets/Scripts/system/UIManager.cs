@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -6,21 +6,21 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    //•Ší‚Ìİ’uUI
+    //æ­¦å™¨ã®è¨­ç½®UI
     [SerializeField] private GameObject weaponShopPanel;
-    //‘I‘ğ’†‚Ìƒm[ƒh‚ğŠi”[
+    //é¸æŠä¸­ã®ãƒãƒ¼ãƒ‰ã‚’æ ¼ç´
     private Node currentNodeSelected;
 
 
     [SerializeField] private TextMeshProUGUI totalCoinsText;
-    // ¥¥¥ •ÏX“_ ¥¥¥ •Ï”–¼‚ğ•ª‚©‚è‚â‚·‚­•ÏX
+    // â–¼â–¼â–¼ å¤‰æ›´ç‚¹ â–¼â–¼â–¼ å¤‰æ•°åã‚’åˆ†ã‹ã‚Šã‚„ã™ãå¤‰æ›´
     [SerializeField] private TextMeshProUGUI enemiesReachedGoalText;
 
 
     [SerializeField] private GameObject nodeUIPanel;
     [SerializeField] private TextMeshProUGUI sellText;
 
-    //ƒŒƒxƒ‹AƒRƒXƒg
+    //ãƒ¬ãƒ™ãƒ«ã€ã‚³ã‚¹ãƒˆ
     [SerializeField] private TextMeshProUGUI weaponLevelText;
     [SerializeField] private TextMeshProUGUI upgradeText;
 
@@ -42,49 +42,49 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-        //‘Ì—Í‚È‚Ç‚ÌUI‚ğXV
+        //ä½“åŠ›ãªã©ã®UIã‚’æ›´æ–°
         UpdateUI();
     }
 
     /// <summary>
-    /// //‘Ì—Í,ƒRƒCƒ“‚ÌUI‚ğXV
+    /// //ä½“åŠ›,ã‚³ã‚¤ãƒ³ã®UIã‚’æ›´æ–°
     /// </summary>
     private void UpdateUI()
     {
-        // Nullƒ`ƒFƒbƒN‚ğ’Ç‰Á‚µAƒNƒ‰ƒbƒVƒ…‚ğ–h‚®
+        // Nullãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ ã—ã€ã‚¯ãƒ©ãƒƒã‚·ãƒ¥ã‚’é˜²ã
         if (totalCoinsText != null && CurrencyManager.instance != null)
         {
             totalCoinsText.text = CurrencyManager.instance.totalCoins.ToString();
         }
 
-        // ¥¥¥ •ÏX“_ ¥¥¥ LevelManager‚ÌV‚µ‚¢•Ï”‚ğQÆ‚·‚é‚æ‚¤‚ÉC³
+        // â–¼â–¼â–¼ å¤‰æ›´ç‚¹ â–¼â–¼â–¼ LevelManagerã®æ–°ã—ã„å¤‰æ•°ã‚’å‚ç…§ã™ã‚‹ã‚ˆã†ã«ä¿®æ­£
         if (enemiesReachedGoalText != null && LevelManager.instance != null)
         {
-            // —áFu5 / 10v‚Ì‚æ‚¤‚É•\¦‚·‚é
+            // ä¾‹ï¼šã€Œ5 / 10ã€ã®ã‚ˆã†ã«è¡¨ç¤ºã™ã‚‹
             enemiesReachedGoalText.text = LevelManager.instance.enemiesReachedGoal.ToString() + " / " + LevelManager.instance.gameOverThreshold.ToString();
         }
     }
 
 
     /// <summary>
-    /// ‚Ç‚ÌWeaponİ’u‚·‚é‚©Œˆ‚ß‚éUI‚ğ”ñ•\¦‚É‚·‚é
+    /// ã©ã®Weaponè¨­ç½®ã™ã‚‹ã‹æ±ºã‚ã‚‹UIã‚’éè¡¨ç¤ºã«ã™ã‚‹
     /// </summary>
     public void CloseTurretShopPanel()
     {
         weaponShopPanel.SetActive(false);
     }
 
-    // yC³zƒƒ\ƒbƒh–¼‚ğ•ÏX‚µ‚½‚èAˆø”‚ğ•Ï‚¦‚½‚è‚µ‚Ä‚¢‚È‚¢‚©Šm”F‚µA
-    // ƒCƒxƒ“ƒg“o˜^‚ÅQÆ‚Å‚«‚é‚æ‚¤‚É‚µ‚Ü‚·BŒ³‚Ì–¼‘O‚ğˆÛB
-    private void NodeSelected(Node nodeSelected) // ƒƒ\ƒbƒh©‘Ì‚Í–â‘è‚ ‚è‚Ü‚¹‚ñ
+    // ã€ä¿®æ­£ã€‘ãƒ¡ã‚½ãƒƒãƒ‰åã‚’å¤‰æ›´ã—ãŸã‚Šã€å¼•æ•°ã‚’å¤‰ãˆãŸã‚Šã—ã¦ã„ãªã„ã‹ç¢ºèªã—ã€
+    // ã‚¤ãƒ™ãƒ³ãƒˆç™»éŒ²ã§å‚ç…§ã§ãã‚‹ã‚ˆã†ã«ã—ã¾ã™ã€‚å…ƒã®åå‰ã‚’ç¶­æŒã€‚
+    private void NodeSelected(Node nodeSelected) // ãƒ¡ã‚½ãƒƒãƒ‰è‡ªä½“ã¯å•é¡Œã‚ã‚Šã¾ã›ã‚“
     {
-        //currentNodeSelected‘I‘ğ’†‚Ìƒm[ƒh‚ğŠi”[
+        //currentNodeSelectedé¸æŠä¸­ã®ãƒãƒ¼ãƒ‰ã‚’æ ¼ç´
         currentNodeSelected = nodeSelected;
 
-        //ƒm[ƒh‚ª‹ó‚©”»’è
+        //ãƒãƒ¼ãƒ‰ãŒç©ºã‹åˆ¤å®š
         if (currentNodeSelected.IseEmpty())
         {
-            //UI•\¦
+            //UIè¡¨ç¤º
             weaponShopPanel.SetActive(true);
         }
         else
@@ -97,10 +97,10 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        // yCS0103‚ÌC³z: ƒƒ\ƒbƒh–¼ 'NodeSelected' ‚Í‘¶İ‚·‚é‚½‚ßA
-        // Node.OnNodeSelected ‚Ì Action‚Ìˆø”‚Æƒƒ\ƒbƒh‚Ìˆø”‚ªˆê’v‚µ‚Ä‚¢‚é‚©‚ğŠm”FB
-        // ƒR[ƒhã‚Í–â‘è‚È‚¢‚½‚ßAƒGƒ‰[‚ÍƒRƒ“ƒpƒCƒ‰‚Ì‰ğßƒ~ƒX‚Ü‚½‚Í‰B‚µƒoƒO‚Ì‰Â”\«‚ª‚‚¢B
-        // ‚»‚Ì‚Ü‚Ü“o˜^‚ğˆÛ‚µ‚Ü‚·B
+        // ã€CS0103ã®ä¿®æ­£ã€‘: ãƒ¡ã‚½ãƒƒãƒ‰å 'NodeSelected' ã¯å­˜åœ¨ã™ã‚‹ãŸã‚ã€
+        // Node.OnNodeSelected ã® Actionã®å¼•æ•°ã¨ãƒ¡ã‚½ãƒƒãƒ‰ã®å¼•æ•°ãŒä¸€è‡´ã—ã¦ã„ã‚‹ã‹ã‚’ç¢ºèªã€‚
+        // ã‚³ãƒ¼ãƒ‰ä¸Šã¯å•é¡Œãªã„ãŸã‚ã€ã‚¨ãƒ©ãƒ¼ã¯ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã®è§£é‡ˆãƒŸã‚¹ã¾ãŸã¯éš ã—ãƒã‚°ã®å¯èƒ½æ€§ãŒé«˜ã„ã€‚
+        // ãã®ã¾ã¾ç™»éŒ²ã‚’ç¶­æŒã—ã¾ã™ã€‚
         Node.OnNodeSelected += NodeSelected;
     }
 
@@ -111,42 +111,42 @@ public class UIManager : MonoBehaviour
     }
 
 
-    //ŒãXƒ{ƒ^ƒ“‚É“o˜^‚·‚é
+    //å¾Œã€…ãƒœã‚¿ãƒ³ã«ç™»éŒ²ã™ã‚‹
     public void CloseNodeUIPanel()
     {
-        //UŒ‚”ÍˆÍ‚ğ”ñ•\¦‚É‚·‚é
-        // Nullƒ`ƒFƒbƒN‚ğ’Ç‰Á
+        //æ”»æ’ƒç¯„å›²ã‚’éè¡¨ç¤ºã«ã™ã‚‹
+        // Nullãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ 
         if (currentNodeSelected != null)
         {
             currentNodeSelected.CloseAttackRange();
         }
 
-        //•Ší‚Ì‹­‰»‚â”Ì”„‚ÌUI‚ğ”ñ•\¦
+        //æ­¦å™¨ã®å¼·åŒ–ã‚„è²©å£²ã®UIã‚’éè¡¨ç¤º
         nodeUIPanel.SetActive(false);
     }
 
     /// <summary>
-    /// ‹­‰»A”„‹p UI
+    /// å¼·åŒ–ã€å£²å´ UI
     /// </summary>
     private void ShowNodeUI()
     {
         nodeUIPanel.SetActive(true);
-        //UI‚ğXV‚·‚é
+        //UIã‚’æ›´æ–°ã™ã‚‹
         UpdateUpgradeText();
         UpdateWeaponLevel();
         UpdateSellValue();
     }
 
     /// <summary>
-    /// •Ší‹­‰»ƒ{ƒ^ƒ“F
+    /// æ­¦å™¨å¼·åŒ–ãƒœã‚¿ãƒ³ï¼š
     /// </summary>
     public void UpgradeWeapon()
     {
-        // Nullƒ`ƒFƒbƒN‚ğ’Ç‰Á
+        // Nullãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ 
         if (currentNodeSelected != null && currentNodeSelected.weapon != null)
         {
             currentNodeSelected.weapon.weaponUpgrade.UpgradeWeapon();
-            //UIXV
+            //UIæ›´æ–°
             UpdateUpgradeText();
             UpdateWeaponLevel();
             UpdateSellValue();
@@ -156,10 +156,10 @@ public class UIManager : MonoBehaviour
 
     private void UpdateSellValue()
     {
-        // Nullƒ`ƒFƒbƒN‚ğ’Ç‰Á
+        // Nullãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ 
         if (currentNodeSelected != null && currentNodeSelected.weapon != null && sellText != null)
         {
-            //”„‹p‚Ì’l’i‚ğXV‚·‚é
+            //å£²å´æ™‚ã®å€¤æ®µã‚’æ›´æ–°ã™ã‚‹
             int sellAmount = currentNodeSelected.weapon.weaponUpgrade.GetSellValue();
             sellText.text = sellAmount.ToString();
         }
@@ -167,7 +167,7 @@ public class UIManager : MonoBehaviour
 
     private void UpdateWeaponLevel()
     {
-        // Nullƒ`ƒFƒbƒN‚ğ’Ç‰Á
+        // Nullãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ 
         if (currentNodeSelected != null && currentNodeSelected.weapon != null && weaponLevelText != null)
         {
             weaponLevelText.text = $"Level{currentNodeSelected.weapon.weaponUpgrade.level}";
@@ -176,14 +176,14 @@ public class UIManager : MonoBehaviour
 
     private void UpdateUpgradeText()
     {
-        // Nullƒ`ƒFƒbƒN‚ğ’Ç‰Á
+        // Nullãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ 
         if (currentNodeSelected != null && currentNodeSelected.weapon != null && upgradeText != null)
         {
             upgradeText.text = currentNodeSelected.weapon.weaponUpgrade.currentUpgradeCost.ToString();
         }
     }
 
-    //ƒ{ƒ^ƒ“‚É“o˜^‚·‚é
+    //ãƒœã‚¿ãƒ³ã«ç™»éŒ²ã™ã‚‹
     public void SellWeapon()
     {
         if (currentNodeSelected != null && nodeUIPanel != null)

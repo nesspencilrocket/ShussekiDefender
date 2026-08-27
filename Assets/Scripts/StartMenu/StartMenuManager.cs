@@ -1,36 +1,36 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class StartMenu : MonoBehaviour
+/// <summary>
+/// タイトル画面のボタン処理。
+/// 【重要】クラス名はファイル名 StartMenuManager と一致させること。
+/// Unity の規約であり、Library キャッシュ再構築時に解決できなくなるのを防ぐ。
+/// </summary>
+public class StartMenuManager : MonoBehaviour
 {
-    // Use a constant for the scene name to avoid magic strings.
     private const string StageSelectSceneName = "StageSelect";
 
-    /// <summary>
-    /// Called when the "Start Game" button is pressed.
-    /// </summary>
+    void Start()
+    {
+        // 敗北・クリア時に 0 にした timeScale が残っているとタイトルが固まる
+        Time.timeScale = 1f;
+    }
+
+    /// <summary>「ゲームスタート」ボタンから呼ぶ</summary>
     public void OnStartButtonClicked()
     {
-        Debug.Log("Loading the Stage Select screen.");
         SceneManager.LoadScene(StageSelectSceneName);
     }
 
-    /// <summary>
-    /// Called when the "Options" button is pressed.
-    /// </summary>
+    /// <summary>「オプション」ボタンから呼ぶ（未実装）</summary>
     public void OnOptionsButtonClicked()
     {
         Debug.Log("Options button was pressed.");
-        // Add your options menu logic here.
     }
 
-    /// <summary>
-    /// Called when the "Quit" button is pressed.
-    /// </summary>
+    /// <summary>「終了」ボタンから呼ぶ</summary>
     public void OnQuitButtonClicked()
     {
-        Debug.Log("Quitting game.");
-        // Handle quitting differently in the editor vs. a built application.
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

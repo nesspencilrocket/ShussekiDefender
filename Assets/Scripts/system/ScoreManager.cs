@@ -1,60 +1,60 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 using System;
 using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-    // --- yInspector‚Åİ’è‚·‚é“Œv•\¦İ’èz ---
+    // --- ã€Inspectorã§è¨­å®šã™ã‚‹çµ±è¨ˆè¡¨ç¤ºè¨­å®šã€‘ ---
 
     [Serializable]
     public struct EnemyStatsSetting
     {
-        [Tooltip("“Œv‚ğ‹L˜^E•\¦‚µ‚½‚¢“G‚ÌƒvƒŒƒnƒu")]
+        [Tooltip("çµ±è¨ˆã‚’è¨˜éŒ²ãƒ»è¡¨ç¤ºã—ãŸã„æ•µã®ãƒ—ãƒ¬ãƒãƒ–")]
         public GameObject enemyPrefab;
 
-        [Tooltip("‚±‚Ì“G‚Ì“¢”°”‚ğ•\¦‚·‚éUIƒeƒLƒXƒg (ƒIƒvƒVƒ‡ƒ“)")]
+        [Tooltip("ã“ã®æ•µã®è¨ä¼æ•°ã‚’è¡¨ç¤ºã™ã‚‹UIãƒ†ã‚­ã‚¹ãƒˆ (ã‚ªãƒ—ã‚·ãƒ§ãƒ³)")]
         public TextMeshProUGUI killCountDisplay;
 
-        [NonSerialized] public int killCount; // “¢”°”‚ğ•Û‚·‚é•Ï”
+        [NonSerialized] public int killCount; // è¨ä¼æ•°ã‚’ä¿æŒã™ã‚‹å¤‰æ•°
     }
 
     [Header("Enemy Stats Settings (Display Order)")]
-    [Tooltip("“¢”°”‚ğ‹L˜^E•\¦‚·‚é“G‚ÌƒvƒŒƒnƒu‚ÆUI‚ÌƒŠƒXƒg")]
+    [Tooltip("è¨ä¼æ•°ã‚’è¨˜éŒ²ãƒ»è¡¨ç¤ºã™ã‚‹æ•µã®ãƒ—ãƒ¬ãƒãƒ–ã¨UIã®ãƒªã‚¹ãƒˆ")]
     [SerializeField]
     private List<EnemyStatsSetting> enemyStatsSettings = new List<EnemyStatsSetting>();
 
     // ---------------------------------------------
 
-    // --- yƒ‰ƒ“ƒ^ƒCƒ€ƒf[ƒ^z ---
+    // --- ã€ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ãƒ‡ãƒ¼ã‚¿ã€‘ ---
     private Dictionary<GameObject, int> defeatedCounts = new Dictionary<GameObject, int>();
     public int TotalKills { get; private set; } = 0;
 
     void Awake()
     {
-        // «‘‚ğ‰Šú‰»
+        // è¾æ›¸ã‚’åˆæœŸåŒ–
         foreach (var setting in enemyStatsSettings)
         {
-            // šyC³‰ÓŠz: enemyPrefab ‚ª null ‚Å‚È‚¢‚©ƒ`ƒFƒbƒN‚µAƒNƒ‰ƒbƒVƒ…‚ğ–h‚®
+            // â˜…ã€ä¿®æ­£ç®‡æ‰€ã€‘: enemyPrefab ãŒ null ã§ãªã„ã‹ãƒã‚§ãƒƒã‚¯ã—ã€ã‚¯ãƒ©ãƒƒã‚·ãƒ¥ã‚’é˜²ã
             if (setting.enemyPrefab != null)
             {
-                // İ’è‚³‚ê‚½ƒvƒŒƒnƒu‚ğƒL[‚Æ‚µ‚Ä0‚Å‰Šú‰»
+                // è¨­å®šã•ã‚ŒãŸãƒ—ãƒ¬ãƒãƒ–ã‚’ã‚­ãƒ¼ã¨ã—ã¦0ã§åˆæœŸåŒ–
                 defeatedCounts[setting.enemyPrefab] = 0;
             }
             else
             {
-                Debug.LogError("ScoreManager Error: Enemy Stats Settings ƒŠƒXƒg‚É–¢İ’è‚Ì Prefab ‚ªŠÜ‚Ü‚ê‚Ä‚¢‚Ü‚·B", this);
+                Debug.LogError("ScoreManager Error: Enemy Stats Settings ãƒªã‚¹ãƒˆã«æœªè¨­å®šã® Prefab ãŒå«ã¾ã‚Œã¦ã„ã¾ã™ã€‚", this);
             }
         }
     }
 
     /// <summary>
-    /// “G‚ª“|‚³‚ê‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚éB“¢”°”‚ğ‹L˜^‚·‚éB
+    /// æ•µãŒå€’ã•ã‚ŒãŸã¨ãã«å‘¼ã°ã‚Œã‚‹ã€‚è¨ä¼æ•°ã‚’è¨˜éŒ²ã™ã‚‹ã€‚
     /// </summary>
-    /// <param name="enemyPrefab">“|‚³‚ê‚½“G‚ÌŒ³‚ÌƒvƒŒƒnƒu</param>
+    /// <param name="enemyPrefab">å€’ã•ã‚ŒãŸæ•µã®å…ƒã®ãƒ—ãƒ¬ãƒãƒ–</param>
     public void RecordDefeat(GameObject enemyPrefab)
     {
-        // «‘‚ÉƒL[‚ª‘¶İ‚·‚é‚©ƒ`ƒFƒbƒNiInspector‚Åİ’è‚³‚ê‚Ä‚¢‚é“G‚©j
+        // è¾æ›¸ã«ã‚­ãƒ¼ãŒå­˜åœ¨ã™ã‚‹ã‹ãƒã‚§ãƒƒã‚¯ï¼ˆInspectorã§è¨­å®šã•ã‚Œã¦ã„ã‚‹æ•µã‹ï¼‰
         if (defeatedCounts.ContainsKey(enemyPrefab))
         {
             defeatedCounts[enemyPrefab]++;
@@ -62,31 +62,31 @@ public class ScoreManager : MonoBehaviour
         }
         else
         {
-            // Inspector‚Éİ’è‚³‚ê‚Ä‚¢‚È‚¢“G‚ª“|‚³‚ê‚½ê‡‚ÍAƒƒO‚É‹L˜^‚·‚é‚ª“Œv‚É‚ÍŠÜ‚ß‚È‚¢
-            Debug.LogWarning($"ScoreManager: –¢“o˜^‚ÌƒvƒŒƒnƒu ({enemyPrefab.name}) ‚ª“|‚³‚ê‚Ü‚µ‚½B");
+            // Inspectorã«è¨­å®šã•ã‚Œã¦ã„ãªã„æ•µãŒå€’ã•ã‚ŒãŸå ´åˆã¯ã€ãƒ­ã‚°ã«è¨˜éŒ²ã™ã‚‹ãŒçµ±è¨ˆã«ã¯å«ã‚ãªã„
+            Debug.LogWarning($"ScoreManager: æœªç™»éŒ²ã®ãƒ—ãƒ¬ãƒãƒ– ({enemyPrefab.name}) ãŒå€’ã•ã‚Œã¾ã—ãŸã€‚");
         }
     }
 
     /// <summary>
-    /// “ŒvUI‚ğXV‚µA•K—v‚È“Œvî•ñ‚ğGameManager‚É’ñ‹Ÿ‚·‚éB
+    /// çµ±è¨ˆUIã‚’æ›´æ–°ã—ã€å¿…è¦ãªçµ±è¨ˆæƒ…å ±ã‚’GameManagerã«æä¾›ã™ã‚‹ã€‚
     /// </summary>
     public void UpdateStatsUI()
     {
-        // ‘‡ƒXƒRƒAŒvZ‚Ì‚½‚ß‚Ég—p‚·‚é’l
+        // ç·åˆã‚¹ã‚³ã‚¢è¨ˆç®—ã®ãŸã‚ã«ä½¿ç”¨ã™ã‚‹å€¤
         TotalKills = 0;
 
         for (int i = 0; i < enemyStatsSettings.Count; i++)
         {
             EnemyStatsSetting setting = enemyStatsSettings[i];
 
-            // šyC³‰ÓŠz: UIXV‚É‚à null ƒ`ƒFƒbƒN‚ğs‚¤ (ƒQ[ƒ€‚ª—‚¿‚é‚Ì‚ğ–h‚®)
+            // â˜…ã€ä¿®æ­£ç®‡æ‰€ã€‘: UIæ›´æ–°æ™‚ã«ã‚‚ null ãƒã‚§ãƒƒã‚¯ã‚’è¡Œã† (ã‚²ãƒ¼ãƒ ãŒè½ã¡ã‚‹ã®ã‚’é˜²ã)
             if (setting.enemyPrefab == null) continue;
 
             int kills = defeatedCounts.ContainsKey(setting.enemyPrefab)
                          ? defeatedCounts[setting.enemyPrefab]
                          : 0;
 
-            // UI‚ğ’¼ÚXV
+            // UIã‚’ç›´æ¥æ›´æ–°
             if (setting.killCountDisplay != null)
             {
                 setting.killCountDisplay.text = kills.ToString();
@@ -97,18 +97,18 @@ public class ScoreManager : MonoBehaviour
     }
 
     /// <summary>
-    /// “Á’è‚ÌƒvƒŒƒnƒu‚Ì“¢”°”‚ğæ“¾‚·‚é
+    /// ç‰¹å®šã®ãƒ—ãƒ¬ãƒãƒ–ã®è¨ä¼æ•°ã‚’å–å¾—ã™ã‚‹
     /// </summary>
     public int GetKillsByPrefab(GameObject prefab)
     {
-        // šyC³‰ÓŠz: ŒŸõ‘O‚É null ƒ`ƒFƒbƒN
+        // â˜…ã€ä¿®æ­£ç®‡æ‰€ã€‘: æ¤œç´¢å‰ã« null ãƒã‚§ãƒƒã‚¯
         if (prefab == null) return 0;
 
         return defeatedCounts.ContainsKey(prefab) ? defeatedCounts[prefab] : 0;
     }
 
     /// <summary>
-    /// “Œvî•ñİ’è‚ÌƒŠƒXƒg‚ğŒöŠJiGameManager‚ªUIXV‚Ég—p‚Å‚«‚é‚æ‚¤‚Éj
+    /// çµ±è¨ˆæƒ…å ±è¨­å®šã®ãƒªã‚¹ãƒˆã‚’å…¬é–‹ï¼ˆGameManagerãŒUIæ›´æ–°ã«ä½¿ç”¨ã§ãã‚‹ã‚ˆã†ã«ï¼‰
     /// </summary>
     public List<EnemyStatsSetting> GetStatsSettings()
     {

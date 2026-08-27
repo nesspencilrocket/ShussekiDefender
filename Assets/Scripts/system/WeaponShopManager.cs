@@ -1,116 +1,116 @@
-using System;
+ï»¿using System;
 using System.Collections;
-using System.Collections.Generic; // List<T>‚ğg—p‚µ‚Ä‚¢‚È‚¢‚½‚ßA‚±‚ê‚Í•s—v‚Å‚·‚ªAc‚µ‚Ü‚·
+using System.Collections.Generic; // List<T>ã‚’ä½¿ç”¨ã—ã¦ã„ãªã„ãŸã‚ã€ã“ã‚Œã¯ä¸è¦ã§ã™ãŒã€æ®‹ã—ã¾ã™
 using UnityEngine;
 
 public class WeaponShopManager : MonoBehaviour
 {
 
-    //UIƒvƒŒƒtƒ@ƒu
+    //UIãƒ—ãƒ¬ãƒ•ã‚¡ãƒ–
     [SerializeField] private GameObject turretCardPrefab;
 
-    //¶¬‚µ‚½UI‚ğŠi”[‚·‚éeƒIƒuƒWƒFƒNƒg
+    //ç”Ÿæˆã—ãŸUIã‚’æ ¼ç´ã™ã‚‹è¦ªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
     [SerializeField] private Transform turretPanelContainer;
 
-    //ƒXƒNƒŠƒvƒ^ƒuƒ‹ƒIƒuƒWƒFƒNƒgŠi”[
-    [SerializeField] private WeaponSettings[] weapons; // ”z—ñ‚Æ‚µ‚ÄéŒ¾
+    //ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ–ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæ ¼ç´
+    [SerializeField] private WeaponSettings[] weapons; // é…åˆ—ã¨ã—ã¦å®£è¨€
 
 
-    //Œ»İ‘I‘ğ’†‚Ìƒm[ƒh‚ğŠi”[‚·‚é
+    //ç¾åœ¨é¸æŠä¸­ã®ãƒãƒ¼ãƒ‰ã‚’æ ¼ç´ã™ã‚‹
     private Node currentNodeSelected;
 
 
 
     void Start()
     {
-        Debug.Log("DEBUG_CRASH_CHECK: WeaponShopManager.Start() ÀsŠJn");
+        Debug.Log("DEBUG_CRASH_CHECK: WeaponShopManager.Start() å®Ÿè¡Œé–‹å§‹");
 
-        // ššš ƒƒO 1: •Ší”z—ñƒ`ƒFƒbƒN‘O ššš
-        Debug.Log("DEBUG_WHS: 1. •Ší”z—ñ‚Ì’·‚³ƒ`ƒFƒbƒN‘OB");
+        // â˜…â˜…â˜… ãƒ­ã‚° 1: æ­¦å™¨é…åˆ—ãƒã‚§ãƒƒã‚¯å‰ â˜…â˜…â˜…
+        Debug.Log("DEBUG_WHS: 1. æ­¦å™¨é…åˆ—ã®é•·ã•ãƒã‚§ãƒƒã‚¯å‰ã€‚");
         if (weapons == null || weapons.Length == 0)
         {
-            Debug.LogError("CRASH_A: •Šíİ’è(weapons)‚ª‹ó‚Å‚·B");
+            Debug.LogError("CRASH_A: æ­¦å™¨è¨­å®š(weapons)ãŒç©ºã§ã™ã€‚");
             return;
         }
 
-        // ššš ƒƒO 2: UIƒvƒŒƒnƒuƒ`ƒFƒbƒN‘O ššš
-        Debug.Log("DEBUG_WHS: 2. UIƒvƒŒƒnƒu‚Ì Null ƒ`ƒFƒbƒN‘OB");
+        // â˜…â˜…â˜… ãƒ­ã‚° 2: UIãƒ—ãƒ¬ãƒãƒ–ãƒã‚§ãƒƒã‚¯å‰ â˜…â˜…â˜…
+        Debug.Log("DEBUG_WHS: 2. UIãƒ—ãƒ¬ãƒãƒ–ã® Null ãƒã‚§ãƒƒã‚¯å‰ã€‚");
         if (turretCardPrefab == null)
         {
-            Debug.LogError("CRASH_B: turretCardPrefab ‚ª–¢İ’è‚Å‚·B");
+            Debug.LogError("CRASH_B: turretCardPrefab ãŒæœªè¨­å®šã§ã™ã€‚");
             return;
         }
 
-        // ššš ƒƒO 3: UIƒRƒ“ƒeƒiƒ`ƒFƒbƒN‘O ššš
-        Debug.Log("DEBUG_WHS: 3. ƒRƒ“ƒeƒi‚Ì Null ƒ`ƒFƒbƒN‘OB");
+        // â˜…â˜…â˜… ãƒ­ã‚° 3: UIã‚³ãƒ³ãƒ†ãƒŠãƒã‚§ãƒƒã‚¯å‰ â˜…â˜…â˜…
+        Debug.Log("DEBUG_WHS: 3. ã‚³ãƒ³ãƒ†ãƒŠã® Null ãƒã‚§ãƒƒã‚¯å‰ã€‚");
         if (turretPanelContainer == null)
         {
-            Debug.LogError("CRASH_C: turretPanelContainer ‚ª–¢İ’è‚Å‚·B");
+            Debug.LogError("CRASH_C: turretPanelContainer ãŒæœªè¨­å®šã§ã™ã€‚");
             return;
         }
 
-        // ššš ƒƒO 4: ƒ‹[ƒvŠJn‘O ššš
-        Debug.Log("DEBUG_WHS: 4. ƒ‹[ƒv‚ğŠJn‚µ‚Ü‚·B");
+        // â˜…â˜…â˜… ãƒ­ã‚° 4: ãƒ«ãƒ¼ãƒ—é–‹å§‹å‰ â˜…â˜…â˜…
+        Debug.Log("DEBUG_WHS: 4. ãƒ«ãƒ¼ãƒ—ã‚’é–‹å§‹ã—ã¾ã™ã€‚");
         for (int i = 0; i < weapons.Length; i++)
         {
-            // yd—vC³ 2z: ”z—ñ‚Ì—v‘f‚ª null ‚Å‚È‚¢‚©ƒ`ƒFƒbƒN
+            // ã€é‡è¦ä¿®æ­£ 2ã€‘: é…åˆ—ã®è¦ç´ ãŒ null ã§ãªã„ã‹ãƒã‚§ãƒƒã‚¯
             if (weapons[i] != null)
             {
-                //UI¶¬
+                //UIç”Ÿæˆ
                 CreateWeaponUI(weapons[i]);
             }
             else
             {
-                Debug.LogWarning($"WeaponShopManager Warning: weapons”z—ñ‚Ì—v‘f {i} ‚ª‹ó(None)‚Å‚·BƒXƒLƒbƒv‚µ‚Ü‚µ‚½B");
+                Debug.LogWarning($"WeaponShopManager Warning: weaponsé…åˆ—ã®è¦ç´  {i} ãŒç©º(None)ã§ã™ã€‚ã‚¹ã‚­ãƒƒãƒ—ã—ã¾ã—ãŸã€‚");
             }
         }
     }
 
     /// <summary>
-    /// •Ší‚ğ¶¬‚·‚éƒ{ƒ^ƒ“UI‚ğì¬‚·‚é
+    /// æ­¦å™¨ã‚’ç”Ÿæˆã™ã‚‹ãƒœã‚¿ãƒ³UIã‚’ä½œæˆã™ã‚‹
     /// </summary>
     /// <param name="weaponSettings"></param>
     private void CreateWeaponUI(WeaponSettings weaponSettings)
     {
-        // Nullƒ`ƒFƒbƒN‚ğ’Ç‰Á (turretCardPrefab‚ª–¢İ’è‚Ìê‡‚ÌƒNƒ‰ƒbƒVƒ…–h~)
+        // Nullãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ  (turretCardPrefabãŒæœªè¨­å®šã®å ´åˆã®ã‚¯ãƒ©ãƒƒã‚·ãƒ¥é˜²æ­¢)
         if (turretCardPrefab == null || turretPanelContainer == null)
         {
-            Debug.LogError("WeaponShopManager Error: turretCardPrefab ‚Ü‚½‚Í turretPanelContainer ‚ª–¢İ’è‚Å‚·B", this);
+            Debug.LogError("WeaponShopManager Error: turretCardPrefab ã¾ãŸã¯ turretPanelContainer ãŒæœªè¨­å®šã§ã™ã€‚", this);
             return;
         }
 
-        //ƒCƒ“ƒXƒ^ƒ“ƒX¶¬‚µ‚ÄŠi”[
+        //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆã—ã¦æ ¼ç´
         GameObject newUI = Instantiate(turretCardPrefab,
             turretPanelContainer.position, Quaternion.identity);
-        //e‚â‘å‚«‚³‚ğİ’è
+        //è¦ªã‚„å¤§ãã•ã‚’è¨­å®š
         newUI.transform.SetParent(turretPanelContainer);
         newUI.transform.localScale = Vector3.one;
 
-        //ƒRƒXƒg‚âŠG‚ğUI‚É”½‰f‚·‚é
+        //ã‚³ã‚¹ãƒˆã‚„çµµã‚’UIã«åæ˜ ã™ã‚‹
         WeaponUI weaponButton = newUI.GetComponent<WeaponUI>();
 
-        // Nullƒ`ƒFƒbƒN‚ğ’Ç‰Á (WeaponUIƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌŒ‡—‚É‚æ‚éƒNƒ‰ƒbƒVƒ…–h~)
+        // Nullãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ  (WeaponUIã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®æ¬ è½ã«ã‚ˆã‚‹ã‚¯ãƒ©ãƒƒã‚·ãƒ¥é˜²æ­¢)
         if (weaponButton != null)
         {
             weaponButton.SetupUI(weaponSettings);
         }
         else
         {
-            Debug.LogError("WeaponShopManager Error: turretCardPrefab‚ÉWeaponUIƒRƒ“ƒ|[ƒlƒ“ƒg‚ª‚ ‚è‚Ü‚¹‚ñB", turretCardPrefab);
+            Debug.LogError("WeaponShopManager Error: turretCardPrefabã«WeaponUIã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒã‚ã‚Šã¾ã›ã‚“ã€‚", turretCardPrefab);
         }
     }
 
 
-    // ... (NodeSelected, PressWeaponUI, OnEnable, OnDisable, WeaponSold ƒƒ\ƒbƒh‚ÍŠù‘¶‚Ì‚Ü‚Ü)
-    // ... (PressWeaponUI, OnEnable, OnDisable, WeaponSold ‚Í’·•¶‚Ì‚½‚ßÈ—ªBŠù‘¶‚ÌƒR[ƒh‚ğg—p‚µ‚Ä‚­‚¾‚³‚¢B)
+    // ... (NodeSelected, PressWeaponUI, OnEnable, OnDisable, WeaponSold ãƒ¡ã‚½ãƒƒãƒ‰ã¯æ—¢å­˜ã®ã¾ã¾)
+    // ... (PressWeaponUI, OnEnable, OnDisable, WeaponSold ã¯é•·æ–‡ã®ãŸã‚çœç•¥ã€‚æ—¢å­˜ã®ã‚³ãƒ¼ãƒ‰ã‚’ä½¿ç”¨ã—ã¦ãã ã•ã„ã€‚)
     // ...
 
     // --------------------------------------------------------------------------------------
-    // ’ˆÓ: ˆÈ‰º‚Í’ñ‹Ÿ‚³‚ê‚Ä‚¢‚È‚¢ƒƒ\ƒbƒh‚Å‚·‚ªAã‹L‚ÌƒR[ƒh‚ª“®ì‚·‚é‚½‚ß‚É‘¶İ‚·‚é‚Æ‰¼’è‚µ‚Ü‚·B
+    // æ³¨æ„: ä»¥ä¸‹ã¯æä¾›ã•ã‚Œã¦ã„ãªã„ãƒ¡ã‚½ãƒƒãƒ‰ã§ã™ãŒã€ä¸Šè¨˜ã®ã‚³ãƒ¼ãƒ‰ãŒå‹•ä½œã™ã‚‹ãŸã‚ã«å­˜åœ¨ã™ã‚‹ã¨ä»®å®šã—ã¾ã™ã€‚
     // --------------------------------------------------------------------------------------
 
     /// <summary>
-    /// ‘I‘ğ’†‚Ìƒm[ƒh‚ğ•Ï”‚ÉŠi”[
+    /// é¸æŠä¸­ã®ãƒãƒ¼ãƒ‰ã‚’å¤‰æ•°ã«æ ¼ç´
     /// </summary>
     private void NodeSelected(Node nodeSelected)
     {
@@ -119,21 +119,21 @@ public class WeaponShopManager : MonoBehaviour
 
     private void PressWeaponUI(WeaponSettings weapon)
     {
-        //“Á’è‚Ìƒm[ƒh‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚È‚ç
+        //ç‰¹å®šã®ãƒãƒ¼ãƒ‰ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ãªã‚‰
         if (currentNodeSelected != null)
         {
-            //ƒvƒŒƒtƒ@ƒu‚©‚ç•ŠíƒIƒuƒWƒFƒNƒg‚ğ¶¬
+            //ãƒ—ãƒ¬ãƒ•ã‚¡ãƒ–ã‹ã‚‰æ­¦å™¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆ
             GameObject weaponInstance =
                 Instantiate(weapon.TurretPrefab);
 
-            //ƒm[ƒh‚ÌêŠ‚Éİ’u
+            //ãƒãƒ¼ãƒ‰ã®å ´æ‰€ã«è¨­ç½®
             weaponInstance.transform.localPosition =
                 currentNodeSelected.transform.position;
 
             weaponInstance.transform.parent =
                 currentNodeSelected.transform;
 
-            //Node‚Ì•Ï”‚Éİ’u‚µ‚½•ŠíŠi”[
+            //Nodeã®å¤‰æ•°ã«è¨­ç½®ã—ãŸæ­¦å™¨æ ¼ç´
             Weapon turretPlaced =
                 weaponInstance.GetComponent<Weapon>();
 
@@ -159,7 +159,7 @@ public class WeaponShopManager : MonoBehaviour
 
 
     /// <summary>
-    /// ”„‹p‚ÍcurrentNodeSelected‚ğ‹ó‚É‚µ‚Ä•Ê‚Ì•Ší‚ğİ’u‚Å‚«‚é‚æ‚¤‚É‚·‚é
+    /// å£²å´æ™‚ã¯currentNodeSelectedã‚’ç©ºã«ã—ã¦åˆ¥ã®æ­¦å™¨ã‚’è¨­ç½®ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
     /// </summary>
     private void WeaponSold()
     {

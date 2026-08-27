@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,19 +37,19 @@ public class EnemyAnimations : MonoBehaviour
 
     public float StopTime()
     {
-        // ˆÈ‘O’²®‚µ‚½’l
+        // ä»¥å‰èª¿æ•´ã—ãŸå€¤
         return animator.GetCurrentAnimatorStateInfo(0).length + 0.1f;
     }
 
-    //ƒCƒxƒ“ƒg‚ÉŠÖ”‚ğ“o˜^E‰ğœ
+    //ã‚¤ãƒ™ãƒ³ãƒˆã«é–¢æ•°ã‚’ç™»éŒ²ãƒ»è§£é™¤
     private void OnEnable()
     {
         if (animator != null)
         {
             animator.ResetTrigger("Hit");
 
-            // ¥¥¥ C³“_ ¥¥¥
-            // "Walk" ‚ğ³‚µ‚¢–¼‘O‚Ì "walk" (¬•¶š) ‚É•ÏX
+            // â–¼â–¼â–¼ ä¿®æ­£ç‚¹ â–¼â–¼â–¼
+            // "Walk" ã‚’æ­£ã—ã„åå‰ã® "walk" (å°æ–‡å­—) ã«å¤‰æ›´
             animator.Play("walk", 0, 0f);
         }
 

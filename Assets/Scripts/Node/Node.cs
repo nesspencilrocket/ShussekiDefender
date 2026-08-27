@@ -1,13 +1,13 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
 
 public class Node : MonoBehaviour
 {
-    //ƒm[ƒh‘I‘ğ‚³‚ê‚½‚ÌƒCƒxƒ“ƒg
+    //ãƒãƒ¼ãƒ‰é¸æŠã•ã‚ŒãŸæ™‚ã®ã‚¤ãƒ™ãƒ³ãƒˆ
     public static Action<Node> OnNodeSelected;
-    //ƒm[ƒh‚Éİ’u‚³‚ê‚Ä‚¢‚é•Ší‚ğŠi”[‚·‚é•Ï”
+    //ãƒãƒ¼ãƒ‰ã«è¨­ç½®ã•ã‚Œã¦ã„ã‚‹æ­¦å™¨ã‚’æ ¼ç´ã™ã‚‹å¤‰æ•°
     [NonSerialized] public Weapon weapon;
 
 
@@ -23,15 +23,15 @@ public class Node : MonoBehaviour
 
     void Start()
     {
-        //‰æ‘œ‚Ì‘å‚«‚³‚ğŠi”[
+        //ç”»åƒã®å¤§ãã•ã‚’æ ¼ç´
         rangeSize = fireRange.GetComponent<SpriteRenderer>().bounds.size.y;
-        //ƒXƒP[ƒ‹‚ğŠi”[
+        //ã‚¹ã‚±ãƒ¼ãƒ«ã‚’æ ¼ç´
         originalScale = fireRange.transform.localScale;
     }
 
 
     /// <summary>
-    /// ‚±‚Ìƒm[ƒh‚É•Ší‚ğƒZƒbƒgi•Ï”‚ÉŠi”[j
+    /// ã“ã®ãƒãƒ¼ãƒ‰ã«æ­¦å™¨ã‚’ã‚»ãƒƒãƒˆï¼ˆå¤‰æ•°ã«æ ¼ç´ï¼‰
     /// </summary>
     /// <param name="weapon"></param>
     public void SetTurret(Weapon weapon)
@@ -41,7 +41,7 @@ public class Node : MonoBehaviour
 
 
     /// <summary>
-    /// ‚±‚Ìƒm[ƒh‚Í‹ó‚©Šm”F
+    /// ã“ã®ãƒãƒ¼ãƒ‰ã¯ç©ºã‹ç¢ºèª
     /// </summary>
     /// <returns></returns>
     public bool IseEmpty()
@@ -50,7 +50,7 @@ public class Node : MonoBehaviour
     }
 
 
-    //ƒ{ƒ^ƒ“‚Éİ’è
+    //ãƒœã‚¿ãƒ³ã«è¨­å®š
     public void SelectNode()
     {
         OnNodeSelected?.Invoke(this);
@@ -58,21 +58,21 @@ public class Node : MonoBehaviour
 
         if (!IseEmpty())
         {
-            //UŒ‚”ÍˆÍ‚ğ•\¦
+            //æ”»æ’ƒç¯„å›²ã‚’è¡¨ç¤º
             ShowWeaponRange();
         }
 
     }
 
     /// <summary>
-    /// UŒ‚”ÍˆÍ‚ğ•`Ê‚·‚é
+    /// æ”»æ’ƒç¯„å›²ã‚’æå†™ã™ã‚‹
     /// </summary>
     private void ShowWeaponRange()
     {
-        //400*400‚Ì‰æ‘œ‚Ì‚¾‚¯ãè‚­s‚­
-        //•\¦
+        //400*400ã®ç”»åƒã®æ™‚ã ã‘ä¸Šæ‰‹ãè¡Œã
+        //è¡¨ç¤º
         fireRange.SetActive(true);
-        //ƒTƒCƒY’²®
+        //ã‚µã‚¤ã‚ºèª¿æ•´
         fireRange.transform.localScale = originalScale * weapon.attackRange /
             (rangeSize / 2);
     }
@@ -85,7 +85,7 @@ public class Node : MonoBehaviour
 
 
     /// <summary>
-    /// •Ší”„‹p‚Ìˆ—‚ğŒÄ‚Ô
+    /// æ­¦å™¨å£²å´æ™‚ã®å‡¦ç†ã‚’å‘¼ã¶
     /// </summary>
     public void SellWeapon()
     {

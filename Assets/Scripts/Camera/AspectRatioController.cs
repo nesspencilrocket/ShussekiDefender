@@ -1,24 +1,24 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
-// MainCamera‚ÉƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğ—v‹‚·‚é
+// MainCameraã«ã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’è¦æ±‚ã™ã‚‹
 [RequireComponent(typeof(Camera))]
 public class AspectRatioController : MonoBehaviour
 {
-    // ‡@ Šî€‚É‚µ‚½‚¢ƒAƒXƒyƒNƒg”ä‚ğİ’è
+    // â‘  åŸºæº–ã«ã—ãŸã„ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã‚’è¨­å®š
     public float targetAspectWidth = 16.0f;
     public float targetAspectHeight = 9.0f;
 
-    void Awake() // Start()‚æ‚èæ‚ÉŒÄ‚Î‚ê‚éAwake()‚ÅÀs
+    void Awake() // Start()ã‚ˆã‚Šå…ˆã«å‘¼ã°ã‚Œã‚‹Awake()ã§å®Ÿè¡Œ
     {
         Camera camera = GetComponent<Camera>();
         float targetAspect = targetAspectWidth / targetAspectHeight;
         float windowAspect = (float)Screen.width / (float)Screen.height;
         float scaleHeight = targetAspect / windowAspect;
 
-        // ÀÛ‚Ì‰æ–Ê”ä—¦‚ªŠî€‚æ‚è‚à‰¡’·‚Ìê‡
+        // å®Ÿéš›ã®ç”»é¢æ¯”ç‡ãŒåŸºæº–ã‚ˆã‚Šã‚‚æ¨ªé•·ã®å ´åˆ
         if (scaleHeight < 1.0f)
         {
-            // ã‰º‚É•‘ÑiƒŒƒ^[ƒ{ƒbƒNƒXj
+            // ä¸Šä¸‹ã«é»’å¸¯ï¼ˆãƒ¬ã‚¿ãƒ¼ãƒœãƒƒã‚¯ã‚¹ï¼‰
             Rect rect = camera.rect;
             rect.width = 1.0f;
             rect.height = scaleHeight;
@@ -26,10 +26,10 @@ public class AspectRatioController : MonoBehaviour
             rect.y = (1.0f - scaleHeight) / 2.0f;
             camera.rect = rect;
         }
-        // ÀÛ‚Ì‰æ–Ê”ä—¦‚ªŠî€‚æ‚è‚àc’·‚Ìê‡
+        // å®Ÿéš›ã®ç”»é¢æ¯”ç‡ãŒåŸºæº–ã‚ˆã‚Šã‚‚ç¸¦é•·ã®å ´åˆ
         else
         {
-            // ¶‰E‚É•‘Ñiƒsƒ‰[ƒ{ƒbƒNƒXj
+            // å·¦å³ã«é»’å¸¯ï¼ˆãƒ”ãƒ©ãƒ¼ãƒœãƒƒã‚¯ã‚¹ï¼‰
             float scaleWidth = 1.0f / scaleHeight;
             Rect rect = camera.rect;
             rect.width = scaleWidth;

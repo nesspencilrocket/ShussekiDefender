@@ -1,14 +1,14 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-// yd—vz[Serializable] ‚Í‚±‚±‚Éˆê“x‚¾‚¯‹Lq‚µ‚Ü‚·B
+// ã€é‡è¦ã€‘[Serializable] ã¯ã“ã“ã«ä¸€åº¦ã ã‘è¨˜è¿°ã—ã¾ã™ã€‚
 [Serializable]
 public class SpawnRoute
 {
-    // “G‚ªƒXƒ|[ƒ“‚·‚éêŠ (ˆÊ’u)
+    // æ•µãŒã‚¹ãƒãƒ¼ãƒ³ã™ã‚‹å ´æ‰€ (ä½ç½®)
     public Transform spawnPoint;
 
-    // “G‚ª‚½‚Ç‚éƒ‹[ƒg (MovePointƒRƒ“ƒ|[ƒlƒlƒ“ƒg)
+    // æ•µãŒãŸã©ã‚‹ãƒ«ãƒ¼ãƒˆ (MovePointã‚³ãƒ³ãƒãƒ¼ãƒãƒãƒ³ãƒˆ)
     public MovePoint targetRoute;
 }

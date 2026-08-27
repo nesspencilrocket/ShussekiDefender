@@ -1,25 +1,25 @@
-using System;
+ï»¿using System;
 using UnityEngine;
 
 [Serializable]
 public class WaveData
 {
-    [Tooltip("‚±‚ÌƒEƒF[ƒu‚ÅoŒ»‚³‚¹‚é“G‚Ì‘”")]
+    [Tooltip("ã“ã®ã‚¦ã‚§ãƒ¼ãƒ–ã§å‡ºç¾ã•ã›ã‚‹æ•µã®ç·æ•°")]
     public int enemyCount = 10;
 
-    [Tooltip("‚±‚ÌƒEƒF[ƒu‚ªI‚í‚Á‚Ä‚©‚çŸ‚ÌƒEƒF[ƒu‚ªn‚Ü‚é‚Ü‚Å‚Ì‘Ò‹@ŠÔ")]
+    [Tooltip("ã“ã®ã‚¦ã‚§ãƒ¼ãƒ–ãŒçµ‚ã‚ã£ã¦ã‹ã‚‰æ¬¡ã®ã‚¦ã‚§ãƒ¼ãƒ–ãŒå§‹ã¾ã‚‹ã¾ã§ã®å¾…æ©Ÿæ™‚é–“")]
     public float wavesDelayTime = 10f;
 
-    [Header("Spawn Rate Settings")] // š’Ç‰Á
-    [Tooltip("ˆê’èƒ‚[ƒh‚Ìê‡‚ÌƒXƒ|[ƒ“ŠÔŠu (•b)")]
-    public float constantSpawnTime = 1f; // š’Ç‰Á
+    [Header("Spawn Rate Settings")] // â˜…è¿½åŠ 
+    [Tooltip("ä¸€å®šãƒ¢ãƒ¼ãƒ‰ã®å ´åˆã®ã‚¹ãƒãƒ¼ãƒ³é–“éš” (ç§’)")]
+    public float constantSpawnTime = 1f; // â˜…è¿½åŠ 
 
-    [Tooltip("ƒ‰ƒ“ƒ_ƒ€ƒ‚[ƒh‚Ìê‡‚ÌÅ’ZƒXƒ|[ƒ“ŠÔŠu (•b)")]
-    public float minRandomDelay = 0.5f; // š’Ç‰Á
+    [Tooltip("ãƒ©ãƒ³ãƒ€ãƒ ãƒ¢ãƒ¼ãƒ‰ã®å ´åˆã®æœ€çŸ­ã‚¹ãƒãƒ¼ãƒ³é–“éš” (ç§’)")]
+    public float minRandomDelay = 0.5f; // â˜…è¿½åŠ 
 
-    [Tooltip("ƒ‰ƒ“ƒ_ƒ€ƒ‚[ƒh‚Ìê‡‚ÌÅ’·ƒXƒ|[ƒ“ŠÔŠu (•b)")]
-    public float maxRandomDelay = 1.5f; // š’Ç‰Á
+    [Tooltip("ãƒ©ãƒ³ãƒ€ãƒ ãƒ¢ãƒ¼ãƒ‰ã®å ´åˆã®æœ€é•·ã‚¹ãƒãƒ¼ãƒ³é–“éš” (ç§’)")]
+    public float maxRandomDelay = 1.5f; // â˜…è¿½åŠ 
 
-    [Tooltip("iƒIƒvƒVƒ‡ƒ“j‚±‚ÌƒEƒF[ƒu‚ÅoŒ»‚³‚¹‚é“G‚Ìí—Ş")]
+    [Tooltip("ï¼ˆã‚ªãƒ—ã‚·ãƒ§ãƒ³ï¼‰ã“ã®ã‚¦ã‚§ãƒ¼ãƒ–ã§å‡ºç¾ã•ã›ã‚‹æ•µã®ç¨®é¡")]
     public GameObject enemyPrefab;
 }

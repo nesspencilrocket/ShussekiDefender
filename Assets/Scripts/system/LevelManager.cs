@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,18 +6,18 @@ using UnityEngine;
 public class LevelManager : MonoBehaviour
 {
 
-    //Œ»İ‚ÌƒEƒF[ƒu
+    //ç¾åœ¨ã®ã‚¦ã‚§ãƒ¼ãƒ–
     [NonSerialized] public int currentWave;
 
 
-    //ÀÛ‚É’l‚ğ•ÏX‚³‚¹‚é•Ï”iƒS[ƒ‹‚É“’B‚µ‚½“G‚Ì”j
+    //å®Ÿéš›ã«å€¤ã‚’å¤‰æ›´ã•ã›ã‚‹å¤‰æ•°ï¼ˆã‚´ãƒ¼ãƒ«ã«åˆ°é”ã—ãŸæ•µã®æ•°ï¼‰
     [NonSerialized] public int enemiesReachedGoal;
 
-    //¥¥¥ C³“_ ¥¥¥ 'private' ‚ğ 'public' ‚É•ÏXI
-    //ƒQ[ƒ€ƒI[ƒo[‚É‚È‚é“G‚ÌãŒÀ”
+    //â–¼â–¼â–¼ ä¿®æ­£ç‚¹ â–¼â–¼â–¼ 'private' ã‚’ 'public' ã«å¤‰æ›´ï¼
+    //ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ã«ãªã‚‹æ•µã®ä¸Šé™æ•°
     [SerializeField] public int gameOverThreshold = 10;
 
-    //ƒVƒ“ƒOƒ‹ƒgƒ“
+    //ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³
     public static LevelManager instance;
     private void Awake()
     {
@@ -34,10 +34,10 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
-        //Œ»İ‚ÌƒEƒF[ƒu‚ğİ’è
+        //ç¾åœ¨ã®ã‚¦ã‚§ãƒ¼ãƒ–ã‚’è¨­å®š
         currentWave = 1;
 
-        //ƒJƒEƒ“ƒ^[‚ğ0‚©‚çƒXƒ^[ƒg‚·‚é
+        //ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼ã‚’0ã‹ã‚‰ã‚¹ã‚¿ãƒ¼ãƒˆã™ã‚‹
         enemiesReachedGoal = 0;
     }
 
@@ -60,21 +60,21 @@ public class LevelManager : MonoBehaviour
 
 
     /// <summary>
-    /// “G‚ªƒS[ƒ‹‚É“’B‚µ‚½‚Ìˆ—
+    /// æ•µãŒã‚´ãƒ¼ãƒ«ã«åˆ°é”ã—ãŸæ™‚ã®å‡¦ç†
     /// </summary>
     private void HandleEnemyReachedGoal()
     {
-        //ƒJƒEƒ“ƒ^[‚ğ1‘‚â‚·
+        //ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼ã‚’1å¢—ã‚„ã™
         enemiesReachedGoal++;
 
-        //ƒJƒEƒ“ƒ^[‚ªãŒÀ‚É’B‚µ‚½‚©Šm”F
+        //ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼ãŒä¸Šé™ã«é”ã—ãŸã‹ç¢ºèª
         if (enemiesReachedGoal >= gameOverThreshold)
         {
-            // ãŒÀ‚ğ’´‚¦‚È‚¢‚æ‚¤‚É’²®iŒ©‚½–Ú‚Ì‚½‚ßj
+            // ä¸Šé™ã‚’è¶…ãˆãªã„ã‚ˆã†ã«èª¿æ•´ï¼ˆè¦‹ãŸç›®ã®ãŸã‚ï¼‰
             enemiesReachedGoal = gameOverThreshold;
 
-            //ƒQ[ƒ€ƒI[ƒo[
-            Debug.Log("ƒQ[ƒ€ƒI[ƒo[");
+            //ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼
+            Debug.Log("ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼");
         }
     }
 }

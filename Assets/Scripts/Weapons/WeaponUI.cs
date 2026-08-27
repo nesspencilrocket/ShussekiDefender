@@ -1,4 +1,4 @@
-
+ï»¿
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -11,34 +11,34 @@ public class WeaponUI : MonoBehaviour
     [SerializeField] private Image weaponImage;
     [SerializeField] private TextMeshProUGUI weaponCost;
 
-    //•\¦‚µ‚Ä‚¢‚é•Ší‚Ìî•ñ‚ğŠi”[iƒRƒXƒg‚âŠGj
+    //è¡¨ç¤ºã—ã¦ã„ã‚‹æ­¦å™¨ã®æƒ…å ±ã‚’æ ¼ç´ï¼ˆã‚³ã‚¹ãƒˆã‚„çµµï¼‰
     private WeaponSettings weaponSettings;
 
 
-    //•ŠíUI‚ğ‰Ÿ‚µ‚½
+    //æ­¦å™¨UIã‚’æŠ¼ã—ãŸ
     public static Action<WeaponSettings> OnPressedWeaponsUI;
 
 
     /// <summary>
-    /// ƒJ[ƒh‚©‚çŠG‚ÆƒRƒXƒgƒeƒLƒXƒg‚ğİ’è
+    /// ã‚«ãƒ¼ãƒ‰ã‹ã‚‰çµµã¨ã‚³ã‚¹ãƒˆãƒ†ã‚­ã‚¹ãƒˆã‚’è¨­å®š
     /// </summary>
     /// <param name="weaponSettings"></param>
     public void SetupUI(WeaponSettings weapon)
     {
-        //ƒXƒNƒŠƒvƒ^ƒuƒ‹ƒIƒuƒWƒFƒNƒg‚ğ•Ï”‚ÉŠi”[
+        //ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ–ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å¤‰æ•°ã«æ ¼ç´
         weaponSettings = weapon;
 
-        //ŠG‚ÆƒRƒXƒgƒeƒLƒXƒg‚ğİ’è
+        //çµµã¨ã‚³ã‚¹ãƒˆãƒ†ã‚­ã‚¹ãƒˆã‚’è¨­å®š
         weaponImage.sprite = weaponSettings.TurretSprite;
         weaponCost.text = weaponSettings.TurretShopCost.ToString();
     }
 
 
-    //ƒ{ƒ^ƒ“‚É“o˜^
+    //ãƒœã‚¿ãƒ³ã«ç™»éŒ²
     public void PressedWeaponUI()
     {
 
-        //ŠƒRƒCƒ“ „= İ’uƒRƒXƒg
+        //æ‰€æŒã‚³ã‚¤ãƒ³ ï¼= è¨­ç½®ã‚³ã‚¹ãƒˆ
         if (CurrencyManager.instance.totalCoins >=
             weaponSettings.TurretShopCost)
         {

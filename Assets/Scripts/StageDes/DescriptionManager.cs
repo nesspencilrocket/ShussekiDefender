@@ -1,13 +1,13 @@
-using UnityEngine;
-using TMPro; // TextMeshPro‚ğg‚¤‚½‚ß‚É•K—v
+ï»¿using UnityEngine;
+using TMPro; // TextMeshProã‚’ä½¿ã†ãŸã‚ã«å¿…è¦
 
 public class DescriptionManager : MonoBehaviour
 {
-    // ‘‚«Š·‚¦‚½‚¢ƒeƒLƒXƒgƒIƒuƒWƒFƒNƒgiHierarchy‚É‚ ‚éSetumeiText‚ğ“ü‚ê‚éêŠj
+    // æ›¸ãæ›ãˆãŸã„ãƒ†ã‚­ã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆï¼ˆHierarchyã«ã‚ã‚‹SetumeiTextã‚’å…¥ã‚Œã‚‹å ´æ‰€ï¼‰
     public TextMeshProUGUI targetText;
 
-    // ƒ{ƒ^ƒ“‚©‚çŒÄ‚Ño‚³‚ê‚éŠÖ”
-    // ˆø”istring messagej‚ÅA•\¦‚µ‚½‚¢•¶Í‚ğó‚¯æ‚é
+    // ãƒœã‚¿ãƒ³ã‹ã‚‰å‘¼ã³å‡ºã•ã‚Œã‚‹é–¢æ•°
+    // å¼•æ•°ï¼ˆstring messageï¼‰ã§ã€è¡¨ç¤ºã—ãŸã„æ–‡ç« ã‚’å—ã‘å–ã‚‹
     public void ChangeText(string message)
     {
         targetText.text = message;

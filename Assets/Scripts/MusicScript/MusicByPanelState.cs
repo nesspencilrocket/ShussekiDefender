@@ -1,34 +1,34 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class MusicByPanelState : MonoBehaviour
 {
-    [Header("š ƒƒCƒ“‚ÌAudioSource (—Bˆê‚ÌÄ¶ƒvƒŒƒCƒ„[)")]
-    [Tooltip("ƒV[ƒ““à‚Ì—Bˆê‚ÌAudioSource‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B")]
+    [Header("â˜… ãƒ¡ã‚¤ãƒ³ã®AudioSource (å”¯ä¸€ã®å†ç”Ÿãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼)")]
+    [Tooltip("ã‚·ãƒ¼ãƒ³å†…ã®å”¯ä¸€ã®AudioSourceã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚")]
     [SerializeField] private AudioSource mainMusicSource;
 
-    // --- ƒfƒtƒHƒ‹ƒgBGMİ’è ---
-    [Header("š ’Êí‚ÌBGMİ’è (ƒpƒlƒ‹”ñ•\¦)")]
-    [Tooltip("‚Ç‚Ìƒpƒlƒ‹‚ào‚Ä‚¢‚È‚¢‚Æ‚«‚ÉÄ¶‚·‚éBGM‚ÌAudioClipB")]
+    // --- ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆBGMè¨­å®š ---
+    [Header("â˜… é€šå¸¸æ™‚ã®BGMè¨­å®š (ãƒ‘ãƒãƒ«éè¡¨ç¤ºæ™‚)")]
+    [Tooltip("ã©ã®ãƒ‘ãƒãƒ«ã‚‚å‡ºã¦ã„ãªã„ã¨ãã«å†ç”Ÿã™ã‚‹BGMã®AudioClipã€‚")]
     [SerializeField] private AudioClip defaultBGM;
-    [Tooltip("Default BGM‚ğƒ‹[ƒvÄ¶‚·‚é‚©‚Ç‚¤‚©B")]
+    [Tooltip("Default BGMã‚’ãƒ«ãƒ¼ãƒ—å†ç”Ÿã™ã‚‹ã‹ã©ã†ã‹ã€‚")]
     [SerializeField] private bool isLooping_Default;
 
-    // --- ƒpƒlƒ‹ƒOƒ‹[ƒv 1 İ’è ---
-    [Header("š ƒpƒlƒ‹ƒOƒ‹[ƒv 1 ‚Ìİ’è (—Dæ“x: ’á)")]
-    [Tooltip("‚±‚Ì”z—ñ“à‚Ìƒpƒlƒ‹‚ªˆê‚Â‚Å‚àƒAƒNƒeƒBƒu‚É‚È‚Á‚½‚ç Music 1 ‚ª—¬‚ê‚Ü‚·B")]
+    // --- ãƒ‘ãƒãƒ«ã‚°ãƒ«ãƒ¼ãƒ— 1 è¨­å®š ---
+    [Header("â˜… ãƒ‘ãƒãƒ«ã‚°ãƒ«ãƒ¼ãƒ— 1 ã®è¨­å®š (å„ªå…ˆåº¦: ä½)")]
+    [Tooltip("ã“ã®é…åˆ—å†…ã®ãƒ‘ãƒãƒ«ãŒä¸€ã¤ã§ã‚‚ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ãªã£ãŸã‚‰ Music 1 ãŒæµã‚Œã¾ã™ã€‚")]
     [SerializeField] private GameObject[] group1Panels;
-    [Tooltip("Panel Group 1 ‚ªƒAƒNƒeƒBƒu‚Ì‚Æ‚«‚ÉÄ¶‚·‚éBGM‚ÌAudioClipB")]
+    [Tooltip("Panel Group 1 ãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã®ã¨ãã«å†ç”Ÿã™ã‚‹BGMã®AudioClipã€‚")]
     [SerializeField] private AudioClip musicClip1;
-    [Tooltip("Music 1 ‚ğƒ‹[ƒvÄ¶‚·‚é‚©‚Ç‚¤‚©B")]
+    [Tooltip("Music 1 ã‚’ãƒ«ãƒ¼ãƒ—å†ç”Ÿã™ã‚‹ã‹ã©ã†ã‹ã€‚")]
     [SerializeField] private bool isLooping_Music1;
 
-    // --- ƒpƒlƒ‹ƒOƒ‹[ƒv 2 İ’è ---
-    [Header("š ƒpƒlƒ‹ƒOƒ‹[ƒv 2 ‚Ìİ’è (—Dæ“x: ‚)")]
-    [Tooltip("‚±‚Ì”z—ñ“à‚Ìƒpƒlƒ‹‚ªˆê‚Â‚Å‚àƒAƒNƒeƒBƒu‚É‚È‚Á‚½‚ç Music 2 ‚ª—¬‚ê‚Ü‚·B")]
+    // --- ãƒ‘ãƒãƒ«ã‚°ãƒ«ãƒ¼ãƒ— 2 è¨­å®š ---
+    [Header("â˜… ãƒ‘ãƒãƒ«ã‚°ãƒ«ãƒ¼ãƒ— 2 ã®è¨­å®š (å„ªå…ˆåº¦: é«˜)")]
+    [Tooltip("ã“ã®é…åˆ—å†…ã®ãƒ‘ãƒãƒ«ãŒä¸€ã¤ã§ã‚‚ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ãªã£ãŸã‚‰ Music 2 ãŒæµã‚Œã¾ã™ã€‚")]
     [SerializeField] private GameObject[] group2Panels;
-    [Tooltip("Panel Group 2 ‚ªƒAƒNƒeƒBƒu‚Ì‚Æ‚«‚ÉÄ¶‚·‚éBGM‚ÌAudioClipB")]
+    [Tooltip("Panel Group 2 ãŒã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã®ã¨ãã«å†ç”Ÿã™ã‚‹BGMã®AudioClipã€‚")]
     [SerializeField] private AudioClip musicClip2;
-    [Tooltip("Music 2 ‚ğƒ‹[ƒvÄ¶‚·‚é‚©‚Ç‚¤‚©B")]
+    [Tooltip("Music 2 ã‚’ãƒ«ãƒ¼ãƒ—å†ç”Ÿã™ã‚‹ã‹ã©ã†ã‹ã€‚")]
     [SerializeField] private bool isLooping_Music2;
 
     private AudioClip currentTargetClip;
@@ -38,64 +38,64 @@ public class MusicByPanelState : MonoBehaviour
     {
         if (mainMusicSource == null) return;
 
-        // §Œäƒpƒlƒ‹‚Ìó‘Ô‚ğƒ`ƒFƒbƒN
+        // åˆ¶å¾¡ãƒ‘ãƒãƒ«ã®çŠ¶æ…‹ã‚’ãƒã‚§ãƒƒã‚¯
         bool isGroup1Active = IsAnyPanelActive(group1Panels);
         bool isGroup2Active = IsAnyPanelActive(group2Panels);
 
         AudioClip targetClip = defaultBGM;
         bool targetLoop = isLooping_Default;
 
-        // —Dæ“x‚ª‚‚¢ Music 2 ‚©‚çƒ`ƒFƒbƒN
+        // å„ªå…ˆåº¦ãŒé«˜ã„ Music 2 ã‹ã‚‰ãƒã‚§ãƒƒã‚¯
         if (isGroup2Active && musicClip2 != null)
         {
             targetClip = musicClip2;
             targetLoop = isLooping_Music2;
         }
-        // Ÿ‚É Music 1 ‚ğƒ`ƒFƒbƒN
+        // æ¬¡ã« Music 1 ã‚’ãƒã‚§ãƒƒã‚¯
         else if (isGroup1Active && musicClip1 != null)
         {
             targetClip = musicClip1;
             targetLoop = isLooping_Music1;
         }
-        // ‚»‚êˆÈŠO‚Ìê‡‚Í defaultBGM (‰Šú’l) ‚Ì‚Ü‚Ü
+        // ãã‚Œä»¥å¤–ã®å ´åˆã¯ defaultBGM (åˆæœŸå€¤) ã®ã¾ã¾
 
-        // ƒ^[ƒQƒbƒg‚Æ‚È‚éBGM‚ğÄ¶
+        // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¨ãªã‚‹BGMã‚’å†ç”Ÿ
         PlayMusic(targetClip, targetLoop);
     }
 
     /// <summary>
-    /// w’è‚³‚ê‚½AudioClip‚Æƒ‹[ƒvİ’è‚ÅÄ¶‚µ‚Ü‚·B
+    /// æŒ‡å®šã•ã‚ŒãŸAudioClipã¨ãƒ«ãƒ¼ãƒ—è¨­å®šã§å†ç”Ÿã—ã¾ã™ã€‚
     /// </summary>
     private void PlayMusic(AudioClip targetClip, bool targetLoop)
     {
-        // ƒ^[ƒQƒbƒgƒNƒŠƒbƒv‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡‚ÍA’â~
+        // ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚¯ãƒªãƒƒãƒ—ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆã¯ã€åœæ­¢
         if (targetClip == null)
         {
             if (mainMusicSource.isPlaying)
             {
                 mainMusicSource.Stop();
             }
-            // ƒ‹[ƒvİ’è‚ğƒŠƒZƒbƒg
+            // ãƒ«ãƒ¼ãƒ—è¨­å®šã‚’ãƒªã‚»ãƒƒãƒˆ
             mainMusicSource.loop = false;
             currentTargetClip = null;
             return;
         }
 
-        // 1. ƒNƒŠƒbƒv‚ªØ‚è‘Ö‚í‚é‚©Aƒ‹[ƒvİ’è‚ª•Ï‚í‚éê‡‚ÍAV‚µ‚¢İ’è‚ÅÄ¶
+        // 1. ã‚¯ãƒªãƒƒãƒ—ãŒåˆ‡ã‚Šæ›¿ã‚ã‚‹ã‹ã€ãƒ«ãƒ¼ãƒ—è¨­å®šãŒå¤‰ã‚ã‚‹å ´åˆã¯ã€æ–°ã—ã„è¨­å®šã§å†ç”Ÿ
         if (mainMusicSource.clip != targetClip || mainMusicSource.loop != targetLoop)
         {
             mainMusicSource.Stop();
             mainMusicSource.clip = targetClip;
-            mainMusicSource.loop = targetLoop; // ššš ƒ‹[ƒvİ’è‚ğ“K—p ššš
+            mainMusicSource.loop = targetLoop; // â˜…â˜…â˜… ãƒ«ãƒ¼ãƒ—è¨­å®šã‚’é©ç”¨ â˜…â˜…â˜…
             mainMusicSource.Play();
             currentTargetClip = targetClip;
             currentLoopSetting = targetLoop;
         }
-        // 2. ƒNƒŠƒbƒv‚ª“¯‚¶‚ÅAÄ¶‚ª’â~‚µ‚Ä‚¢‚éê‡‚ÍÄŠJ (ƒ‹[ƒv‚Å‚Í‚È‚¢’P”­‰¹‚ªI‚í‚Á‚½ê‡‚È‚Ç)
+        // 2. ã‚¯ãƒªãƒƒãƒ—ãŒåŒã˜ã§ã€å†ç”ŸãŒåœæ­¢ã—ã¦ã„ã‚‹å ´åˆã¯å†é–‹ (ãƒ«ãƒ¼ãƒ—ã§ã¯ãªã„å˜ç™ºéŸ³ãŒçµ‚ã‚ã£ãŸå ´åˆãªã©)
         else if (!mainMusicSource.isPlaying)
         {
-            // Note: ƒ‹[ƒvİ’è‚ª false ‚Ìê‡AÄ¶‚ªI‚í‚é‚Æ‚±‚±‚É“ü‚è‚Ü‚·B
-            // targetLoop ‚ª true ‚È‚çAPlay()‚ÅÄŠJBtargetLoop ‚ª false ‚È‚çA‚»‚Ì‚Ü‚Ü‚É‚µ‚Ä‰¹‚ª–Â‚èI‚í‚Á‚½ó‘Ô‚ğˆÛ‚µ‚Ü‚·B
+            // Note: ãƒ«ãƒ¼ãƒ—è¨­å®šãŒ false ã®å ´åˆã€å†ç”ŸãŒçµ‚ã‚ã‚‹ã¨ã“ã“ã«å…¥ã‚Šã¾ã™ã€‚
+            // targetLoop ãŒ true ãªã‚‰ã€Play()ã§å†é–‹ã€‚targetLoop ãŒ false ãªã‚‰ã€ãã®ã¾ã¾ã«ã—ã¦éŸ³ãŒé³´ã‚Šçµ‚ã‚ã£ãŸçŠ¶æ…‹ã‚’ç¶­æŒã—ã¾ã™ã€‚
             if (targetLoop)
             {
                 mainMusicSource.Play();
@@ -104,7 +104,7 @@ public class MusicByPanelState : MonoBehaviour
     }
 
     /// <summary>
-    /// w’è‚³‚ê‚½”z—ñ“à‚ÌGameObject‚ªˆê‚Â‚Å‚àƒAƒNƒeƒBƒu‚©‚Ç‚¤‚©‚ğ”»’è‚·‚é
+    /// æŒ‡å®šã•ã‚ŒãŸé…åˆ—å†…ã®GameObjectãŒä¸€ã¤ã§ã‚‚ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã‹ã©ã†ã‹ã‚’åˆ¤å®šã™ã‚‹
     /// </summary>
     private bool IsAnyPanelActive(GameObject[] panels)
     {
