@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System;
 using TMPro;
@@ -18,6 +19,20 @@ public class GameManager : MonoBehaviour
     /// <summary>このステージの設定。Awake で解決される</summary>
     public StageData Stage { get; private set; }
 
+    // --- 開始前カウントダウン ---
+    [Header("Start Countdown")]
+    [Tooltip("開始までの秒数。3 なら 3 → 2 → 1 → GO")]
+    [SerializeField] private float countdownSeconds = 3f;
+    [Tooltip("「GO」を表示している時間（秒）")]
+    [SerializeField] private float goDuration = 0.6f;
+    [Tooltip("カウント 0 のときに出す文字")]
+    [SerializeField] private string goText = "GO!";
+    [Tooltip("カウントダウンを表示する TextMeshPro（画面中央）")]
+    [SerializeField] private TextMeshProUGUI countdownText;
+
+    /// <summary>開始前カウントダウン中は true</summary>
+    public bool IsCountingDown { get; private set; }
+
     // --- 外部マネージャーの参照 ---
     [Header("External Managers")]
     [SerializeField] private CurrencyManager currencyManager;
@@ -31,6 +46,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string titleSceneName = "StartMenu";
     [Tooltip("時限選択に戻る時にロードするシーン名")]
     [SerializeField] private string stageSelectSceneName = "StageSelect";
+    [Tooltip("敗北時にリザルトへ出す文字（処分に至らなかった、の意）")]
+    [SerializeField] private string gameOverTitle = "処分なし";
 
     // --- UI ---
     [Header("UI Panels & Buttons")]
@@ -64,15 +81,22 @@ public class GameManager : MonoBehaviour
     public int MaxEnemyPasses => maxEnemyPasses;
     public float RemainingTime => Mathf.Max(0f, gameClearTime - gameTimeElapsed);
 
+    /// <summary>
+    /// 処分の軽い順。StageData.rankThresholds と添字を対応させる。
+    /// プレイヤーは出席を妨害する側なので、重い処分ほど良い結果。
+    /// </summary>
+    private static readonly string[] RANKS =
+        { "訓告", "厳重注意", "1週間停学", "無期限停学", "退学処分" };
+
     void Awake()
     {
         Instance = this;
 
         // 【重要】IsGameActive と timeScale はグローバルな状態なので、
         // 前のシーンの値を持ち越さないよう必ず Awake で戻す。
-        // Start に置くと、敗北後に別ステージへ入ったとき Weapon.Update() が
-        // 冒頭で return し、武器が一発も撃たなくなる。
-        IsGameActive = true;
+        // ここでは false から始め、カウントダウンが明けたら true にする。
+        IsGameActive = false;
+        IsCountingDown = true;
         Time.timeScale = 1f;
 
         // 【重要】StageData を解決するのはこの 1 箇所だけ。
@@ -102,6 +126,34 @@ public class GameManager : MonoBehaviour
 
         if (currencyManager == null) currencyManager = FindAnyObjectByType<CurrencyManager>();
         if (scoreManager == null) scoreManager = FindAnyObjectByType<ScoreManager>();
+
+        StartCoroutine(BeginStage());
+    }
+
+    /// <summary>
+    /// 3 → 2 → 1 → GO を表示してからゲームを開始する。
+    /// Spawner はこのフラグが立つのを待ってから湧かせはじめる。
+    /// </summary>
+    private IEnumerator BeginStage()
+    {
+        IsCountingDown = true;
+        IsGameActive = false;
+
+        if (countdownText != null) countdownText.gameObject.SetActive(true);
+
+        for (int n = Mathf.CeilToInt(countdownSeconds); n > 0; n--)
+        {
+            if (countdownText != null) countdownText.text = n.ToString();
+            yield return new WaitForSeconds(1f);
+        }
+
+        if (countdownText != null) countdownText.text = goText;
+        yield return new WaitForSeconds(goDuration);
+
+        if (countdownText != null) countdownText.gameObject.SetActive(false);
+
+        IsCountingDown = false;
+        IsGameActive = true;
     }
 
     private void SetPanelActive(List<GameObject> panels, bool active)
@@ -157,8 +209,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0;
         SetPanelActive(gameClearPanels, true);
 
-        // 【順序注意】スコアは DisplayStats の中で確定するので、記録より先に呼ぶ
-        DisplayStats("退学処分");
+        DisplayStats(true);
 
         if (Stage != null)
         {
@@ -182,10 +233,14 @@ public class GameManager : MonoBehaviour
         IsGameActive = false;
         Time.timeScale = 0;
         SetPanelActive(gameOverPanels, true);
-        DisplayStats(" ");
+        DisplayStats(false);
     }
 
-    private void DisplayStats(string resultTitle)
+    /// <summary>
+    /// スコアを確定させ、リザルト UI を埋める。
+    /// 見出しはスコアから処分の重さを決めて出す。
+    /// </summary>
+    private void DisplayStats(bool cleared)
     {
         if (scoreManager == null)
         {
@@ -197,7 +252,6 @@ public class GameManager : MonoBehaviour
         UpdateEnemyKillStats();
 
         TimeSpan time = TimeSpan.FromSeconds(gameTimeElapsed);
-        if (titleText != null) titleText.text = resultTitle;
         if (playTimeDisplay != null) playTimeDisplay.text = $"{time.Minutes:D2}:{time.Seconds:D2}";
 
         int finalCurrency = (currencyManager != null) ? currencyManager.GetCurrentCurrency() : 0;
@@ -212,6 +266,28 @@ public class GameManager : MonoBehaviour
                        + Mathf.FloorToInt(gameTimeElapsed) * TIME_SCORE_WEIGHT;
 
         if (totalScoreDisplay != null) totalScoreDisplay.text = lastTotalScore.ToString();
+
+        // 見出しはスコア確定後に決める（順序を逆にすると常に最軽量の処分になる）
+        if (titleText != null)
+        {
+            titleText.text = cleared ? RankOf(lastTotalScore) : gameOverTitle;
+        }
+    }
+
+    /// <summary>
+    /// スコアから処分の重さを決める。閾値はステージごとに StageData で調整する。
+    /// </summary>
+    private string RankOf(int score)
+    {
+        int[] th = (Stage != null) ? Stage.rankThresholds : null;
+        if (th == null || th.Length == 0) return RANKS[RANKS.Length - 1];
+
+        int n = Mathf.Min(th.Length, RANKS.Length);
+        for (int i = n - 1; i >= 0; i--)
+        {
+            if (score >= th[i]) return RANKS[i];
+        }
+        return RANKS[0];
     }
 
     private void UpdateEnemyKillStats()

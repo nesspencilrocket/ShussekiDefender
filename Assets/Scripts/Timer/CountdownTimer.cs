@@ -2,40 +2,26 @@
 using TMPro;
 
 /// <summary>
-/// カウントダウン表示。
-/// 【重要】クラス名はファイル名 CountdownTimer と一致させること。
-/// ※ STEP 11 で GameManager が残り時間を持つようになったら、
-///    このクラスは GameManager.RemainingTime を映すだけの表示専用に作り替える。
+/// 残り時間の表示だけを担当する。時間の管理は GameManager 側にある。
+/// 独自にカウントすると、StageData.clearTime を変えたときに
+/// 表示と実際のクリア時刻がずれるため、必ず GameManager から引く。
 /// </summary>
 public class CountdownTimer : MonoBehaviour
 {
-    public TextMeshProUGUI timerText;
+    [Tooltip("残り秒数を表示する TextMeshPro")]
+    [SerializeField] private TextMeshProUGUI timerText;
 
-    [SerializeField]
-    [Tooltip("カウントダウン開始時の初期時間（秒）")]
-    private float startTime = 30f;
-
-    private float currentTime;
-
-    void Start()
-    {
-        currentTime = startTime;
-        UpdateTimerDisplay();
-    }
+    private int lastShown = -1;
 
     void Update()
     {
-        if (currentTime <= 0) return;
+        if (timerText == null || GameManager.Instance == null) return;
 
-        currentTime -= Time.deltaTime;
-        if (currentTime < 0) currentTime = 0;
+        int seconds = Mathf.CeilToInt(GameManager.Instance.RemainingTime);
 
-        UpdateTimerDisplay();
-    }
-
-    void UpdateTimerDisplay()
-    {
-        if (timerText == null) return;
-        timerText.text = Mathf.CeilToInt(currentTime).ToString();
+        // 秒が変わったときだけ文字列を組み立てる
+        if (seconds == lastShown) return;
+        lastShown = seconds;
+        timerText.text = seconds.ToString();
     }
 }
