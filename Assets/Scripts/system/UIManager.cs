@@ -57,11 +57,14 @@ public class UIManager : MonoBehaviour
             totalCoinsText.text = CurrencyManager.instance.totalCoins.ToString();
         }
 
-        // ▼▼▼ 変更点 ▼▼▼ LevelManagerの新しい変数を参照するように修正
-        if (enemiesReachedGoalText != null && LevelManager.instance != null)
+        // 通過数のカウンタは GameManager に一本化した。
+        // 以前は LevelManager 側にも別のカウンタがあり、二重管理になっていた
+        // （しかも LevelManager 側は Debug.Log を出すだけで敗北処理をしていなかった）。
+        if (enemiesReachedGoalText != null && GameManager.Instance != null)
         {
-            // 例：「5 / 10」のように表示する
-            enemiesReachedGoalText.text = LevelManager.instance.enemiesReachedGoal.ToString() + " / " + LevelManager.instance.gameOverThreshold.ToString();
+            // 例：「5 / 50」のように表示する
+            enemiesReachedGoalText.text =
+                $"{GameManager.Instance.EnemiesPassed} / {GameManager.Instance.MaxEnemyPasses}";
         }
     }
 

@@ -5,14 +5,10 @@ using System;
 
 public class CurrencyManager : MonoBehaviour
 {
+    [Tooltip("StageData が取得できなかったときに使う初期コイン")]
+    [SerializeField] private int InitialCoin = 100;
 
-    //初期コイン
-    [SerializeField] private int InitialCoin;
-    //所持コインをセーブするキー
-    private string SAVE_COIN = "COIN";
-    //所持コイン
-    [NonSerialized] public int totalCoins;
-
+    [NonSerialized] public int totalCoins;
 
     public static CurrencyManager instance;
 
@@ -30,55 +26,36 @@ public class CurrencyManager : MonoBehaviour
 
     void Start()
     {
-        //コインの数が引き継がれないように消す
-        PlayerPrefs.DeleteKey(SAVE_COIN);
-
-        //読み込む
-        LoadCoins();
-    }
-
-    private void LoadCoins()
-    {
-        //セーブされていればその数値を、
-        //されていなければ第二引数を変数に格納
-        totalCoins = PlayerPrefs.GetInt(SAVE_COIN, InitialCoin);
+        // コインはステージ内だけの一時的な資源なので保存しない。
+        // 以前は PlayerPrefs に保存しては Start で消す、という誤用をしていた。
+        // PlayerPrefs は StageProgress（進行状況の保存）に専念させる。
+        StageData stage = (GameManager.Instance != null) ? GameManager.Instance.Stage : null;
+        totalCoins = (stage != null) ? stage.initialCoin : InitialCoin;
     }
 
     public void AddCoins(int amount)
     {
         totalCoins += amount;
-        SaveCoins();
     }
 
-
+    /// <summary>EnemyHP.OnEnemyDead から呼ばれる（引数なし版）</summary>
     public void AddCoins()
     {
         AddCoins(10);
     }
 
-    /// <summary>
-    /// 引数分コインを減らす
-    /// </summary>
-    /// <param name="amount"></param>
-    public void RemoveCoins(int amount)
+    public void RemoveCoins(int amount)
     {
         if (totalCoins >= amount)
         {
             totalCoins -= amount;
-            SaveCoins();
         }
     }
 
-    // 【追加】GameManagerが所持コイン数を取得するための公開メソッド
-    /// <summary>
-    /// 現在の所持コイン数を返します
-    /// </summary>
-    /// <returns>所持コイン数</returns>
     public int GetCurrentCurrency()
     {
         return totalCoins;
     }
-
 
     private void OnEnable()
     {
@@ -88,12 +65,5 @@ public class CurrencyManager : MonoBehaviour
     private void OnDisable()
     {
         EnemyHP.OnEnemyDead -= AddCoins;
-    }
-
-
-    private void SaveCoins()
-    {
-        //totalCoinsを保存する
-        PlayerPrefs.SetInt(SAVE_COIN, totalCoins);
     }
 }
