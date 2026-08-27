@@ -2,59 +2,64 @@
 using System.Collections.Generic;
 using System;
 using TMPro;
-using UnityEngine.SceneManagement; // シーン切り替えのために追加
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
+    // --- ステージ設定 ---
+    [Header("Stage")]
+    [Tooltip("選択画面を経由せず直接このシーンを再生したときに使う StageData")]
+    [SerializeField] private StageData fallbackStage;
+    [Tooltip("全ステージ一覧。「次の時限へ」の遷移先を引くのに使う")]
+    [SerializeField] private StageCatalog catalog;
+
+    /// <summary>このステージの設定。Awake で解決される</summary>
+    public StageData Stage { get; private set; }
+
     // --- 外部マネージャーの参照 ---
     [Header("External Managers")]
     [SerializeField] private CurrencyManager currencyManager;
-    [SerializeField] private ScoreManager scoreManager; // ScoreManagerの参照
+    [SerializeField] private ScoreManager scoreManager;
 
-    // --- ゲーム設定 ---
+    // --- ゲーム設定（StageData があれば Awake で上書きされる）---
     [Header("Game Goals & Settings")]
-    [Tooltip("ゲームクリアに必要な時間 (秒)")]
-    [SerializeField] private float gameClearTime = 60f;
-    [Tooltip("敗北条件: 許容される敵の最大通過数")]
-    [SerializeField] private int maxEnemyPasses = 10;
-    [Tooltip("リトライ時にロードするシーンの名前")]
-    [SerializeField] private string retrySceneName = "GameScene"; // 例: 現在のゲームシーン名
-    [Tooltip("タイトルに戻る時にロードするシーンの名前")]
-    [SerializeField] private string titleSceneName = "TitleScene";
+    [SerializeField] private float gameClearTime = 30f;
+    [SerializeField] private int maxEnemyPasses = 50;
+    [Tooltip("タイトルに戻る時にロードするシーン名")]
+    [SerializeField] private string titleSceneName = "StartMenu";
+    [Tooltip("時限選択に戻る時にロードするシーン名")]
+    [SerializeField] private string stageSelectSceneName = "StageSelect";
 
-    // --- UI参照 (パネルはリスト、ボタンは単一変数) ---
+    // --- UI ---
     [Header("UI Panels & Buttons")]
-    [Tooltip("ゲームオーバー時に表示するUIパネル全体 (複数設定可能)")]
     [SerializeField] private List<GameObject> gameOverPanels = new List<GameObject>();
-    [Tooltip("ゲームクリア時に表示するUIパネル全体 (複数設定可能)")]
     [SerializeField] private List<GameObject> gameClearPanels = new List<GameObject>();
+    [Tooltip("クリアパネル内の「次の時限へ」ボタン。最終ステージでは自動的に隠れる")]
+    [SerializeField] private GameObject nextStageButton;
 
     [Header("UI Text References")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI playTimeDisplay;
     [SerializeField] private TextMeshProUGUI finalCurrencyDisplay;
     [SerializeField] private TextMeshProUGUI totalScoreDisplay;
-    // ▼▼▼ 修正点 ▼▼▼ UIテキストの参照を追加
-    [Tooltip("敵の通過数を表示するUIテキスト")]
     [SerializeField] private TextMeshProUGUI enemyPassesDisplay;
 
-
     [Header("Enemy Kill Stats UI")]
-    [Tooltip("各パネル内の、敵の討伐数表示用UIをすべてリスト化")]
     [SerializeField] private List<TextMeshProUGUI> enemyKillDisplays = new List<TextMeshProUGUI>();
-
 
     // --- 統計データ ---
     private float gameTimeElapsed = 0f;
     private int enemiesPassed = 0;
+    private int lastTotalScore = 0;
 
-    // ゲームの状態管理
+    // --- ゲームの状態 ---
     public static bool IsGameActive = true;
     public bool IsGameOver { get; private set; } = false;
     public bool IsGameClear { get; private set; } = false;
 
-    // --- 他クラスへの公開（UIManager / CountdownTimer などが参照する）---
-    public static GameManager Instance { get; private set; }
+    // --- 他クラスへの公開 ---
     public int EnemiesPassed => enemiesPassed;
     public int MaxEnemyPasses => maxEnemyPasses;
     public float RemainingTime => Mathf.Max(0f, gameClearTime - gameTimeElapsed);
@@ -66,47 +71,46 @@ public class GameManager : MonoBehaviour
         // 【重要】IsGameActive と timeScale はグローバルな状態なので、
         // 前のシーンの値を持ち越さないよう必ず Awake で戻す。
         // Start に置くと、敗北後に別ステージへ入ったとき Weapon.Update() が
-        // 冒頭で return して武器が一発も撃たなくなる。
+        // 冒頭で return し、武器が一発も撃たなくなる。
         IsGameActive = true;
         Time.timeScale = 1f;
+
+        // 【重要】StageData を解決するのはこの 1 箇所だけ。
+        // Awake はすべての Start より先に走るので、他のコンポーネントは
+        // Start で GameManager.Instance.Stage を読めば必ず解決済みになる。
+        Stage = StageContext.Resolve(fallbackStage);
+
+        if (Stage != null)
+        {
+            gameClearTime = Stage.clearTime;
+            maxEnemyPasses = Stage.maxEnemyPasses;
+        }
+        else
+        {
+            Debug.LogError("GameManager: StageData を解決できませんでした。"
+                         + "Inspector の Fallback Stage を設定してください。", this);
+        }
     }
 
     void Start()
     {
-        Debug.Log("DEBUG_CRASH_CHECK: GameManager.Start() 実行開始");
-
         enemiesPassed = 0;
-
-        // ▼▼▼ 修正点 ▼▼▼ ゲーム開始時にUIを初期化
         UpdatePassesDisplay();
 
         SetPanelActive(gameOverPanels, false);
         SetPanelActive(gameClearPanels, false);
 
-
-        if (currencyManager == null)
-        {
-            currencyManager = FindAnyObjectByType<CurrencyManager>();
-        }
-        if (scoreManager == null)
-        {
-            scoreManager = FindAnyObjectByType<ScoreManager>();
-        }
-
-        Debug.Log("DEBUG_CRASH_CHECK: GameManager.Start() 実行完了");
+        if (currencyManager == null) currencyManager = FindAnyObjectByType<CurrencyManager>();
+        if (scoreManager == null) scoreManager = FindAnyObjectByType<ScoreManager>();
     }
 
     private void SetPanelActive(List<GameObject> panels, bool active)
     {
         foreach (GameObject panel in panels)
         {
-            if (panel != null)
-            {
-                panel.SetActive(active);
-            }
+            if (panel != null) panel.SetActive(active);
         }
     }
-
 
     void Update()
     {
@@ -116,21 +120,18 @@ public class GameManager : MonoBehaviour
 
         if (gameTimeElapsed >= gameClearTime)
         {
-            Debug.Log("ゲームクリア");
             GameClear();
         }
     }
 
     /// <summary>
-    /// 敵がゴール地点を通過したときに呼ばれるメソッド
+    /// 敵がゴール地点を通過したときに Enemy から呼ばれる
     /// </summary>
     public void RecordEnemyPass()
     {
         if (!IsGameActive || IsGameOver || IsGameClear) return;
 
         enemiesPassed++;
-
-        // ▼▼▼ 修正点 ▼▼▼ 敵が通過するたびにUIを更新
         UpdatePassesDisplay();
 
         if (enemiesPassed >= maxEnemyPasses)
@@ -139,37 +140,44 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ▼▼▼ 修正点 ▼▼▼ UIを更新するための新しいメソッド
-    /// <summary>
-    /// 敵の通過数UIを更新する
-    /// </summary>
     private void UpdatePassesDisplay()
     {
         if (enemyPassesDisplay != null)
         {
-            // 例：「5 / 10」のように表示
-            enemyPassesDisplay.text = enemiesPassed.ToString() + " / " + maxEnemyPasses.ToString();
+            enemyPassesDisplay.text = enemiesPassed + " / " + maxEnemyPasses;
         }
     }
 
-
-    // --- (これ以降のコードは変更ありません) ---
-
     public void GameClear()
     {
-        Debug.Log("ゲームクリア: 時間達成");
         if (IsGameClear || IsGameOver) return;
+
         IsGameClear = true;
         IsGameActive = false;
         Time.timeScale = 0;
         SetPanelActive(gameClearPanels, true);
+
+        // 【順序注意】スコアは DisplayStats の中で確定するので、記録より先に呼ぶ
         DisplayStats("退学処分");
+
+        if (Stage != null)
+        {
+            StageProgress.MarkCleared(Stage.stageNumber);
+            StageProgress.SubmitScore(Stage.stageNumber, lastTotalScore);
+        }
+
+        // 最終ステージでは「次の時限へ」を出さない
+        if (nextStageButton != null)
+        {
+            bool hasNext = catalog != null && catalog.Next(Stage) != null;
+            nextStageButton.SetActive(hasNext);
+        }
     }
 
     public void GameOver()
     {
-        Debug.Log("ゲームオーバー: 敵通過数が上限に達しました");
         if (IsGameClear || IsGameOver) return;
+
         IsGameOver = true;
         IsGameActive = false;
         Time.timeScale = 0;
@@ -181,57 +189,77 @@ public class GameManager : MonoBehaviour
     {
         if (scoreManager == null)
         {
-            Debug.LogError("ScoreManagerが設定されていません。統計表示をスキップします。");
+            Debug.LogError("ScoreManager が設定されていません。統計表示をスキップします。");
             return;
         }
+
         scoreManager.UpdateStatsUI();
         UpdateEnemyKillStats();
+
         TimeSpan time = TimeSpan.FromSeconds(gameTimeElapsed);
         if (titleText != null) titleText.text = resultTitle;
         if (playTimeDisplay != null) playTimeDisplay.text = $"{time.Minutes:D2}:{time.Seconds:D2}";
-        int finalCurrency = 0;
-        if (currencyManager != null)
-        {
-            finalCurrency = currencyManager.GetCurrentCurrency();
-        }
+
+        int finalCurrency = (currencyManager != null) ? currencyManager.GetCurrentCurrency() : 0;
         if (finalCurrencyDisplay != null) finalCurrencyDisplay.text = finalCurrency.ToString();
-        int totalKills = scoreManager.TotalKills;
+
         const int KILL_SCORE_WEIGHT = 50;
         const int CURRENCY_SCORE_WEIGHT = 1;
         const int TIME_SCORE_WEIGHT = 10;
-        int totalScore = totalKills * KILL_SCORE_WEIGHT
-                           + finalCurrency * CURRENCY_SCORE_WEIGHT
-                           + Mathf.FloorToInt(gameTimeElapsed) * TIME_SCORE_WEIGHT;
-        if (totalScoreDisplay != null) totalScoreDisplay.text = totalScore.ToString();
+
+        lastTotalScore = scoreManager.TotalKills * KILL_SCORE_WEIGHT
+                       + finalCurrency * CURRENCY_SCORE_WEIGHT
+                       + Mathf.FloorToInt(gameTimeElapsed) * TIME_SCORE_WEIGHT;
+
+        if (totalScoreDisplay != null) totalScoreDisplay.text = lastTotalScore.ToString();
     }
 
     private void UpdateEnemyKillStats()
     {
         if (scoreManager == null) return;
+
         List<ScoreManager.EnemyStatsSetting> stats = scoreManager.GetStatsSettings();
-        int enemyTypeCount = stats.Count;
+
+        // 敵が 1 種も登録されていないと下の剰余算がゼロ除算になるため先に抜ける
+        if (stats == null || stats.Count == 0) return;
+
         for (int i = 0; i < enemyKillDisplays.Count; i++)
         {
-            if (enemyKillDisplays[i] != null)
-            {
-                int statIndex = i % enemyTypeCount;
-                if (statIndex < stats.Count)
-                {
-                    int kills = stats[statIndex].killCount;
-                    enemyKillDisplays[i].text = kills.ToString();
-                }
-                else
-                {
-                    enemyKillDisplays[i].text = "0";
-                }
-            }
+            if (enemyKillDisplays[i] == null) continue;
+            enemyKillDisplays[i].text = stats[i % stats.Count].killCount.ToString();
         }
     }
+
+    // ───── ボタンから呼ぶ遷移メソッド ─────
+    // 【重要】どれも Time.timeScale を 1 に戻してから遷移すること。
+    // GameOver / GameClear で 0 にしたまま遷移すると次のシーンが停止状態で始まる。
 
     public void OnRetryButtonClicked()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(retrySceneName);
+        // シーン名を手で持たない。6 枚に増えたとき書き忘れる典型的な箇所だった。
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void OnNextStageButtonClicked()
+    {
+        Time.timeScale = 1f;
+
+        StageData next = (catalog != null) ? catalog.Next(Stage) : null;
+        if (next == null)
+        {
+            OnStageSelectButtonClicked();
+            return;
+        }
+
+        StageContext.Select(next);
+        SceneManager.LoadScene(next.sceneName);
+    }
+
+    public void OnStageSelectButtonClicked()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(stageSelectSceneName);
     }
 
     public void OnTitleButtonClicked()

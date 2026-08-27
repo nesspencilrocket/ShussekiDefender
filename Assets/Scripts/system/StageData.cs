@@ -24,7 +24,7 @@ public class StageData : ScriptableObject
     public Sprite selectButtonImage;
 
     [Tooltip("読み込むシーン名。Build Settings に登録されていること")]
-    public string sceneName = "_Stage_1";
+    public string sceneName = "Stage_1";
 
     [Header("ルール")]
     [Tooltip("出現させる敵の波表。Spawner がここから読む")]

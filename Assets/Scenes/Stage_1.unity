@@ -8644,8 +8644,11 @@ MonoBehaviour:
   scoreManager: {fileID: 1594171834}
   gameClearTime: 30
   maxEnemyPasses: 50
-  retrySceneName: _Stage_1
+  fallbackStage: {fileID: 11400000, guid: b827623407aded54bad2eb734fe35790, type: 2}
+  catalog: {fileID: 11400000, guid: 8736d235f0b956c4cbaa5a038fdf45ee, type: 2}
   titleSceneName: StartMenu
+  stageSelectSceneName: StageSelect
+  nextStageButton: {fileID: 0}
   gameOverPanels:
   - {fileID: 1101082476}
   - {fileID: 1250260775}

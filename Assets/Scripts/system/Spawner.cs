@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-// ★★★ 修正点：削除されていた定義を元に戻しました ★★★
 public enum SpawnModes
 {
     constant,
@@ -13,18 +12,20 @@ public enum SpawnModes
 
 public class Spawner : MonoBehaviour
 {
-    [Header("Wave Settings")]
-    [SerializeField] private List<WaveData> waves = new List<WaveData>();
-
-    private int currentWaveIndex = 0;
-
+    [Header("Spawn Settings")]
     [SerializeField] private SpawnModes spawnMode = SpawnModes.constant;
+
+    [Tooltip("スポーン地点と経路の組。シーン内の Transform を指すのでアセットには出せない")]
     [SerializeField] private List<SpawnRoute> spawnRoutes;
 
+    // 波の内容は StageData から受け取る。シーンには持たせない。
+    private List<WaveData> waves;
+
+    private int currentWaveIndex = 0;
     private float spawnTimer;
     private float spawned;
     private ObjectPooler pooler;
-    private int enemiesRemaining; // ウェーブ進行制御では不要になりましたが、他の用途のため残しています
+
     public static Action OnWaveCompleted;
 
     private void Awake()
@@ -37,9 +38,20 @@ public class Spawner : MonoBehaviour
         if (pooler == null) pooler = ObjectPooler.Instance;
         if (pooler == null)
         {
-            Debug.LogError("CRITICAL ERROR: ObjectPoolerの参照が取得できませんでした。");
+            Debug.LogError("Spawner: ObjectPooler が見つかりません。", this);
             return;
         }
+
+        // GameManager.Awake で解決済みの StageData から波表を受け取る
+        StageData stage = (GameManager.Instance != null) ? GameManager.Instance.Stage : null;
+        if (stage == null)
+        {
+            Debug.LogError("Spawner: StageData を取得できませんでした。"
+                         + "GameManager の Fallback Stage を確認してください。", this);
+            return;
+        }
+
+        waves = stage.waves;
         StartCoroutine(SpawnWaves());
     }
 
@@ -50,11 +62,9 @@ public class Spawner : MonoBehaviour
         while (currentWaveIndex < waves.Count)
         {
             WaveData currentWave = waves[currentWaveIndex];
-            // 敵の全滅待ちをしないため、この行はウェーブ進行制御には影響しません
-            enemiesRemaining = currentWave.enemyCount;
             spawned = 0;
 
-            // ★★★ このwhileループで指定数の敵をすべてスポーンさせます ★★★
+            // 指定数の敵をすべてスポーンさせる
             while (spawned < currentWave.enemyCount)
             {
                 spawned++;
@@ -63,16 +73,12 @@ public class Spawner : MonoBehaviour
                 yield return new WaitForSeconds(spawnTimer);
             }
 
-            // ★★★ 修正箇所: 敵が全滅するのを待つ行を削除しました ★★★
-            // yield return new WaitUntil(() => enemiesRemaining <= 0);
-
-            // スポーンが完了したらすぐに次の処理へ
+            // 敵の全滅は待たない。波は「スポーンの時刻表」として扱う。
             OnWaveCompleted?.Invoke();
             currentWaveIndex++;
 
             if (currentWaveIndex < waves.Count)
             {
-                // 次のウェーブまでのインターバル時間
                 yield return new WaitForSeconds(waves[currentWaveIndex - 1].wavesDelayTime);
             }
         }
@@ -81,6 +87,7 @@ public class Spawner : MonoBehaviour
     private void SpawnEnemy(WaveData currentWave)
     {
         if (currentWave.enemyPrefab == null) return;
+
         GameObject newInstance = pooler.GetObjectFromPool(currentWave.enemyPrefab);
         if (newInstance == null) return;
 
