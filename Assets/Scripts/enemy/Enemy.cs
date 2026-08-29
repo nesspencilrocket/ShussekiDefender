@@ -32,6 +32,15 @@ public class Enemy : MonoBehaviour
     {
         currentMovePointIndex = 0;
         SetMoveSpeed();
+
+        // 【重要】Hit.anim は m_Color を赤へ動かすが、walk.anim は m_Sprite しか
+        // 動かさないため色を戻してくれない。被弾アニメの途中で倒されて
+        // プールに返されると、赤いまま再利用されてしまう。
+        // プールから出るたびに色を戻しておく。
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.white;
+        }
     }
 
     public void SetMoveSpeed()
