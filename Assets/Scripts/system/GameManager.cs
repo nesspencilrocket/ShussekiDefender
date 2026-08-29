@@ -29,6 +29,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string goText = "GO!";
     [Tooltip("カウントダウンを表示する TextMeshPro（画面中央）")]
     [SerializeField] private TextMeshProUGUI countdownText;
+    [Tooltip("カウントダウン中だけ出す暗幕。文字はこの子に置く。"
+           + "未設定なら countdownText 単体を出し入れする")]
+    [SerializeField] private GameObject countdownRoot;
 
     /// <summary>開始前カウントダウン中は true</summary>
     public bool IsCountingDown { get; private set; }
@@ -139,7 +142,7 @@ public class GameManager : MonoBehaviour
         IsCountingDown = true;
         IsGameActive = false;
 
-        if (countdownText != null) countdownText.gameObject.SetActive(true);
+        SetCountdownVisible(true);
 
         for (int n = Mathf.CeilToInt(countdownSeconds); n > 0; n--)
         {
@@ -150,10 +153,25 @@ public class GameManager : MonoBehaviour
         if (countdownText != null) countdownText.text = goText;
         yield return new WaitForSeconds(goDuration);
 
-        if (countdownText != null) countdownText.gameObject.SetActive(false);
+        SetCountdownVisible(false);
 
         IsCountingDown = false;
         IsGameActive = true;
+    }
+
+    /// <summary>
+    /// 暗幕ごと出し入れする。暗幕が無い構成でも動くようフォールバックを持たせる。
+    /// </summary>
+    private void SetCountdownVisible(bool visible)
+    {
+        if (countdownRoot != null)
+        {
+            countdownRoot.SetActive(visible);
+        }
+        else if (countdownText != null)
+        {
+            countdownText.gameObject.SetActive(visible);
+        }
     }
 
     private void SetPanelActive(List<GameObject> panels, bool active)
