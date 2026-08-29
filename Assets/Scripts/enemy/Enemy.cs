@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour
     private int currentMovePointIndex;
 
     private GameManager gameManager;
+    private EnemyAnimations enemyAnimations;
 
     public Vector3 CurrentPointPosition => movePoint.GetMovePointPosition(currentMovePointIndex);
     public static Action OnReachedGoal;
@@ -24,6 +25,7 @@ public class Enemy : MonoBehaviour
     {
         enemyHP = GetComponent<EnemyHP>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        enemyAnimations = GetComponent<EnemyAnimations>();
         // ★★★ 修正点：警告が出ない新しい命令に変更 ★★★
         gameManager = FindFirstObjectByType<GameManager>();
     }
@@ -33,13 +35,14 @@ public class Enemy : MonoBehaviour
         currentMovePointIndex = 0;
         SetMoveSpeed();
 
-        // 【重要】Hit.anim は m_Color を赤へ動かすが、walk.anim は m_Sprite しか
-        // 動かさないため色を戻してくれない。被弾アニメの途中で倒されて
-        // プールに返されると、赤いまま再利用されてしまう。
-        // プールから出るたびに色を戻しておく。
+        // 被弾表現で色を変えるため、プールから出るたびに白へ戻しておく。
+        // 被弾中に倒されると色が戻らないまま返却されるため、ここが最後の砦になる。
         if (spriteRenderer != null)
         {
             spriteRenderer.color = Color.white;
+            // 4方向スプライトを使うので左右反転は不要。
+            // 以前の名残が残っていると左向きが二重反転するため明示的に戻す。
+            spriteRenderer.flipX = false;
         }
     }
 
@@ -104,10 +107,12 @@ public class Enemy : MonoBehaviour
             CurrentPointPosition,
             moveSpeed * Time.deltaTime);
 
-        if (spriteRenderer != null)
+        // 4方向スプライトへ進行方向を伝える。
+        // 以前は flipX による左右反転だけだったため、上下へ移動しても
+        // 正面（下向き）のまま歩いていた。
+        if (enemyAnimations != null)
         {
-            if (direction.x < 0) spriteRenderer.flipX = true;
-            else if (direction.x > 0) spriteRenderer.flipX = false;
+            enemyAnimations.SetDirection(direction);
         }
     }
 
