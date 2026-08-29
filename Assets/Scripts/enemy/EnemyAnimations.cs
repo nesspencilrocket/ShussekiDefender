@@ -61,6 +61,42 @@ public class EnemyAnimations : MonoBehaviour
     {
         enemy = GetComponent<Enemy>();
         if (target == null) target = GetComponent<SpriteRenderer>();
+
+        Validate();
+    }
+
+    /// <summary>
+    /// 設定漏れを黙って見逃さないための検査。
+    ///
+    /// スプライトが未設定でも「アニメーションしないだけ」で例外は出ないため、
+    /// SpriteRenderer の初期スプライトのまま全員が同じ向きで固まる、という
+    /// 紛らわしい症状になる。原因が一目で分かるよう Console に出しておく。
+    /// </summary>
+    private void Validate()
+    {
+        if (target == null)
+        {
+            Debug.LogError($"{name}: SpriteRenderer が見つかりません。", this);
+            return;
+        }
+
+        int need = framesPerDirection * 4;   // 下・左・右・上 の 4 方向ぶん
+        if (sprites == null || sprites.Length < need)
+        {
+            Debug.LogError(
+                $"{name}: EnemyAnimations の sprites が {(sprites == null ? 0 : sprites.Length)} 枚しかありません。"
+                + $"下→左→右→上 の順に {need} 枚（4方向 × {framesPerDirection}コマ）必要です。", this);
+            return;
+        }
+
+        for (int i = 0; i < need; i++)
+        {
+            if (sprites[i] == null)
+            {
+                Debug.LogError($"{name}: EnemyAnimations の sprites[{i}] が未設定です。", this);
+                return;
+            }
+        }
     }
 
     private void OnEnable()
