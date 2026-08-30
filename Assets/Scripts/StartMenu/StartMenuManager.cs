@@ -12,8 +12,8 @@ public class StartMenuManager : MonoBehaviour
 
     void Start()
     {
-        // 敗北・クリア時に 0 にした timeScale が残っているとタイトルが固まる
-        Time.timeScale = 1f;
+        // 敗北・クリア時に止めたまま戻ってくるとタイトルが固まる
+        GameSpeed.Resume();
     }
 
     /// <summary>「ゲームスタート」ボタンから呼ぶ</summary>

@@ -25,8 +25,8 @@ public class StageSelectManager : MonoBehaviour
 
     void Start()
     {
-        // ステージ選択に来た時点で timeScale を戻す（敗北直後に戻ってきた場合の保険）
-        Time.timeScale = 1f;
+        // 敗北直後に戻ってきた場合の保険。止まったままだとボタンが押せない
+        GameSpeed.Resume();
 
         if (descriptionText != null) descriptionText.text = "";
         if (startButtonObj != null) startButtonObj.SetActive(false);

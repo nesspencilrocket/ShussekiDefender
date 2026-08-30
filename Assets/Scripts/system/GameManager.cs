@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
         // ここでは false から始め、カウントダウンが明けたら true にする。
         IsGameActive = false;
         IsCountingDown = true;
-        Time.timeScale = 1f;
+        GameSpeed.Resume();
 
         // 【重要】StageData を解決するのはこの 1 箇所だけ。
         // Awake はすべての Start より先に走るので、他のコンポーネントは
@@ -147,11 +147,12 @@ public class GameManager : MonoBehaviour
         for (int n = Mathf.CeilToInt(countdownSeconds); n > 0; n--)
         {
             if (countdownText != null) countdownText.text = n.ToString();
-            yield return new WaitForSeconds(1f);
+            // 実時間で数える。timeScale に従うと倍速時に 3 秒が 2.5 秒になる
+            yield return new WaitForSecondsRealtime(1f);
         }
 
         if (countdownText != null) countdownText.text = goText;
-        yield return new WaitForSeconds(goDuration);
+        yield return new WaitForSecondsRealtime(goDuration);
 
         SetCountdownVisible(false);
 
@@ -224,7 +225,7 @@ public class GameManager : MonoBehaviour
 
         IsGameClear = true;
         IsGameActive = false;
-        Time.timeScale = 0;
+        GameSpeed.Pause();
         SetPanelActive(gameClearPanels, true);
 
         DisplayStats(true);
@@ -249,7 +250,7 @@ public class GameManager : MonoBehaviour
 
         IsGameOver = true;
         IsGameActive = false;
-        Time.timeScale = 0;
+        GameSpeed.Pause();
         SetPanelActive(gameOverPanels, true);
         DisplayStats(false);
     }
@@ -325,19 +326,19 @@ public class GameManager : MonoBehaviour
     }
 
     // ───── ボタンから呼ぶ遷移メソッド ─────
-    // 【重要】どれも Time.timeScale を 1 に戻してから遷移すること。
-    // GameOver / GameClear で 0 にしたまま遷移すると次のシーンが停止状態で始まる。
+    // 【重要】どれも GameSpeed.Resume() を呼んでから遷移すること。
+    // GameOver / GameClear で止めたまま遷移すると、次のシーンが停止状態で始まる。
 
     public void OnRetryButtonClicked()
     {
-        Time.timeScale = 1f;
+        GameSpeed.Resume();
         // シーン名を手で持たない。6 枚に増えたとき書き忘れる典型的な箇所だった。
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void OnNextStageButtonClicked()
     {
-        Time.timeScale = 1f;
+        GameSpeed.Resume();
 
         StageData next = (catalog != null) ? catalog.Next(Stage) : null;
         if (next == null)
@@ -352,13 +353,13 @@ public class GameManager : MonoBehaviour
 
     public void OnStageSelectButtonClicked()
     {
-        Time.timeScale = 1f;
+        GameSpeed.Resume();
         SceneManager.LoadScene(stageSelectSceneName);
     }
 
     public void OnTitleButtonClicked()
     {
-        Time.timeScale = 1f;
+        GameSpeed.Resume();
         SceneManager.LoadScene(titleSceneName);
     }
 }
