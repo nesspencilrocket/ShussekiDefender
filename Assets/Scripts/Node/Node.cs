@@ -53,6 +53,14 @@ public class Node : MonoBehaviour
     //ボタンに設定
     public void SelectNode()
     {
+        // 開始前カウントダウン中は設置・強化を受け付けない。
+        // 暗幕でもクリックを塞いでいるが、Canvas の重なり順に依存しない
+        // よう、ここでも確実に止めておく。
+        if (GameManager.Instance != null && GameManager.Instance.IsCountingDown)
+        {
+            return;
+        }
+
         OnNodeSelected?.Invoke(this);
 
 

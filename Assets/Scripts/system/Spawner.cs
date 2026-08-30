@@ -26,6 +26,9 @@ public class Spawner : MonoBehaviour
     private float spawned;
     private ObjectPooler pooler;
 
+    // 直前に使ったスポーン地点。連続で同じ場所から湧かせないために覚えておく
+    private int lastRouteIndex = -1;
+
     public static Action OnWaveCompleted;
 
     private void Awake()
@@ -58,6 +61,9 @@ public class Spawner : MonoBehaviour
     private IEnumerator SpawnWaves()
     {
         if (waves == null || waves.Count == 0) yield break;
+
+        // 開始前カウントダウン（3・2・1・GO）が明けるまで湧かせない
+        yield return new WaitUntil(() => GameManager.IsGameActive);
 
         while (currentWaveIndex < waves.Count)
         {
@@ -124,12 +130,27 @@ public class Spawner : MonoBehaviour
             : Random.Range(currentWave.minRandomDelay, currentWave.maxRandomDelay);
     }
 
+    /// <summary>
+    /// スポーン地点を選ぶ。直前と同じ地点は避けるので、
+    /// 同じ場所から連続で湧くことがなくなる。
+    /// 範囲スポーンを実装しなくても、体感上の問題はこれで解消する。
+    /// </summary>
     private SpawnRoute GetRandomSpawnRoute()
     {
         if (spawnRoutes == null || spawnRoutes.Count == 0)
         {
             return new SpawnRoute { spawnPoint = null, targetRoute = null };
         }
-        return spawnRoutes[Random.Range(0, spawnRoutes.Count)];
+
+        int i = Random.Range(0, spawnRoutes.Count);
+
+        // 直前と同じなら、それ以外の中から選び直す
+        if (i == lastRouteIndex && spawnRoutes.Count > 1)
+        {
+            i = (lastRouteIndex + 1 + Random.Range(0, spawnRoutes.Count - 1)) % spawnRoutes.Count;
+        }
+
+        lastRouteIndex = i;
+        return spawnRoutes[i];
     }
 }

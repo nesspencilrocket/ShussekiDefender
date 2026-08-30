@@ -39,6 +39,11 @@ public class StageData : ScriptableObject
     [Tooltip("ステージ開始時の所持コイン")]
     public int initialCoin = 100;
 
+    [Header("結果の区分")]
+    [Tooltip("スコアの境界。低い順に 訓告 / 厳重注意 / 1週間停学 / 無期限停学 / 退学処分。"
+           + "妨害する側なので、重い処分ほど良い結果")]
+    public int[] rankThresholds = new int[] { 0, 800, 1400, 2000, 2600 };
+
     [Header("演出")]
     public AudioClip bgm;
 
