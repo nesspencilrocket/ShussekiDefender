@@ -7589,7 +7589,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1263362196
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8609,7 +8609,6 @@ MonoBehaviour:
   - {fileID: 1250260775}
   - {fileID: 775248512}
   - {fileID: 849124034}
-  - {fileID: 1263362195}
   gameClearPanels:
   - {fileID: 2146897555}
   - {fileID: 1250260775}
