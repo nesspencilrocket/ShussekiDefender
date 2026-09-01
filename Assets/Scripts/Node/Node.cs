@@ -44,7 +44,7 @@ public class Node : MonoBehaviour
     /// このノードは空か確認
     /// </summary>
     /// <returns></returns>
-    public bool IseEmpty()
+    public bool IsEmpty()
     {
         return weapon == null;
     }
@@ -64,7 +64,7 @@ public class Node : MonoBehaviour
         OnNodeSelected?.Invoke(this);
 
 
-        if (!IseEmpty())
+        if (!IsEmpty())
         {
             //攻撃範囲を表示
             ShowWeaponRange();
@@ -97,7 +97,7 @@ public class Node : MonoBehaviour
     /// </summary>
     public void SellWeapon()
     {
-        if (!IseEmpty())
+        if (!IsEmpty())
         {
             CurrencyManager.instance.AddCoins(weapon.weaponUpgrade.GetSellValue());
             Destroy(weapon.gameObject);

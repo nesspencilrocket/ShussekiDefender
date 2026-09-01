@@ -24,6 +24,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI weaponLevelText;
     [SerializeField] private TextMeshProUGUI upgradeText;
 
+    [Tooltip("強化ボタン。上限に達したら押せなくする（未設定でも動く）")]
+    [SerializeField] private UnityEngine.UI.Button upgradeButton;
+
 
     public static UIManager instance;
 
@@ -40,6 +43,10 @@ public class UIManager : MonoBehaviour
 
     }
 
+    // 直前に表示した値。変わったときだけ文字列を作り直す
+    private int lastCoins = int.MinValue;
+    private int lastPasses = int.MinValue;
+
     void Update()
     {
         //体力などのUIを更新
@@ -52,9 +59,16 @@ public class UIManager : MonoBehaviour
     private void UpdateUI()
     {
         // Nullチェックを追加し、クラッシュを防ぐ
+        // 毎フレーム文字列を作り直すと、変化していなくても新しい string が
+        // 生成されてゴミが増える。値が変わったときだけ組み立てる。
         if (totalCoinsText != null && CurrencyManager.instance != null)
         {
-            totalCoinsText.text = CurrencyManager.instance.totalCoins.ToString();
+            int coins = CurrencyManager.instance.totalCoins;
+            if (coins != lastCoins)
+            {
+                lastCoins = coins;
+                totalCoinsText.text = coins.ToString();
+            }
         }
 
         // 通過数のカウンタは GameManager に一本化した。
@@ -63,8 +77,13 @@ public class UIManager : MonoBehaviour
         if (enemiesReachedGoalText != null && GameManager.Instance != null)
         {
             // 例：「5 / 50」のように表示する
-            enemiesReachedGoalText.text =
-                $"{GameManager.Instance.EnemiesPassed} / {GameManager.Instance.MaxEnemyPasses}";
+            int passes = GameManager.Instance.EnemiesPassed;
+            if (passes != lastPasses)
+            {
+                lastPasses = passes;
+                enemiesReachedGoalText.text =
+                    $"{passes} / {GameManager.Instance.MaxEnemyPasses}";
+            }
         }
     }
 
@@ -85,7 +104,7 @@ public class UIManager : MonoBehaviour
         currentNodeSelected = nodeSelected;
 
         //ノードが空か判定
-        if (currentNodeSelected.IseEmpty())
+        if (currentNodeSelected.IsEmpty())
         {
             //UI表示
             weaponShopPanel.SetActive(true);
@@ -173,7 +192,9 @@ public class UIManager : MonoBehaviour
         // Nullチェックを追加
         if (currentNodeSelected != null && currentNodeSelected.weapon != null && weaponLevelText != null)
         {
-            weaponLevelText.text = $"Level{currentNodeSelected.weapon.weaponUpgrade.level}";
+            WeaponUpgrade up = currentNodeSelected.weapon.weaponUpgrade;
+            // 上限が分かると、あと何回強化できるかが読める
+            weaponLevelText.text = $"Level {up.level} / {up.MaxLevel}";
         }
     }
 
@@ -182,8 +203,27 @@ public class UIManager : MonoBehaviour
         // Nullチェックを追加
         if (currentNodeSelected != null && currentNodeSelected.weapon != null && upgradeText != null)
         {
-            upgradeText.text = currentNodeSelected.weapon.weaponUpgrade.currentUpgradeCost.ToString();
+            WeaponUpgrade up = currentNodeSelected.weapon.weaponUpgrade;
+            // 上限では数字ではなく MAX と出す。
+            // 数字のままだと、押しても何も起きない理由が分からない。
+            upgradeText.text = up.IsMaxLevel ? "MAX" : up.currentUpgradeCost.ToString();
         }
+
+        UpdateUpgradeButtonState();
+    }
+
+    /// <summary>
+    /// 上限に達した武器では強化ボタンを押せなくする。
+    /// ボタンが未設定でも表示だけは正しくなるようにしてある。
+    /// </summary>
+    private void UpdateUpgradeButtonState()
+    {
+        if (upgradeButton == null) return;
+
+        upgradeButton.interactable =
+            currentNodeSelected != null &&
+            currentNodeSelected.weapon != null &&
+            !currentNodeSelected.weapon.weaponUpgrade.IsMaxLevel;
     }
 
     //ボタンに登録する
