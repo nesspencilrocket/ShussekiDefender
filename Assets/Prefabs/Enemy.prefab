@@ -249,7 +249,7 @@ MonoBehaviour:
   - {fileID: 2129908209297762822, guid: 221f65745bbe3b049912725d86d15581, type: 3}
   framesPerDirection: 3
   advanceByDistance: 1
-  distancePerCycle: 1
+  distancePerCycle: 0.5
   secondsPerFrame: 0.16
   warpThreshold: 2
   framePattern:

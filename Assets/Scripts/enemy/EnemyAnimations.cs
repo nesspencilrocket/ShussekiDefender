@@ -41,10 +41,12 @@ public class EnemyAnimations : MonoBehaviour
     [Tooltip("ON: 進んだ距離でコマを送る（足が地面に合う）。OFF: 時間で送る")]
     [SerializeField] private bool advanceByDistance = true;
 
-    [Tooltip("パターンを 1 周するあいだに進む距離。敵の身長が 1 単位なので、"
-           + "1.0 なら 1 周（＝2歩）で身長 1 つぶん進む。"
-           + "コマ数を変えても歩幅が保たれるよう、1 周ぶんで指定する")]
-    [Min(0.01f)] [SerializeField] private float distancePerCycle = 1f;
+    // パターンを 1 周するあいだに進む距離。小さいほどコマ送りが速くなる。
+    // 敵の身長が 1 単位・移動速度 3 のとき、2 コマ構成なら
+    //   1.0 → 6 コマ/秒 ／ 0.5 → 12 コマ/秒 ／ 0.3 → 20 コマ/秒
+    // 物理的な歩幅どおり（1.0）だと、小さいドット絵では歩いて見えにくい。
+    [Tooltip("1 周で進む距離。小さいほどコマ送りが速くなる")]
+    [Min(0.01f)] [SerializeField] private float distancePerCycle = 0.5f;
 
     [Tooltip("1コマあたりの秒数。advanceByDistance が OFF のときだけ使う")]
     [SerializeField] private float secondsPerFrame = 0.16f;
