@@ -42,11 +42,12 @@ public class EnemyAnimations : MonoBehaviour
     [SerializeField] private bool advanceByDistance = true;
 
     // パターンを 1 周するあいだに進む距離。小さいほどコマ送りが速くなる。
-    // 敵の身長が 1 単位・移動速度 3 のとき、2 コマ構成なら
-    //   1.0 → 6 コマ/秒 ／ 0.5 → 12 コマ/秒 ／ 0.3 → 20 コマ/秒
-    // 物理的な歩幅どおり（1.0）だと、小さいドット絵では歩いて見えにくい。
+    // 敵の身長が 1 単位・移動速度 3 のとき、4 コマ構成なら
+    //   1.92 → 6.25 コマ/秒（時間ベースだった頃と同じ速さ）
+    //   1.5  → 8 コマ/秒（既定。元より少し速い）
+    //   1.2  → 10 コマ/秒
     [Tooltip("1 周で進む距離。小さいほどコマ送りが速くなる")]
-    [Min(0.01f)] [SerializeField] private float distancePerCycle = 0.5f;
+    [Min(0.01f)] [SerializeField] private float distancePerCycle = 1.5f;
 
     [Tooltip("1コマあたりの秒数。advanceByDistance が OFF のときだけ使う")]
     [SerializeField] private float secondsPerFrame = 0.16f;
@@ -55,11 +56,11 @@ public class EnemyAnimations : MonoBehaviour
     [SerializeField] private float warpThreshold = 2f;
 
     // コマの並び順。
-    //   {0, 2}       … 左足と右足だけの 2 コマ。歩いている感が強く出る（既定）
-    //   {0, 1, 2, 1} … 中割りを挟む 4 コマ。滑らかだが動きは穏やか
+    //   {0, 1, 2, 1} … 中割りを挟む 4 コマ。3 枚の絵をすべて使う（既定）
+    //   {0, 2}       … 左足と右足だけの 2 コマ。動きは強いが硬く見える
     // どちらに変えても、歩幅は distancePerCycle 側で保たれる。
-    [Tooltip("コマの並び順。{0, 2} は左足と右足のみ、{0, 1, 2, 1} は中割りを挟む")]
-    [SerializeField] private int[] framePattern = { 0, 2 };
+    [Tooltip("コマの並び順。{0, 1, 2, 1} は中割りを挟む、{0, 2} は左足と右足のみ")]
+    [SerializeField] private int[] framePattern = { 0, 1, 2, 1 };
 
     [Header("被弾表現")]
     [Tooltip("被弾したときに一瞬かぶせる色")]
