@@ -15,7 +15,7 @@
 public static class GameSpeed
 {
     public const float NORMAL = 1f;
-    public const float FAST = 1.2f;
+    public const float FAST = 1.5f;
 
     private const string SAVE_KEY = "GAME_SPEED";
 
