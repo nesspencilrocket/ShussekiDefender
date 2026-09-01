@@ -8576,6 +8576,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1397420912}
   - component: {fileID: 1397420911}
+  - component: {fileID: 9500000001}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -14320,6 +14321,26 @@ MonoBehaviour:
   label: {fileID: 9400000014}
   normalText: "\u00D71.0"
   fastText: "\u00D71.5"
+--- !u!114 &9500000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397420910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4f4e01474b74915991eee7207dd565d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageBackgroundTint
+  sprites:
+  - {fileID: 863440843}
+  - {fileID: 1064338118}
+  - {fileID: 1649878992}
+  - {fileID: 1865584000}
+  - {fileID: 2020257134}
+  tilemaps:
+  - {fileID: 346608783}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
