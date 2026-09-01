@@ -38,8 +38,18 @@ public class EnemyAnimations : MonoBehaviour
     [SerializeField] private int framesPerDirection = 3;
 
     [Header("歩行アニメーション")]
-    [Tooltip("1コマあたりの秒数。小さいほど速く歩く")]
+    [Tooltip("ON: 進んだ距離でコマを送る（足が地面に合う）。OFF: 時間で送る")]
+    [SerializeField] private bool advanceByDistance = true;
+
+    [Tooltip("何ワールド単位進むごとに 1 コマ送るか。"
+           + "敵の身長が 1 単位なので、0.25 なら 4 コマ＝2歩で身長 1 つぶん進む")]
+    [Min(0.01f)] [SerializeField] private float distancePerFrame = 0.25f;
+
+    [Tooltip("1コマあたりの秒数。advanceByDistance が OFF のときだけ使う")]
     [SerializeField] private float secondsPerFrame = 0.16f;
+
+    [Tooltip("1フレームでこれ以上動いたらワープとみなし、コマを送らない")]
+    [SerializeField] private float warpThreshold = 2f;
 
     [Tooltip("コマの並び順。0→1→2→1 と往復させると足の運びが自然に見える")]
     [SerializeField] private int[] framePattern = { 0, 1, 2, 1 };
@@ -56,6 +66,10 @@ public class EnemyAnimations : MonoBehaviour
     private float frameTimer;
     private int patternIndex;
     private bool walking = true;
+
+    // 距離ベースの送り用
+    private Vector3 lastPosition;
+    private float distanceAccum;
 
     void Awake()
     {
@@ -107,6 +121,10 @@ public class EnemyAnimations : MonoBehaviour
         patternIndex = 0;
         frameTimer = 0f;
         walking = true;
+        // Spawner は SetActive の前に位置を決めているので、ここで拾えば
+        // 出現時のワープを距離としてカウントせずに済む
+        lastPosition = transform.position;
+        distanceAccum = 0f;
         if (target != null) target.color = Color.white;
         ApplyFrame();
 
@@ -120,12 +138,53 @@ public class EnemyAnimations : MonoBehaviour
 
     void Update()
     {
-        if (!walking || framePattern == null || framePattern.Length == 0) return;
+        if (framePattern == null || framePattern.Length == 0) return;
+
+        if (advanceByDistance)
+        {
+            UpdateByDistance();
+            return;
+        }
+
+        if (!walking) return;
 
         frameTimer += Time.deltaTime;
         if (frameTimer < secondsPerFrame) return;
 
         frameTimer -= secondsPerFrame;
+        AdvanceFrame();
+    }
+
+    /// <summary>
+    /// 実際に進んだ距離でコマを送る。
+    ///
+    /// 時間で送ると、移動速度や倍速を変えたときに足の運びと地面がずれて
+    /// 滑って見える。距離で送れば、速度が変わっても歩幅は変わらない。
+    /// 被弾や必殺技で止まっているあいだは距離が増えないので、
+    /// 自然にその場で足も止まる。
+    /// </summary>
+    private void UpdateByDistance()
+    {
+        Vector3 now = transform.position;
+        float moved = (now - lastPosition).magnitude;
+        lastPosition = now;
+
+        // 経路の切り替えなどで大きく飛んだ分は歩数に数えない
+        if (moved > warpThreshold) return;
+
+        distanceAccum += moved;
+        if (distanceAccum < distancePerFrame) return;
+
+        // 1 フレームで複数コマ分進んだ場合も取りこぼさない
+        while (distanceAccum >= distancePerFrame)
+        {
+            distanceAccum -= distancePerFrame;
+            AdvanceFrame();
+        }
+    }
+
+    private void AdvanceFrame()
+    {
         patternIndex = (patternIndex + 1) % framePattern.Length;
         ApplyFrame();
     }
