@@ -13,7 +13,7 @@ public class GameSpeedButton : MonoBehaviour
     [SerializeField] private TextMeshProUGUI label;
 
     [SerializeField] private string normalText = "×1.0";
-    [SerializeField] private string fastText = "×1.2";
+    [SerializeField] private string fastText = "×1.5";
 
     void Awake()
     {

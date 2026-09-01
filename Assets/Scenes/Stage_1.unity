@@ -14069,9 +14069,9 @@ RectTransform:
   - {fileID: 9400000012}
   m_Father: {fileID: 1529088618}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -150, y: -80}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -150, y: 80}
   m_SizeDelta: {x: 220, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9400000003
@@ -14319,7 +14319,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameSpeedButton
   label: {fileID: 9400000014}
   normalText: "\u00D71.0"
-  fastText: "\u00D71.2"
+  fastText: "\u00D71.5"
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
