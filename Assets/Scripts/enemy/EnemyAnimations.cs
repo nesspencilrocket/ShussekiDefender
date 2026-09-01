@@ -52,11 +52,11 @@ public class EnemyAnimations : MonoBehaviour
     [Tooltip("1フレームでこれ以上動いたらワープとみなし、コマを送らない")]
     [SerializeField] private float warpThreshold = 2f;
 
-    [Tooltip("コマの並び順。
-"
-           + "{0, 2} … 左足と右足だけの 2 コマ。歩いている感が強く出る（既定）
-"
-           + "{0, 1, 2, 1} … 中割りを挟む 4 コマ。滑らかだが動きは穏やか")]
+    // コマの並び順。
+    //   {0, 2}       … 左足と右足だけの 2 コマ。歩いている感が強く出る（既定）
+    //   {0, 1, 2, 1} … 中割りを挟む 4 コマ。滑らかだが動きは穏やか
+    // どちらに変えても、歩幅は distancePerCycle 側で保たれる。
+    [Tooltip("コマの並び順。{0, 2} は左足と右足のみ、{0, 1, 2, 1} は中割りを挟む")]
     [SerializeField] private int[] framePattern = { 0, 2 };
 
     [Header("被弾表現")]
