@@ -13,6 +13,10 @@ public class Weapon : MonoBehaviour
     // 攻撃範囲内にいるターゲットを1体格納する
     [NonSerialized] public Enemy currentEnemyTarget;
 
+    [Tooltip("ON: ゴールに最も近い敵を狙う（タワーディフェンスの定石）。"
+           + "OFF: 最初に範囲へ入った敵を狙う（従来の挙動）")]
+    [SerializeField] private bool targetClosestToGoal = true;
+
     public WeaponUpgrade weaponUpgrade;
 
     void Start()
@@ -59,8 +63,44 @@ public class Weapon : MonoBehaviour
             return;
         }
 
-        // 【修正】リストの最初の敵を設定 (最前線にいる敵を攻撃するロジック)
-        currentEnemyTarget = enemies[0];
+        currentEnemyTarget = targetClosestToGoal
+            ? FindClosestToGoal()
+            : enemies[0];   // 従来の挙動：最初に範囲へ入った敵
+    }
+
+    /// <summary>
+    /// ゴールに最も近い敵を返す。
+    ///
+    /// 「最初に範囲へ入った敵」を狙う従来の挙動だと、あと一歩で通過する敵より
+    /// 後から入ってきた敵を優先してしまい、取り逃がしが起きる。
+    /// ゴールに近い敵から潰すのがタワーディフェンスの定石。
+    ///
+    /// 進行度は経路の最終地点までの直線距離で近似している。Enemy が
+    /// 現在の経由点番号を公開していないためだが、7 本の経路はすべて
+    /// 校舎付近へ収束するので、実用上はこれで十分機能する。
+    /// </summary>
+    private Enemy FindClosestToGoal()
+    {
+        Enemy best = null;
+        float bestDistance = float.MaxValue;
+
+        foreach (Enemy enemy in enemies)
+        {
+            if (enemy == null || enemy.movePoint == null) continue;
+
+            Vector3[] points = enemy.movePoint.points;
+            if (points == null || points.Length == 0) continue;
+
+            float d = (enemy.transform.position - points[points.Length - 1]).sqrMagnitude;
+            if (d < bestDistance)
+            {
+                bestDistance = d;
+                best = enemy;
+            }
+        }
+
+        // 経路情報が取れない敵しか居なければ、従来どおり先頭を返す
+        return best != null ? best : enemies[0];
     }
 
     /// <summary>
