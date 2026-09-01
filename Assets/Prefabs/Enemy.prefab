@@ -178,7 +178,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6694506150673368543}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: dc39b93d2ad8ae544b99e05851182527, type: 2}
   m_CullingMode: 0
@@ -233,6 +233,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac66911bd7a6a124e866f72a77b54493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimations
+  target: {fileID: 2226994665757557479}
+  sprites:
+  - {fileID: 2344253866284302986, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  - {fileID: 4567182223941860509, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  - {fileID: 248189676023000862, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  - {fileID: 6487457475967768652, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  - {fileID: 741451627523461564, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  - {fileID: 2115280996931402252, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  - {fileID: -762890175848442654, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  - {fileID: -4560845763192653027, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  - {fileID: -5182365469683672288, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  - {fileID: 7733839724989846165, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  - {fileID: 6112486306840577959, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  - {fileID: 2129908209297762822, guid: 221f65745bbe3b049912725d86d15581, type: 3}
+  framesPerDirection: 3
+  secondsPerFrame: 0.16
+  framePattern:
+  - 0
+  - 1
+  - 2
+  - 1
+  hitColor: {r: 1, g: 0.35, b: 0.35, a: 1}
+  hitStopTime: 0.15
 --- !u!1 &7148536954641079619
 GameObject:
   m_ObjectHideFlags: 0
