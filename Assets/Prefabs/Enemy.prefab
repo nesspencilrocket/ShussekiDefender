@@ -249,14 +249,12 @@ MonoBehaviour:
   - {fileID: 2129908209297762822, guid: 221f65745bbe3b049912725d86d15581, type: 3}
   framesPerDirection: 3
   advanceByDistance: 1
-  distancePerFrame: 0.25
+  distancePerCycle: 1
   secondsPerFrame: 0.16
   warpThreshold: 2
   framePattern:
   - 0
-  - 1
   - 2
-  - 1
   hitColor: {r: 1, g: 0.35, b: 0.35, a: 1}
   hitStopTime: 0.15
 --- !u!1 &7148536954641079619

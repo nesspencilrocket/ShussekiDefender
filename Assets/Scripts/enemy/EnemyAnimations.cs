@@ -41,9 +41,10 @@ public class EnemyAnimations : MonoBehaviour
     [Tooltip("ON: 進んだ距離でコマを送る（足が地面に合う）。OFF: 時間で送る")]
     [SerializeField] private bool advanceByDistance = true;
 
-    [Tooltip("何ワールド単位進むごとに 1 コマ送るか。"
-           + "敵の身長が 1 単位なので、0.25 なら 4 コマ＝2歩で身長 1 つぶん進む")]
-    [Min(0.01f)] [SerializeField] private float distancePerFrame = 0.25f;
+    [Tooltip("パターンを 1 周するあいだに進む距離。敵の身長が 1 単位なので、"
+           + "1.0 なら 1 周（＝2歩）で身長 1 つぶん進む。"
+           + "コマ数を変えても歩幅が保たれるよう、1 周ぶんで指定する")]
+    [Min(0.01f)] [SerializeField] private float distancePerCycle = 1f;
 
     [Tooltip("1コマあたりの秒数。advanceByDistance が OFF のときだけ使う")]
     [SerializeField] private float secondsPerFrame = 0.16f;
@@ -51,8 +52,12 @@ public class EnemyAnimations : MonoBehaviour
     [Tooltip("1フレームでこれ以上動いたらワープとみなし、コマを送らない")]
     [SerializeField] private float warpThreshold = 2f;
 
-    [Tooltip("コマの並び順。0→1→2→1 と往復させると足の運びが自然に見える")]
-    [SerializeField] private int[] framePattern = { 0, 1, 2, 1 };
+    [Tooltip("コマの並び順。
+"
+           + "{0, 2} … 左足と右足だけの 2 コマ。歩いている感が強く出る（既定）
+"
+           + "{0, 1, 2, 1} … 中割りを挟む 4 コマ。滑らかだが動きは穏やか")]
+    [SerializeField] private int[] framePattern = { 0, 2 };
 
     [Header("被弾表現")]
     [Tooltip("被弾したときに一瞬かぶせる色")]
@@ -172,13 +177,17 @@ public class EnemyAnimations : MonoBehaviour
         // 経路の切り替えなどで大きく飛んだ分は歩数に数えない
         if (moved > warpThreshold) return;
 
+        // 1 周ぶんの距離をコマ数で割る。パターンを 2 コマにしても
+        // 4 コマにしても、1 周で進む距離は変わらない＝歩幅が保たれる。
+        float perFrame = distancePerCycle / framePattern.Length;
+
         distanceAccum += moved;
-        if (distanceAccum < distancePerFrame) return;
+        if (distanceAccum < perFrame) return;
 
         // 1 フレームで複数コマ分進んだ場合も取りこぼさない
-        while (distanceAccum >= distancePerFrame)
+        while (distanceAccum >= perFrame)
         {
-            distanceAccum -= distancePerFrame;
+            distanceAccum -= perFrame;
             AdvanceFrame();
         }
     }
