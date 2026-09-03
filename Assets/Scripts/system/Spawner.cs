@@ -29,6 +29,9 @@ public class Spawner : MonoBehaviour
     // 直前に使ったスポーン地点。連続で同じ場所から湧かせないために覚えておく
     private int lastRouteIndex = -1;
 
+    // 今の波でまだ出していない確定枠。先頭から消化する
+    private readonly List<EnemyData> pendingGuaranteed = new List<EnemyData>();
+
     public static Action OnWaveCompleted;
 
     private void Awake()
@@ -70,6 +73,18 @@ public class Spawner : MonoBehaviour
             WaveData currentWave = waves[currentWaveIndex];
             spawned = 0;
 
+            // 確定枠を先に積んでおく。総数を超えていたら頭から切り詰める
+            pendingGuaranteed.Clear();
+            if (currentWave.HasSpawnTable)
+            {
+                pendingGuaranteed.AddRange(currentWave.BuildGuaranteedList());
+                if (pendingGuaranteed.Count > currentWave.enemyCount)
+                {
+                    pendingGuaranteed.RemoveRange(currentWave.enemyCount,
+                        pendingGuaranteed.Count - currentWave.enemyCount);
+                }
+            }
+
             // 指定数の敵をすべてスポーンさせる
             while (spawned < currentWave.enemyCount)
             {
@@ -92,9 +107,13 @@ public class Spawner : MonoBehaviour
 
     private void SpawnEnemy(WaveData currentWave)
     {
-        if (currentWave.enemyPrefab == null) return;
+        EnemyData data = PickEnemy(currentWave);
 
-        GameObject newInstance = pooler.GetObjectFromPool(currentWave.enemyPrefab);
+        // spawnTable が未設定の波は旧形式のプレハブで湧かせる
+        GameObject prefab = (data != null) ? data.prefab : currentWave.enemyPrefab;
+        if (prefab == null) return;
+
+        GameObject newInstance = pooler.GetObjectFromPool(prefab);
         if (newInstance == null) return;
 
         SpawnRoute selectedRoute = GetRandomSpawnRoute();
@@ -104,8 +123,27 @@ public class Spawner : MonoBehaviour
             return;
         }
 
-        SetEnemy(newInstance, selectedRoute.spawnPoint, selectedRoute.targetRoute, currentWave.enemyPrefab);
+        SetEnemy(newInstance, selectedRoute.spawnPoint, selectedRoute.targetRoute, prefab);
         newInstance.SetActive(true);
+    }
+
+    /// <summary>
+    /// この 1 体をどの敵にするか決める。
+    /// 確定枠が残っていればそちらを優先し、無くなったら重みで抽選する。
+    /// spawnTable が空の波では null を返し、呼び出し側が旧形式へ落ちる。
+    /// </summary>
+    private EnemyData PickEnemy(WaveData currentWave)
+    {
+        if (!currentWave.HasSpawnTable) return null;
+
+        if (pendingGuaranteed.Count > 0)
+        {
+            EnemyData first = pendingGuaranteed[0];
+            pendingGuaranteed.RemoveAt(0);
+            return first;
+        }
+
+        return currentWave.PickWeighted();
     }
 
     private void SetEnemy(GameObject newInstance, Transform spawnTransform, MovePoint route, GameObject prefabToSpawn)
