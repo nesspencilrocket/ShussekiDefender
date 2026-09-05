@@ -51,6 +51,22 @@ public class Enemy : MonoBehaviour
         moveSpeed = setMoveSpeed;
     }
 
+    /// <summary>
+    /// EnemyData の値でプレハブ側の設定を上書きする。
+    /// Spawner が敵を起こす直前に呼ぶ。
+    ///
+    /// 同じ見た目のまま強さだけ変えられるようにするための口で、
+    /// 「6限目だけ歩行者を速くする」といった調整をプレハブを増やさずに行える。
+    /// data が null なら何もしないので、移行中の波でも壊れない。
+    /// </summary>
+    public void Apply(EnemyData data)
+    {
+        if (data == null) return;
+
+        setMoveSpeed = data.moveSpeed;
+        SetMoveSpeed();
+    }
+
     public void StopMovement()
     {
         moveSpeed = 0f;

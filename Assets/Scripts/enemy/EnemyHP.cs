@@ -11,6 +11,9 @@ public class EnemyHP : MonoBehaviour
     [SerializeField] private float hp = 10f;
     [NonSerialized] public float currentHP;
 
+    [Tooltip("EnemyData が指定されていないときに使う獲得コイン")]
+    [SerializeField] private int defaultRewardCoin = 10;
+
     [SerializeField] private GameObject hpBar;
     [SerializeField] private Transform barPos;
 
@@ -27,6 +30,12 @@ public class EnemyHP : MonoBehaviour
     /// <summary>最大 HP。残量の割合を出したいときに使う</summary>
     public float MaxHP => hp;
 
+    /// <summary>この個体の設定。倒したときの報酬や集計に使う</summary>
+    public EnemyData Data { get; private set; }
+
+    /// <summary>獲得コイン。EnemyData が無ければ従来どおりの固定値</summary>
+    public int RewardCoin => (Data != null) ? Data.rewardCoin : defaultRewardCoin;
+
     private void Awake()
     {
         enemy = GetComponent<Enemy>();
@@ -34,6 +43,20 @@ public class EnemyHP : MonoBehaviour
         scoreManager = FindFirstObjectByType<ScoreManager>();
 
         CreateHealthBar();
+    }
+
+    /// <summary>
+    /// EnemyData の値でプレハブ側の設定を上書きする。
+    /// OnEnable より先に呼ばれる必要があるため、Spawner は
+    /// SetActive(true) の前にこれを呼ぶ。
+    /// </summary>
+    public void Apply(EnemyData data)
+    {
+        Data = data;
+        if (data == null) return;
+
+        hp = data.maxHP;
+        currentHP = hp;
     }
 
     private void OnEnable()
