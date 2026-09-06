@@ -248,7 +248,7 @@ MonoBehaviour:
   - {fileID: 4711593917029136369, guid: 56c0098d2b52bef9df2a4e118a249626, type: 3}
   - {fileID: -1081491330948314947, guid: 56c0098d2b52bef9df2a4e118a249626, type: 3}
   framesPerDirection: 3
-  secondsPerFrame: 0.16
+  secondsPerFrame: 0.08
   framePattern:
   - 0
   - 1
