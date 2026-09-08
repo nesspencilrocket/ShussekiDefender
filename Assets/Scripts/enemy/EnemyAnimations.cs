@@ -38,8 +38,13 @@ public class EnemyAnimations : MonoBehaviour
     [SerializeField] private int framesPerDirection = 3;
 
     [Header("歩行アニメーション")]
-    [Tooltip("1コマあたりの秒数。小さいほど速く歩く")]
-    [SerializeField] private float secondsPerFrame = 0.16f;
+    // 移動速度と釣り合わないと足が滑って見える。
+    // framePattern が 4 コマ＝2歩なので、1歩あたりの距離は
+    //   moveSpeed * secondsPerFrame * framePattern.Length / 2
+    // で決まる。これがキャラの背丈（PPU 32 なら 1 ユニット）の半分あたりだと自然に見える。
+    // moveSpeed 3 のとき 0.08 で 1 歩 0.48 ユニット。
+    [Tooltip("1コマあたりの秒数。小さいほど速くコマが切り替わる")]
+    [SerializeField] private float secondsPerFrame = 0.08f;
 
     [Tooltip("コマの並び順。0→1→2→1 と往復させると足の運びが自然に見える")]
     [SerializeField] private int[] framePattern = { 0, 1, 2, 1 };
