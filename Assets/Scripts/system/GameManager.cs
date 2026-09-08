@@ -84,13 +84,6 @@ public class GameManager : MonoBehaviour
     public int MaxEnemyPasses => maxEnemyPasses;
     public float RemainingTime => Mathf.Max(0f, gameClearTime - gameTimeElapsed);
 
-    /// <summary>
-    /// 処分の軽い順。StageData.rankThresholds と添字を対応させる。
-    /// プレイヤーは出席を妨害する側なので、重い処分ほど良い結果。
-    /// </summary>
-    private static readonly string[] RANKS =
-        { "訓告", "厳重注意", "1週間停学", "無期限停学", "退学処分" };
-
     void Awake()
     {
         Instance = this;
@@ -294,19 +287,13 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// スコアから処分の重さを決める。閾値はステージごとに StageData で調整する。
+    /// スコアから処分の重さを決める。判定は StageData 側に置いてある。
+    /// 成績確認画面からも同じ判定を呼ぶため、ここに private で持たせない。
     /// </summary>
     private string RankOf(int score)
     {
-        int[] th = (Stage != null) ? Stage.rankThresholds : null;
-        if (th == null || th.Length == 0) return RANKS[RANKS.Length - 1];
-
-        int n = Mathf.Min(th.Length, RANKS.Length);
-        for (int i = n - 1; i >= 0; i--)
-        {
-            if (score >= th[i]) return RANKS[i];
-        }
-        return RANKS[0];
+        if (Stage == null) return StageData.Ranks[StageData.Ranks.Length - 1];
+        return Stage.RankOf(score);
     }
 
     private void UpdateEnemyKillStats()

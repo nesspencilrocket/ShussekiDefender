@@ -49,4 +49,49 @@ public class StageData : ScriptableObject
 
     [Tooltip("背景の色調。1限目=朝、6限目=夕、のように時限で変える（Phase 4 で使用）")]
     public Color backgroundTint = Color.white;
+
+    // ───── 処分の判定 ─────
+    //
+    // リザルト画面と成績確認画面の両方が同じ判定を必要とするため、
+    // 閾値を持っている StageData 側に置いてある。
+    // GameManager に private で持たせていた頃は、成績画面から呼べなかった。
+
+    /// <summary>
+    /// 処分の軽い順。rankThresholds と添字を対応させる。
+    /// プレイヤーは出席を妨害する側なので、重い処分ほど良い結果。
+    /// </summary>
+    public static readonly string[] Ranks =
+        { "訓告", "厳重注意", "1週間停学", "無期限停学", "退学処分" };
+
+    /// <summary>スコアから処分の重さを決める。</summary>
+    public string RankOf(int score)
+    {
+        if (rankThresholds == null || rankThresholds.Length == 0)
+        {
+            return Ranks[Ranks.Length - 1];
+        }
+
+        int n = Mathf.Min(rankThresholds.Length, Ranks.Length);
+        for (int i = n - 1; i >= 0; i--)
+        {
+            if (score >= rankThresholds[i]) return Ranks[i];
+        }
+        return Ranks[0];
+    }
+
+    /// <summary>
+    /// 1 つ上の処分に届くのに必要なスコア。最上位に達していれば -1。
+    /// 成績画面で「あと何点で次の処分か」を出すために使う。
+    /// </summary>
+    public int NextRankScore(int score)
+    {
+        if (rankThresholds == null) return -1;
+
+        int n = Mathf.Min(rankThresholds.Length, Ranks.Length);
+        for (int i = 0; i < n; i++)
+        {
+            if (score < rankThresholds[i]) return rankThresholds[i];
+        }
+        return -1;
+    }
 }
