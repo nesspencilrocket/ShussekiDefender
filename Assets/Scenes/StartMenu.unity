@@ -208,6 +208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 400155572}
   - component: {fileID: 400155573}
+  - component: {fileID: 910000005}
   m_Layer: 0
   m_Name: button_start_0
   m_TagString: Untagged
@@ -224,11 +225,11 @@ Transform:
   m_GameObject: {fileID: 400155571}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -961.8717, y: -440.237, z: 0}
+  m_LocalPosition: {x: 0, y: -0.6405, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1376843474}
+  m_Father: {fileID: 1191038476}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &400155573
 SpriteRenderer:
@@ -646,6 +647,7 @@ Transform:
   - {fileID: 1033524215}
   - {fileID: 1703342223}
   - {fileID: 1597203967}
+  - {fileID: 400155572}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1295878775
@@ -780,8 +782,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 400155572}
+  m_Children: []
   m_Father: {fileID: 1295878779}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.38466668, y: 0.342}
@@ -803,7 +804,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -954,6 +955,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1597203967}
   - component: {fileID: 1597203968}
+  - component: {fileID: 910000003}
   m_Layer: 0
   m_Name: button_option_0
   m_TagString: Untagged
@@ -1044,6 +1046,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1703342223}
   - component: {fileID: 1703342224}
+  - component: {fileID: 910000001}
   m_Layer: 0
   m_Name: button_ranking_0
   m_TagString: Untagged
@@ -1178,3 +1181,57 @@ SceneRoots:
   - {fileID: 1295878779}
   - {fileID: 150009217}
   - {fileID: 1889046421}
+--- !u!114 &910000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1703342222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9446bd38a4f257fd624e704bad1c365e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteButton
+  sceneToLoad: Records
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  hoverScale: 1.04
+  hoverColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &910000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597203966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9446bd38a4f257fd624e704bad1c365e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteButton
+  sceneToLoad: Settings
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  hoverScale: 1.04
+  hoverColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &910000005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400155571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9446bd38a4f257fd624e704bad1c365e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteButton
+  sceneToLoad: StageSelect
+  onClick:
+    m_PersistentCalls:
+      m_Calls: []
+  hoverScale: 1.04
+  hoverColor: {r: 1, g: 1, b: 1, a: 1}
