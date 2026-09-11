@@ -38,6 +38,12 @@ public class MusicByPanelState : MonoBehaviour
     {
         if (mainMusicSource == null) return;
 
+        // 設定画面の BGM 音量を反映する。
+        // AudioSource 側の値を基準に掛け算しないのは、シーンに置かれている
+        // AudioSource の volume が 0 のままで、掛けると常に無音になるため。
+        // 音量はスライダーだけで決める、と割り切っている。
+        mainMusicSource.volume = GameSettings.BgmVolume;
+
         // 制御パネルの状態をチェック
         bool isGroup1Active = IsAnyPanelActive(group1Panels);
         bool isGroup2Active = IsAnyPanelActive(group2Panels);
