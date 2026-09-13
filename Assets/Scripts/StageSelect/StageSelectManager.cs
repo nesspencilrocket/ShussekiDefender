@@ -21,6 +21,16 @@ public class StageSelectManager : MonoBehaviour
     [Header("時限ボタン（catalog.stages と同じ順に並べる）")]
     public List<Button> stageButtons = new List<Button>();
 
+    [Header("ステージの紹介映像")]
+    [Tooltip("映像を映している RawImage の GameObject。時限を選ぶまで隠しておく")]
+    public GameObject previewObj;
+
+    [Header("タイトルへ戻るボタン")]
+    [Tooltip("実行時に作るボタンの文字。日本語が出るフォントを指定する")]
+    [SerializeField] private TMP_FontAsset backButtonFont;
+
+    [SerializeField] private string titleSceneName = "StartMenu";
+
     private StageData selected;
 
     void Start()
@@ -28,10 +38,48 @@ public class StageSelectManager : MonoBehaviour
         // 敗北直後に戻ってきた場合の保険。止まったままだとボタンが押せない
         GameSpeed.Resume();
 
+        // 説明文・行くボタン・映像は、時限を選ぶまで出さない。
+        // 何も選んでいないのに 1限目の映像が出ていると、選択済みだと誤解される。
         if (descriptionText != null) descriptionText.text = "";
         if (startButtonObj != null) startButtonObj.SetActive(false);
+        if (previewObj != null) previewObj.SetActive(false);
 
         RefreshLocks();
+        CreateBackButton();
+    }
+
+    /// <summary>
+    /// タイトルへ戻るボタンを実行時に作る。
+    /// 時限ボタンと同じ Canvas に置くので、シーン側の配置は不要。
+    /// </summary>
+    private void CreateBackButton()
+    {
+        Canvas canvas = null;
+        foreach (Button b in stageButtons)
+        {
+            if (b == null) continue;
+            canvas = b.GetComponentInParent<Canvas>();
+            if (canvas != null) break;
+        }
+        if (canvas == null)
+        {
+            Debug.LogWarning("StageSelectManager: Canvas が見つからず戻るボタンを作れません。", this);
+            return;
+        }
+
+        // 6限目ボタンの下（画面左下）に置く
+        Button back = MenuUI.TextButton(canvas.transform, "BackToTitleButton", "タイトルへ戻る",
+                                        new Vector2(-540f, -462f), new Vector2(300f, 76f),
+                                        30f,
+                                        new Color(0.12f, 0.16f, 0.24f, 0.92f),
+                                        Color.white,
+                                        backButtonFont);
+        back.gameObject.AddComponent<UIHoverScale>();
+        back.onClick.AddListener(() =>
+        {
+            GameSpeed.Resume();
+            SceneManager.LoadScene(titleSceneName);
+        });
     }
 
     /// <summary>
@@ -68,6 +116,7 @@ public class StageSelectManager : MonoBehaviour
         if (descriptionText != null) descriptionText.text = data.description;
         if (startButtonLabel != null) startButtonLabel.text = $"{data.displayName}へ行く";
         if (startButtonObj != null) startButtonObj.SetActive(true);
+        if (previewObj != null) previewObj.SetActive(true);
     }
 
     /// <summary>
