@@ -15,7 +15,15 @@ public class Spawner : MonoBehaviour
     [Header("Spawn Settings")]
     [SerializeField] private SpawnModes spawnMode = SpawnModes.constant;
 
-    [Tooltip("スポーン地点と経路の組。シーン内の Transform を指すのでアセットには出せない")]
+    [Header("湧き口")]
+    // 敵が出る位置は Enemy.SnapToStartPoint() が movePoint.points[0] へ移すことで決まる。
+    // SpawnRoute.spawnPoint は直後に上書きされるので結果に影響しない。
+    // つまり経路さえあれば湧き口として成立するため、親を指定して自動で集める形にした。
+    // 湧き口を増やすときは Route をこの親の下に複製するだけでよく、Inspector の一覧を触らずに済む。
+    [Tooltip("MovePoint を子に持つ親。指定するとその子の MovePoint を全て湧き口として使う")]
+    [SerializeField] private Transform routesParent;
+
+    [Tooltip("routesParent が空のときだけ使う手動の一覧（移行用）")]
     [SerializeField] private List<SpawnRoute> spawnRoutes;
 
     // 波の内容は StageData から受け取る。シーンには持たせない。
@@ -25,6 +33,9 @@ public class Spawner : MonoBehaviour
     private float spawnTimer;
     private float spawned;
     private ObjectPooler pooler;
+
+    // 実際に使う湧き口。Start で routesParent か spawnRoutes から組み立てる
+    private readonly List<MovePoint> routes = new List<MovePoint>();
 
     // 直前に使ったスポーン地点。連続で同じ場所から湧かせないために覚えておく
     private int lastRouteIndex = -1;
@@ -58,7 +69,46 @@ public class Spawner : MonoBehaviour
         }
 
         waves = stage.waves;
+
+        CollectRoutes();
+        if (routes.Count == 0)
+        {
+            Debug.LogError("Spawner: 湧き口が 1 つもありません。"
+                         + "Routes Parent の指定か、その下の MovePoint を確認してください。", this);
+            return;
+        }
+
         StartCoroutine(SpawnWaves());
+    }
+
+    /// <summary>
+    /// 湧き口を集める。
+    /// routesParent が指定されていればその子から、無ければ spawnRoutes から作る。
+    /// 経由点が 1 つも無い MovePoint は湧き位置を決められないので除外する。
+    /// </summary>
+    private void CollectRoutes()
+    {
+        routes.Clear();
+
+        if (routesParent != null)
+        {
+            foreach (MovePoint mp in routesParent.GetComponentsInChildren<MovePoint>())
+            {
+                if (IsUsable(mp)) routes.Add(mp);
+            }
+            return;
+        }
+
+        if (spawnRoutes == null) return;
+        foreach (SpawnRoute sr in spawnRoutes)
+        {
+            if (sr != null && IsUsable(sr.targetRoute)) routes.Add(sr.targetRoute);
+        }
+    }
+
+    private static bool IsUsable(MovePoint route)
+    {
+        return route != null && route.points != null && route.points.Length > 0;
     }
 
     private IEnumerator SpawnWaves()
@@ -116,14 +166,14 @@ public class Spawner : MonoBehaviour
         GameObject newInstance = pooler.GetObjectFromPool(prefab);
         if (newInstance == null) return;
 
-        SpawnRoute selectedRoute = GetRandomSpawnRoute();
-        if (selectedRoute.targetRoute == null)
+        MovePoint route = GetRandomRoute();
+        if (route == null)
         {
             newInstance.SetActive(false);
             return;
         }
 
-        SetEnemy(newInstance, selectedRoute.spawnPoint, selectedRoute.targetRoute, prefab);
+        SetEnemy(newInstance, route, prefab);
         newInstance.SetActive(true);
     }
 
@@ -146,7 +196,7 @@ public class Spawner : MonoBehaviour
         return currentWave.PickWeighted();
     }
 
-    private void SetEnemy(GameObject newInstance, Transform spawnTransform, MovePoint route, GameObject prefabToSpawn)
+    private void SetEnemy(GameObject newInstance, MovePoint route, GameObject prefabToSpawn)
     {
         Enemy enemy = newInstance.GetComponent<Enemy>();
         EnemyHP enemyHP = newInstance.GetComponent<EnemyHP>();
@@ -156,7 +206,8 @@ public class Spawner : MonoBehaviour
         enemyHP.originalPrefab = prefabToSpawn;
         enemy.movePoint = route;
         enemy.ResetMovePoint();
-        enemy.transform.position = spawnTransform.position;
+        // 湧く位置は SnapToStartPoint が points[0] へ移して決める。
+        // 以前はここで spawnPoint の位置も入れていたが、直後に上書きされる無駄な代入だった。
         enemy.SnapToStartPoint();
         enemy.SetMoveSpeed();
     }
@@ -173,22 +224,19 @@ public class Spawner : MonoBehaviour
     /// 同じ場所から連続で湧くことがなくなる。
     /// 範囲スポーンを実装しなくても、体感上の問題はこれで解消する。
     /// </summary>
-    private SpawnRoute GetRandomSpawnRoute()
+    private MovePoint GetRandomRoute()
     {
-        if (spawnRoutes == null || spawnRoutes.Count == 0)
-        {
-            return new SpawnRoute { spawnPoint = null, targetRoute = null };
-        }
+        if (routes.Count == 0) return null;
 
-        int i = Random.Range(0, spawnRoutes.Count);
+        int i = Random.Range(0, routes.Count);
 
         // 直前と同じなら、それ以外の中から選び直す
-        if (i == lastRouteIndex && spawnRoutes.Count > 1)
+        if (i == lastRouteIndex && routes.Count > 1)
         {
-            i = (lastRouteIndex + 1 + Random.Range(0, spawnRoutes.Count - 1)) % spawnRoutes.Count;
+            i = (lastRouteIndex + 1 + Random.Range(0, routes.Count - 1)) % routes.Count;
         }
 
         lastRouteIndex = i;
-        return spawnRoutes[i];
+        return routes[i];
     }
 }
