@@ -164,7 +164,7 @@ public class Spawner : MonoBehaviour
             return;
         }
 
-        SetEnemy(newInstance, route, prefab);
+        SetEnemy(newInstance, route, prefab, data);
         newInstance.SetActive(true);
     }
 
@@ -187,12 +187,18 @@ public class Spawner : MonoBehaviour
         return currentWave.PickWeighted();
     }
 
-    private void SetEnemy(GameObject newInstance, MovePoint route, GameObject prefabToSpawn)
+    private void SetEnemy(GameObject newInstance, MovePoint route, GameObject prefabToSpawn, EnemyData data)
     {
         Enemy enemy = newInstance.GetComponent<Enemy>();
         EnemyHP enemyHP = newInstance.GetComponent<EnemyHP>();
 
         if (enemyHP == null || enemy == null) return;
+
+        // EnemyData の HP・速度・報酬をこの個体へ反映する。
+        // SetActive(true) より前に呼ぶ必要がある（OnEnable が currentHP = hp を読むため）。
+        // data が null（旧形式の波）なら何もせず、プレハブの値のまま湧く。
+        enemyHP.Apply(data);
+        enemy.Apply(data);
 
         enemyHP.originalPrefab = prefabToSpawn;
         enemy.movePoint = route;
