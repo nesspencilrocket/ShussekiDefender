@@ -44,7 +44,7 @@ public class StageSelectManager : MonoBehaviour
         if (startButtonObj != null) startButtonObj.SetActive(false);
         if (previewObj != null) previewObj.SetActive(false);
 
-        RefreshLocks();
+        SetupStageButtons();
         CreateBackButton();
     }
 
@@ -83,9 +83,12 @@ public class StageSelectManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 未開放のステージはボタンを押せなくする
+    /// 時限ボタンの見た目と押せるかどうかを StageData から決める。
+    /// 画像はアセット側の selectButtonImage を使うので、差し替えるときは
+    /// シーンを開かずに StageData を変えればよい。未設定ならシーンの画像のまま。
+    /// 未開放のステージはボタンを押せなくする。
     /// </summary>
-    private void RefreshLocks()
+    private void SetupStageButtons()
     {
         if (catalog == null)
         {
@@ -95,8 +98,17 @@ public class StageSelectManager : MonoBehaviour
 
         for (int i = 0; i < stageButtons.Count && i < catalog.stages.Count; i++)
         {
-            if (stageButtons[i] == null || catalog.stages[i] == null) continue;
-            stageButtons[i].interactable = StageProgress.IsUnlocked(catalog.stages[i].stageNumber);
+            Button button = stageButtons[i];
+            StageData stage = catalog.stages[i];
+            if (button == null || stage == null) continue;
+
+            Image image = button.GetComponent<Image>();
+            if (image != null && stage.selectButtonImage != null)
+            {
+                image.sprite = stage.selectButtonImage;
+            }
+
+            button.interactable = StageProgress.IsUnlocked(stage.stageNumber);
         }
     }
 
