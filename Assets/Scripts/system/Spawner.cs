@@ -26,6 +26,11 @@ public class Spawner : MonoBehaviour
     [Tooltip("routesParent が空のときだけ使う手動の一覧（移行用）")]
     [SerializeField] private List<SpawnRoute> spawnRoutes;
 
+    [Header("経路の乗り換え")]
+    // 同じ湧き口から出た敵が一列に並ぶのを崩す。
+    // 湧いた直後に一定確率で他の経路の次の点へ向かわせる。詳細は RouteBranching。
+    [SerializeField] private RouteBranching branching = new RouteBranching();
+
     // 波の内容は StageData から受け取る。シーンには持たせない。
     private List<WaveData> waves;
 
@@ -205,6 +210,7 @@ public class Spawner : MonoBehaviour
 
         enemyHP.originalPrefab = prefabToSpawn;
         enemy.movePoint = route;
+        enemy.SetRoutes(routes, branching);
         enemy.ResetMovePoint();
         // 湧く位置は SnapToStartPoint が points[0] へ移して決める。
         // 以前はここで spawnPoint の位置も入れていたが、直後に上書きされる無駄な代入だった。
