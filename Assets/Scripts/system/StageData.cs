@@ -42,6 +42,10 @@ public class StageData : ScriptableObject
     [Tooltip("ステージ開始時の所持コイン")]
     public int initialCoin = 100;
 
+    [Tooltip("このステージで使える必殺技。空なら使えない。"
+           + "「3限目から解禁」のような構成をここで作る")]
+    public List<PlayerSkill> skills = new List<PlayerSkill>();
+
     [Header("結果の区分")]
     [Tooltip("スコアの境界。低い順に 訓告 / 厳重注意 / 1週間停学 / 無期限停学 / 退学処分。"
            + "妨害する側なので、重い処分ほど良い結果")]
