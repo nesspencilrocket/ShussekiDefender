@@ -25,7 +25,10 @@ public class EnemyHP : MonoBehaviour
     private EnemyAnimations enemyAnimations;
 
     public static Action<Enemy> OnEnemyHit;
-    public static Action OnEnemyDead;
+    /// <summary>
+    /// 倒された個体を渡す。誰が死んだか分からないと報酬を敵ごとに変えられない。
+    /// </summary>
+    public static Action<EnemyHP> OnEnemyDead;
 
     /// <summary>最大 HP。残量の割合を出したいときに使う</summary>
     public float MaxHP => hp;
@@ -130,7 +133,7 @@ public class EnemyHP : MonoBehaviour
             scoreManager.RecordDefeat(originalPrefab);
         }
 
-        OnEnemyDead?.Invoke();
+        OnEnemyDead?.Invoke(this);
         ObjectPooler.ReturnToPool(gameObject);
     }
 }

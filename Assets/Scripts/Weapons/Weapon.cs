@@ -127,7 +127,7 @@ public class Weapon : MonoBehaviour
     /// <summary>
     /// 【追加】敵が倒された（死亡/ゴール）イベントが発生したときにリストをクリーンアップ
     /// </summary>
-    private void RemoveInvalidEnemy()
+    private void RemoveInvalidEnemy(EnemyHP _)
     {
         // イベント発生時に即座にターゲットリセットとリストクリーンアップを試みる
         CleanEnemyList();
