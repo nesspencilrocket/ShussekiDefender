@@ -150,9 +150,9 @@ public class Spawner : MonoBehaviour
     {
         EnemyData data = PickEnemy(currentWave);
 
-        // spawnTable が未設定の波は旧形式のプレハブで湧かせる
-        GameObject prefab = (data != null) ? data.prefab : currentWave.enemyPrefab;
-        if (prefab == null) return;
+        // spawnTable が空の波や、重みが全て 0 の波では何も湧かせない
+        if (data == null || data.prefab == null) return;
+        GameObject prefab = data.prefab;
 
         GameObject newInstance = pooler.GetObjectFromPool(prefab);
         if (newInstance == null) return;
@@ -171,7 +171,7 @@ public class Spawner : MonoBehaviour
     /// <summary>
     /// この 1 体をどの敵にするか決める。
     /// 確定枠が残っていればそちらを優先し、無くなったら重みで抽選する。
-    /// spawnTable が空の波では null を返し、呼び出し側が旧形式へ落ちる。
+    /// spawnTable が空の波では null を返し、その 1 体は湧かない。
     /// </summary>
     private EnemyData PickEnemy(WaveData currentWave)
     {

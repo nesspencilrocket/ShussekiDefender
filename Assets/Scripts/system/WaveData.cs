@@ -22,11 +22,8 @@ public class WaveData
     public float maxRandomDelay = 1.5f;
 
     [Header("出現させる敵")]
-    [Tooltip("敵の種類と割合。空なら下の enemyPrefab を使う（移行用）")]
+    [Tooltip("敵の種類と割合。空の波からは何も湧かない")]
     public List<SpawnEntry> spawnTable = new List<SpawnEntry>();
-
-    [Tooltip("【旧形式】spawnTable が空のときだけ使われる。移行が済んだら削除する")]
-    public GameObject enemyPrefab;
 
     /// <summary>spawnTable による抽選が使えるか</summary>
     public bool HasSpawnTable
