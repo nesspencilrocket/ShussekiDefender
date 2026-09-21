@@ -15,6 +15,11 @@ public class Enemy : MonoBehaviour
     [NonSerialized] public MovePoint movePoint;
     private int currentMovePointIndex;
 
+    // 経路の乗り換えに使う。Spawner が SetRoutes で渡す。
+    // 渡されなければ乗り換えず、従来どおり movePoint をなぞる。
+    private IReadOnlyList<MovePoint> routes;
+    private RouteBranching branching;
+
     private GameManager gameManager;
     private EnemyAnimations enemyAnimations;
 
@@ -86,11 +91,38 @@ public class Enemy : MonoBehaviour
     {
         if (currentMovePointIndex < movePoint.points.Length - 1)
         {
+            TryBranch();
             currentMovePointIndex++;
         }
         else
         {
             ReachedGoal();
+        }
+    }
+
+    /// <summary>
+    /// 乗り換え先の経路を Spawner から受け取る。
+    /// 全ての敵が同じ一覧と規則を共有するので、敵ごとに複製はしない。
+    /// </summary>
+    public void SetRoutes(IReadOnlyList<MovePoint> allRoutes, RouteBranching rule)
+    {
+        routes = allRoutes;
+        branching = rule;
+    }
+
+    /// <summary>
+    /// いま踏んだ点で別の経路へ乗り換えるか決める。
+    /// 乗り換えたら movePoint ごと差し替え、次の点はその経路の同じ番号の次を目指す。
+    /// 経路の点は全て同じ番号付けなので、途中から乗っても最後はゴールに着く。
+    /// </summary>
+    private void TryBranch()
+    {
+        if (branching == null || routes == null) return;
+
+        MovePoint other = branching.Pick(movePoint, currentMovePointIndex, routes);
+        if (other != null)
+        {
+            movePoint = other;
         }
     }
 
