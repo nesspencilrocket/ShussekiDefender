@@ -38,10 +38,15 @@ public class CurrencyManager : MonoBehaviour
         totalCoins += amount;
     }
 
-    /// <summary>EnemyHP.OnEnemyDead から呼ばれる（引数なし版）</summary>
-    public void AddCoins()
+    /// <summary>
+    /// EnemyHP.OnEnemyDead から呼ばれる。
+    /// 報酬は倒された敵の EnemyData から取る。EnemyData が無い敵は
+    /// EnemyHP 側の既定値（10）に落ちるので、従来と同じ額になる。
+    /// </summary>
+    private void OnEnemyDefeated(EnemyHP hp)
     {
-        AddCoins(10);
+        if (hp == null) return;
+        AddCoins(hp.RewardCoin);
     }
 
     public void RemoveCoins(int amount)
@@ -59,11 +64,11 @@ public class CurrencyManager : MonoBehaviour
 
     private void OnEnable()
     {
-        EnemyHP.OnEnemyDead += AddCoins;
+        EnemyHP.OnEnemyDead += OnEnemyDefeated;
     }
 
     private void OnDisable()
     {
-        EnemyHP.OnEnemyDead -= AddCoins;
+        EnemyHP.OnEnemyDead -= OnEnemyDefeated;
     }
 }
