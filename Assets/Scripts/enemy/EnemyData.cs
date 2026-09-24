@@ -34,7 +34,7 @@ public class EnemyData : ScriptableObject
     [Tooltip("移動速度。プレハブ側の値を上書きする")]
     public float moveSpeed = 3f;
 
-    [Tooltip("倒したときに得られるコイン。現在は全種一律 10 になっている")]
+    [Tooltip("倒したときに得られるコイン。EnemyHP.RewardCoin を通じて CurrencyManager が読む")]
     public int rewardCoin = 10;
 
     [Tooltip("倒したときのスコア。現在は全種一律 50 で計算している")]
