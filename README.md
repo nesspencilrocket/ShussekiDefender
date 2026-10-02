@@ -244,8 +244,6 @@ MIT License の対象：
 
 | 素材 | 該当ファイル | ライセンス・規約 |
 |---|---|---|
-| ぴぽや のドット絵 | `Assets/TowerDefenseMaterials/タワーディフェンス素材/` 内の `pipo-*.png`、`[A]Grass1-Dirt1_pipo.png` とそこから作ったタイル | [ぴぽや 素材利用規約](https://pipoya.net/sozai/terms-of-use/) |
-| ユニブレ_Unity#学習チャンネル の素材 | `Assets/TowerDefenseMaterials/タワーディフェンス素材/UI/` 内の画像 | 配布元の規約に従う |
 | DotGothic16 | `Assets/DotGothic16-Regular.ttf` と、そこから生成した TextMesh Pro フォントアセット | [SIL Open Font License 1.1](ThirdPartyLicenses/DotGothic16-OFL.txt) |
 | TextMesh Pro の同梱リソース | `Assets/TextMesh Pro/` 以下 | Unity Technologies の規約。同梱フォントは各フォルダ内のライセンスファイル（OFL など）に従う |
 | Unity パッケージ | `Packages/manifest.json` に記載のパッケージ | 各パッケージのライセンス（Unity Companion License など） |
