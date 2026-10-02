@@ -248,13 +248,6 @@ MIT License の対象：
 | TextMesh Pro の同梱リソース | `Assets/TextMesh Pro/` 以下 | Unity Technologies の規約。同梱フォントは各フォルダ内のライセンスファイル（OFL など）に従う |
 | Unity パッケージ | `Packages/manifest.json` に記載のパッケージ | 各パッケージのライセンス（Unity Companion License など） |
 
-#### ぴぽや の素材について
-
-- 規約上、無料素材は個人・法人、営利・非営利を問わず利用でき、加工も自由です
-- **素材データそのものの販売（転売）・有償での再配布は禁止**されています
-- 無償での再配布は認められていますが、加工した素材を配布する場合は、元の素材が「ぴぽや」のデータである旨を明記する必要があります
-- このリポジトリをもとに作品を作る場合も、上記の規約が適用されます
-
 #### DotGothic16 について
 
 Copyright 2020 The DotGothic16 Project Authors (https://github.com/fontworks-fonts/DotGothic16)
