@@ -216,8 +216,6 @@ Assets/
 
 | 素材 | 提供元 |
 |---|---|
-| ドット絵（キャラクター・エフェクト・装置・マップタイル） | ぴぽや https://pipoya.net/ |
-| UI アイコン | ユニブレ_Unity#学習チャンネル https://www.youtube.com/@unity1817 |
 | フォント DotGothic16 | Fontworks Inc. / The DotGothic16 Project Authors |
 
 ---
