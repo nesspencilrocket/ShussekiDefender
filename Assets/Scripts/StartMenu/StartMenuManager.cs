@@ -1,34 +1,25 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
-/// タイトル画面のボタン処理。
+/// タイトル画面の進行役。
 /// 【重要】クラス名はファイル名 StartMenuManager と一致させること。
 /// Unity の規約であり、Library キャッシュ再構築時に解決できなくなるのを防ぐ。
+///
+/// 「妨害開始」「成績確認」「設定」の遷移は、各ボタン画像の SpriteButton が
+/// 直接シーンを読み込む。ここでは画面に入ったときの後始末だけを行う。
 /// </summary>
 public class StartMenuManager : MonoBehaviour
 {
-    private const string StageSelectSceneName = "StageSelect";
-
     void Start()
     {
         // 敗北・クリア時に止めたまま戻ってくるとタイトルが固まる
         GameSpeed.Resume();
     }
 
-    /// <summary>「ゲームスタート」ボタンから呼ぶ</summary>
-    public void OnStartButtonClicked()
-    {
-        SceneManager.LoadScene(StageSelectSceneName);
-    }
-
-    /// <summary>「オプション」ボタンから呼ぶ（未実装）</summary>
-    public void OnOptionsButtonClicked()
-    {
-        Debug.Log("Options button was pressed.");
-    }
-
-    /// <summary>「終了」ボタンから呼ぶ</summary>
+    /// <summary>
+    /// ゲームを終了する。いまは呼び出し元が無いが、ビルドはフルスクリーンで起動し
+    /// 終了する手段が Alt+F4 しかないため、「終了」ボタンを置くときに使う。
+    /// </summary>
     public void OnQuitButtonClicked()
     {
 #if UNITY_EDITOR
