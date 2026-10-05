@@ -7920,6 +7920,7 @@ MonoBehaviour:
   sellText: {fileID: 779513815}
   weaponLevelText: {fileID: 186181733}
   upgradeText: {fileID: 1453234572}
+  upgradeButton: {fileID: 1698929616}
 --- !u!4 &1293198913
 Transform:
   m_ObjectHideFlags: 0
