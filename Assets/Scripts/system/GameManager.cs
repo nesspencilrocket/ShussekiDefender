@@ -52,6 +52,16 @@ public class GameManager : MonoBehaviour
     [Tooltip("敗北時にリザルトへ出す文字（処分に至らなかった、の意）")]
     [SerializeField] private string gameOverTitle = "処分なし";
 
+    // --- スコアの重み ---
+    // スコア = 倒した数 × killScoreWeight ＋ 残った所持金 × coinScoreWeight ＋ 経過秒 × timeScoreWeight
+    [Header("Score Weights")]
+    [Tooltip("学生を 1 人倒したときの点")]
+    [SerializeField] private int killScoreWeight = 50;
+    [Tooltip("残った所持金 1 円あたりの点。高いほど「使わずに残す」が得になる")]
+    [SerializeField] private int coinScoreWeight = 5;
+    [Tooltip("耐えた 1 秒あたりの点")]
+    [SerializeField] private int timeScoreWeight = 10;
+
     // --- UI ---
     [Header("UI Panels & Buttons")]
     [SerializeField] private List<GameObject> gameOverPanels = new List<GameObject>();
@@ -271,13 +281,13 @@ public class GameManager : MonoBehaviour
         int finalCurrency = (currencyManager != null) ? currencyManager.GetCurrentCurrency() : 0;
         if (finalCurrencyDisplay != null) finalCurrencyDisplay.text = finalCurrency.ToString();
 
-        const int KILL_SCORE_WEIGHT = 50;
-        const int CURRENCY_SCORE_WEIGHT = 1;
-        const int TIME_SCORE_WEIGHT = 10;
-
-        lastTotalScore = scoreManager.TotalKills * KILL_SCORE_WEIGHT
-                       + finalCurrency * CURRENCY_SCORE_WEIGHT
-                       + Mathf.FloorToInt(gameTimeElapsed) * TIME_SCORE_WEIGHT;
+        // 所持金の重みを 1 から 5 に上げた。1 のままだと 1 円が 1 点にしかならず、
+        // 倒せば 50 点の学生に比べて残す価値がほぼ無いため、「全部使う」以外の選択肢がなかった。
+        // 5 にすると、たとえば強化 1 回（50 円）は 250 点ぶんになり、
+        // 終盤に強化するか残すかを考える意味が出る。
+        lastTotalScore = scoreManager.TotalKills * killScoreWeight
+                       + finalCurrency * coinScoreWeight
+                       + Mathf.FloorToInt(gameTimeElapsed) * timeScoreWeight;
 
         if (totalScoreDisplay != null) totalScoreDisplay.text = lastTotalScore.ToString();
 
