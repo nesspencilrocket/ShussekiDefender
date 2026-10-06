@@ -30,7 +30,8 @@ public class WeaponUI : MonoBehaviour
 
         //絵とコストテキストを設定
         weaponImage.sprite = weaponSettings.TurretSprite;
-        weaponCost.text = weaponSettings.TurretShopCost.ToString();
+        Money.FitOneLine(weaponCost);
+        weaponCost.text = Money.Yen(weaponSettings.TurretShopCost);
     }
 
 
