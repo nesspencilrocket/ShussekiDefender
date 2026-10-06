@@ -31,7 +31,34 @@ public class WeaponUI : MonoBehaviour
         //絵とコストテキストを設定
         weaponImage.sprite = weaponSettings.TurretSprite;
         Money.FitOneLine(weaponCost);
-        weaponCost.text = Money.Yen(weaponSettings.TurretShopCost);
+        shownPrice = -1;
+        RefreshPrice();
+    }
+
+    // 直前に出した値段。変わったときだけ文字を作り直す
+    private int shownPrice = -1;
+
+    // 値段は同じ武器を置くほど上がるので、購入パネルを開くたびと、開いている間に合わせ直す
+    private void OnEnable()
+    {
+        RefreshPrice();
+    }
+
+    private void Update()
+    {
+        RefreshPrice();
+    }
+
+    private void RefreshPrice()
+    {
+        if (weaponSettings == null || weaponCost == null) return;
+
+        WeaponShopManager shop = WeaponShopManager.Instance;
+        int price = (shop != null) ? shop.PriceOf(weaponSettings) : weaponSettings.TurretShopCost;
+        if (price == shownPrice) return;
+
+        shownPrice = price;
+        weaponCost.text = Money.Yen(price);
     }
 
 
