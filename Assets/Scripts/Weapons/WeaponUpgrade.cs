@@ -16,9 +16,17 @@ public class WeaponUpgrade : MonoBehaviour
     [Tooltip("発射間隔の下限（秒）。これを下回らせない")]
     [SerializeField] private float minDelay = 0.08f;
 
+    [Header("売却")]
+    [Tooltip("売ったときに戻ってくる割合。購入代金と強化に払った額の合計に掛ける")]
+    [Range(0f, 1f)]
+    [SerializeField] private float sellRate = 0.5f;
+
     private WeaponControl weaponControl;
     [NonSerialized] public int currentUpgradeCost;
     [NonSerialized] public int level;
+
+    // この武器に払った合計（購入代金＋強化代）。売却額の元になる
+    private int totalSpent;
 
     /// <summary>これ以上強化できないか</summary>
     public bool IsMaxLevel => level >= maxLevel;
@@ -61,15 +69,31 @@ public class WeaponUpgrade : MonoBehaviour
     {
         //コインを減らす
         CurrencyManager.instance.RemoveCoins(currentUpgradeCost);
+        totalSpent += currentUpgradeCost;
         //次の強化にかかるコインを増やす
         currentUpgradeCost += addCost;
         //レベルの数値を上げる
         level++;
     }
 
+    /// <summary>
+    /// 購入代金を記録する。設置した直後に WeaponShopManager が呼ぶ。
+    /// </summary>
+    public void RecordPurchase(int price)
+    {
+        totalSpent += price;
+    }
+
+    /// <summary>
+    /// 売却額。払った合計に sellRate（既定 0.5）を掛ける。
+    ///
+    /// 以前は「次の強化費用の半分」を返していた。通常の武器は 20 で買えて
+    /// 次の強化費用が 50 なので、置いてすぐ売ると 25 戻り、
+    /// 買って売るだけで 5 ずつ増やせてしまっていた。
+    /// </summary>
     public int GetSellValue()
     {
         //int型に丸めて返す
-        return Mathf.RoundToInt(currentUpgradeCost * 0.5f);
+        return Mathf.RoundToInt(totalSpent * sellRate);
     }
 }
