@@ -37,19 +37,10 @@ public class WeaponUI : MonoBehaviour
     //ボタンに登録
     public void PressedWeaponUI()
     {
-
-        //所持コイン ＞= 設置コスト
-        if (CurrencyManager.instance.totalCoins >=
-            weaponSettings.TurretShopCost)
-        {
-
-            CurrencyManager.instance.RemoveCoins(weaponSettings.TurretShopCost);
-
-            UIManager.instance.CloseTurretShopPanel();
-
-            OnPressedWeaponsUI?.Invoke(weaponSettings);
-        }
-
+        // 支払いと設置の判断は WeaponShopManager にまとめた。
+        // ここで先に代金を引くと、設置先のノードが無い・埋まっているときにも
+        // お金だけ減ってしまう。
+        OnPressedWeaponsUI?.Invoke(weaponSettings);
     }
 
 

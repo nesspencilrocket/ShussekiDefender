@@ -100,17 +100,26 @@ public class UIManager : MonoBehaviour
     // イベント登録で参照できるようにします。元の名前を維持。
     private void NodeSelected(Node nodeSelected) // メソッド自体は問題ありません
     {
+        // 別のノードに移ったら、前のノードの攻撃範囲は閉じる
+        if (currentNodeSelected != null && currentNodeSelected != nodeSelected)
+        {
+            currentNodeSelected.CloseAttackRange();
+        }
+
         //currentNodeSelected選択中のノードを格納
         currentNodeSelected = nodeSelected;
 
-        //ノードが空か判定
+        // 購入パネルと強化・売却パネルは、選んだノードに合う方だけを開く。
+        // 以前は反対側を閉じていなかったため、空きノードで購入パネルを開いたまま
+        // 武器のあるノードを選ぶと、購入パネルからそのノードへ重ねて設置できた。
         if (currentNodeSelected.IsEmpty())
         {
-            //UI表示
+            nodeUIPanel.SetActive(false);
             weaponShopPanel.SetActive(true);
         }
         else
         {
+            weaponShopPanel.SetActive(false);
             ShowNodeUI();
         }
 

@@ -117,28 +117,45 @@ public class WeaponShopManager : MonoBehaviour
         currentNodeSelected = nodeSelected;
     }
 
+    /// <summary>
+    /// 購入カードが押されたとき。設置できるか確かめてから代金を払い、武器を置く。
+    ///
+    /// 置けるのは、選択中の空いたノードだけ。以前はここで空きを確かめておらず、
+    /// 武器のあるノードにも重ねて置けた。重ねた古い武器は Node から外れるため、
+    /// 強化も売却もできないまま撃ち続けていた。
+    /// </summary>
     private void PressWeaponUI(WeaponSettings weapon)
     {
-        //特定のノードが押されているなら
-        if (currentNodeSelected != null)
+        if (currentNodeSelected == null || !currentNodeSelected.IsEmpty())
         {
-            //プレファブから武器オブジェクトを生成
-            GameObject weaponInstance =
-                Instantiate(weapon.TurretPrefab);
-
-            //ノードの場所に設置
-            weaponInstance.transform.localPosition =
-                currentNodeSelected.transform.position;
-
-            weaponInstance.transform.parent =
-                currentNodeSelected.transform;
-
-            //Nodeの変数に設置した武器格納
-            Weapon turretPlaced =
-                weaponInstance.GetComponent<Weapon>();
-
-            currentNodeSelected.SetTurret(turretPlaced);
+            UIManager.instance.CloseTurretShopPanel();
+            return;
         }
+
+        // お金が足りなければ何もしない。パネルは開いたままにして、別の武器を選べるようにする
+        CurrencyManager wallet = CurrencyManager.instance;
+        int price = weapon.TurretShopCost;
+        if (wallet == null || wallet.totalCoins < price) return;
+
+        wallet.RemoveCoins(price);
+        UIManager.instance.CloseTurretShopPanel();
+
+        //プレファブから武器オブジェクトを生成
+        GameObject weaponInstance =
+            Instantiate(weapon.TurretPrefab);
+
+        //ノードの場所に設置
+        weaponInstance.transform.localPosition =
+            currentNodeSelected.transform.position;
+
+        weaponInstance.transform.parent =
+            currentNodeSelected.transform;
+
+        //Nodeの変数に設置した武器格納
+        Weapon turretPlaced =
+            weaponInstance.GetComponent<Weapon>();
+
+        currentNodeSelected.SetTurret(turretPlaced);
     }
 
     private void OnEnable()
