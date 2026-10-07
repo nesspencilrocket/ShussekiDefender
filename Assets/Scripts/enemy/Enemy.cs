@@ -26,6 +26,13 @@ public class Enemy : MonoBehaviour
     public Vector3 CurrentPointPosition => movePoint.GetMovePointPosition(currentMovePointIndex);
     public static Action OnReachedGoal;
 
+    /// <summary>
+    /// 全員の歩く速さに掛ける倍率。雨（RainController）が降っている間だけ 1 より小さくなる。
+    /// 個体の moveSpeed には触らないので、被弾で足が止まる・必殺技で止める、といった
+    /// 既存の速度の出し入れと干渉しない。
+    /// </summary>
+    public static float WeatherSpeedScale = 1f;
+
     void Awake()
     {
         enemyHP = GetComponent<EnemyHP>();
@@ -153,7 +160,7 @@ public class Enemy : MonoBehaviour
         transform.position = Vector3.MoveTowards(
             transform.position,
             CurrentPointPosition,
-            moveSpeed * Time.deltaTime);
+            moveSpeed * WeatherSpeedScale * Time.deltaTime);
 
         // 4方向スプライトへ進行方向を伝える。
         // 以前は flipX による左右反転だけだったため、上下へ移動しても
