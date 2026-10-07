@@ -1314,8 +1314,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u59A8\u5BB3\u958B\u59CB\uFF01"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: de76f3850e4ff6345b7c3e433a8cf5e5, type: 2}
-  m_sharedMaterial: {fileID: 6125687671886972085, guid: de76f3850e4ff6345b7c3e433a8cf5e5, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: de7268b7d5f084b4aa586b59b109f314, type: 2}
+  m_sharedMaterial: {fileID: -7427579518466857834, guid: de7268b7d5f084b4aa586b59b109f314, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
