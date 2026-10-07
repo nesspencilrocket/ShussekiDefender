@@ -29,7 +29,7 @@ public class Weapon : MonoBehaviour
         weaponUpgrade = GetComponent<WeaponUpgrade>();
 
         // 【追加】イベントの購読を開始
-        EnemyHP.OnEnemyDead += RemoveInvalidEnemy;
+        EnemyHP.OnEnemyDead += OnEnemyDead;
         Enemy.OnReachedGoal += RemoveInvalidEnemy;
     }
 
@@ -37,7 +37,7 @@ public class Weapon : MonoBehaviour
     private void OnDestroy()
     {
         // Nullチェックはイベントの呼び出し側で安全に処理されていることが多いが、明示的に解除する
-        EnemyHP.OnEnemyDead -= RemoveInvalidEnemy;
+        EnemyHP.OnEnemyDead -= OnEnemyDead;
         Enemy.OnReachedGoal -= RemoveInvalidEnemy;
     }
 
@@ -125,9 +125,19 @@ public class Weapon : MonoBehaviour
     }
 
     /// <summary>
+    /// EnemyHP.OnEnemyDead は倒された個体を引数に渡してくる（Action&lt;EnemyHP&gt;）。
+    /// Enemy.OnReachedGoal は引数なし（Action）なので、同じメソッドを両方に
+    /// 登録できない。こちらで引数を受け、共通の処理へ流す。
+    /// </summary>
+    private void OnEnemyDead(EnemyHP _)
+    {
+        RemoveInvalidEnemy();
+    }
+
+    /// <summary>
     /// 【追加】敵が倒された（死亡/ゴール）イベントが発生したときにリストをクリーンアップ
     /// </summary>
-    private void RemoveInvalidEnemy(EnemyHP _)
+    private void RemoveInvalidEnemy()
     {
         // イベント発生時に即座にターゲットリセットとリストクリーンアップを試みる
         CleanEnemyList();
