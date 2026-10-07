@@ -50,6 +50,20 @@ public class StageData : ScriptableObject
     [Tooltip("背景の色調。1限目=朝、6限目=夕、のように時限で変える（Phase 4 で使用）")]
     public Color backgroundTint = Color.white;
 
+    [Header("レベルと設置スポット")]
+    [Tooltip("レベルが上がるのに必要な、倒した学生の累計。"
+           + "要素 0 が Lv2 になる数、要素 1 が Lv3 になる数…")]
+    public int[] levelUpKills = new int[] { 5, 15, 30 };
+
+    [Tooltip("最初（Lv1）から使える設置スポットの数")]
+    [Min(0)] public int initialNodes = 4;
+
+    [Tooltip("レベルが 1 つ上がるごとに使えるようになる設置スポットの数")]
+    [Min(0)] public int nodesPerLevel = 2;
+
+    [Tooltip("このステージで使える設置スポットの最大数。0 ならシーンにあるすべて")]
+    [Min(0)] public int maxNodes = 0;
+
     // ───── 処分の判定 ─────
     //
     // リザルト画面と成績確認画面の両方が同じ判定を必要とするため、

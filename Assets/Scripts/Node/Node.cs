@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 
 public class Node : MonoBehaviour
@@ -16,9 +17,52 @@ public class Node : MonoBehaviour
     private float rangeSize;
     private Vector3 originalScale;
 
+    [Header("解放")]
+    [Tooltip("使えるようになる順番（1 から）。小さいほど早く開く。"
+           + "何番目まで開くかはステージの StageData（initialNodes / nodesPerLevel / maxNodes）で決まる。"
+           + "0 なら順番に関係なく常に使える")]
+    [Min(0)]
+    [SerializeField] private int unlockOrder = 0;
+
+    [Tooltip("まだ使えないときの色。台座の色に掛ける")]
+    [SerializeField] private Color lockedTint = new Color(0.3f, 0.3f, 0.3f, 0.55f);
+
+    private SpriteRenderer baseSprite;
+    private Color baseColor = Color.white;
+    private Button button;
 
 
     public static Action OnWeaponSold;
+
+    /// <summary>使えるようになる順番。0 は常に使える</summary>
+    public int UnlockOrder => unlockOrder;
+
+    /// <summary>
+    /// 今使えるか。順番が今のレベルで開いている数以内なら使える。
+    /// StageLevel が無いときは、順番が付いているスポットは使えない扱いにする
+    /// </summary>
+    public bool IsUnlocked
+    {
+        get
+        {
+            if (unlockOrder <= 0) return true;
+            StageLevel level = StageLevel.Instance;
+            return level != null && unlockOrder <= level.UnlockedCount;
+        }
+    }
+
+    /// <summary>
+    /// このステージのうちに使えるようになるか。maxNodes を超える順番のスポットは最後まで開かない
+    /// </summary>
+    public bool IsAvailableInStage
+    {
+        get
+        {
+            if (unlockOrder <= 0) return true;
+            StageLevel level = StageLevel.Instance;
+            return level == null || level.MaxNodes <= 0 || unlockOrder <= level.MaxNodes;
+        }
+    }
 
 
     void Start()
@@ -27,6 +71,39 @@ public class Node : MonoBehaviour
         rangeSize = fireRange.GetComponent<SpriteRenderer>().bounds.size.y;
         //スケールを格納
         originalScale = fireRange.transform.localScale;
+
+        // レベルの仕組みは、シーンに置いていなくてもここで用意される
+        StageLevel.Ensure();
+
+        baseSprite = GetComponent<SpriteRenderer>();
+        if (baseSprite != null) baseColor = baseSprite.color;
+        button = GetComponentInChildren<Button>(true);
+        ApplyLock();
+    }
+
+    private void OnEnable()
+    {
+        StageLevel.OnLevelChanged += OnLevelChanged;
+    }
+
+    private void OnDisable()
+    {
+        StageLevel.OnLevelChanged -= OnLevelChanged;
+    }
+
+    private void OnLevelChanged(int level)
+    {
+        ApplyLock();
+    }
+
+    /// <summary>
+    /// まだ使えないスポットは暗くし、押せなくする
+    /// </summary>
+    private void ApplyLock()
+    {
+        bool unlocked = IsUnlocked;
+        if (baseSprite != null) baseSprite.color = unlocked ? baseColor : baseColor * lockedTint;
+        if (button != null) button.interactable = unlocked;
     }
 
 
@@ -57,6 +134,12 @@ public class Node : MonoBehaviour
         // 暗幕でもクリックを塞いでいるが、Canvas の重なり順に依存しない
         // よう、ここでも確実に止めておく。
         if (GameManager.Instance != null && GameManager.Instance.IsCountingDown)
+        {
+            return;
+        }
+
+        // まだ解放されていないスポットは選べない
+        if (!IsUnlocked)
         {
             return;
         }
