@@ -8712,6 +8712,57 @@ MonoBehaviour:
   font: {fileID: 11400000, guid: de7268b7d5f084b4aa586b59b109f314, type: 2}
   position: {x: 0, y: -24}
   noticeSeconds: 2
+--- !u!1 &1834027811
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1834027812}
+  - component: {fileID: 1834027813}
+  m_Layer: 5
+  m_Name: RainButton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1834027812
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834027811}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1834027813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834027811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da0cf04d2d2f4ed5a1afe110edf3b8bc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::RainController
+  cost: 50
+  duration: 8
+  speedScale: 0.5
+  cooldown: 10
+  font: {fileID: 11400000, guid: de7268b7d5f084b4aa586b59b109f314, type: 2}
+  buttonPosition: {x: -390, y: 80}
+  dropCount: 90
 --- !u!1 &1453234570
 GameObject:
   m_ObjectHideFlags: 0
@@ -14440,6 +14491,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1834027802}
+  - {fileID: 1834027812}
   - {fileID: 71937038}
   - {fileID: 1529088618}
   - {fileID: 8643311834818657018}
