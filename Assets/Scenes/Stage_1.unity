@@ -11821,7 +11821,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2145227327}
-  - component: {fileID: 2145227326}
   - component: {fileID: 2145227329}
   m_Layer: 0
   m_Name: WayPoint_and_Spawner
@@ -11830,23 +11829,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2145227326
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2145227325}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b563d0abfd70f6a4c96623ddbe1e9a66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MovePoint
-  points:
-  - {x: 10.20811, y: 1.2121098, z: 0}
-  - {x: 2.990891, y: 1.2439249, z: 0}
-  - {x: 3.218093, y: 3.3198392, z: 0}
-  - {x: 3.5554838, y: 5.1695247, z: 0}
 --- !u!4 &2145227327
 Transform:
   m_ObjectHideFlags: 0
