@@ -11889,7 +11889,6 @@ MonoBehaviour:
     enemyPrefab: {fileID: 6694506150673368543, guid: a675260f0f71e5447bdb22f345a92aee, type: 3}
   spawnMode: 1
   routesParent: {fileID: 531125412}
-  spawnRoutes: []
 --- !u!1 &2146544922
 GameObject:
   m_ObjectHideFlags: 0

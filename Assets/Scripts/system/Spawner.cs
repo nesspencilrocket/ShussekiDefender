@@ -17,14 +17,10 @@ public class Spawner : MonoBehaviour
 
     [Header("湧き口")]
     // 敵が出る位置は Enemy.SnapToStartPoint() が movePoint.points[0] へ移すことで決まる。
-    // SpawnRoute.spawnPoint は直後に上書きされるので結果に影響しない。
-    // つまり経路さえあれば湧き口として成立するため、親を指定して自動で集める形にした。
+    // つまり経路さえあれば湧き口として成立するため、親を指定して自動で集める形にしている。
     // 湧き口を増やすときは Route をこの親の下に複製するだけでよく、Inspector の一覧を触らずに済む。
-    [Tooltip("MovePoint を子に持つ親。指定するとその子の MovePoint を全て湧き口として使う")]
+    [Tooltip("MovePoint を子に持つ親。その子の MovePoint を全て湧き口として使う")]
     [SerializeField] private Transform routesParent;
-
-    [Tooltip("routesParent が空のときだけ使う手動の一覧（移行用）")]
-    [SerializeField] private List<SpawnRoute> spawnRoutes;
 
     [Header("経路の乗り換え")]
     // 同じ湧き口から出た敵が一列に並ぶのを崩す。
@@ -39,7 +35,7 @@ public class Spawner : MonoBehaviour
     private float spawned;
     private ObjectPooler pooler;
 
-    // 実際に使う湧き口。Start で routesParent か spawnRoutes から組み立てる
+    // 実際に使う湧き口。Start で routesParent の子から組み立てる
     private readonly List<MovePoint> routes = new List<MovePoint>();
 
     // 直前に使ったスポーン地点。連続で同じ場所から湧かせないために覚えておく
@@ -87,27 +83,17 @@ public class Spawner : MonoBehaviour
     }
 
     /// <summary>
-    /// 湧き口を集める。
-    /// routesParent が指定されていればその子から、無ければ spawnRoutes から作る。
+    /// 湧き口を集める。routesParent の子の MovePoint が全て候補になる。
     /// 経由点が 1 つも無い MovePoint は湧き位置を決められないので除外する。
     /// </summary>
     private void CollectRoutes()
     {
         routes.Clear();
+        if (routesParent == null) return;
 
-        if (routesParent != null)
+        foreach (MovePoint mp in routesParent.GetComponentsInChildren<MovePoint>())
         {
-            foreach (MovePoint mp in routesParent.GetComponentsInChildren<MovePoint>())
-            {
-                if (IsUsable(mp)) routes.Add(mp);
-            }
-            return;
-        }
-
-        if (spawnRoutes == null) return;
-        foreach (SpawnRoute sr in spawnRoutes)
-        {
-            if (sr != null && IsUsable(sr.targetRoute)) routes.Add(sr.targetRoute);
+            if (IsUsable(mp)) routes.Add(mp);
         }
     }
 
@@ -212,8 +198,7 @@ public class Spawner : MonoBehaviour
         enemy.movePoint = route;
         enemy.SetRoutes(routes, branching);
         enemy.ResetMovePoint();
-        // 湧く位置は SnapToStartPoint が points[0] へ移して決める。
-        // 以前はここで spawnPoint の位置も入れていたが、直後に上書きされる無駄な代入だった。
+        // 湧く位置は SnapToStartPoint が points[0] へ移して決める
         enemy.SnapToStartPoint();
         enemy.SetMoveSpeed();
     }
