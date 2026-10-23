@@ -155,7 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponControl
   bulletSpawnPos: {fileID: 5000899930988835866}
   damage: 8
-  fireBullet: {fileID: 2833042510048027509, guid: 1a7e38bfc57d23a4990322892446369f, type: 3}
+  fireBullet: {fileID: 8680826643702983046, guid: 113c95b7c4483b848b443c9294631e75, type: 3}
   firingInterval: 2
 --- !u!114 &4775250167374610158
 MonoBehaviour:
