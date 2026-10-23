@@ -156,6 +156,11 @@ public class WeaponShopManager : MonoBehaviour
             weaponInstance.GetComponent<Weapon>();
 
         currentNodeSelected.SetTurret(turretPlaced);
+
+        // 売却額の元にするため、払った額を武器に覚えさせる。
+        // Weapon.weaponUpgrade は Weapon.Start で入るので、ここでは直接取る
+        WeaponUpgrade upgrade = weaponInstance.GetComponent<WeaponUpgrade>();
+        if (upgrade != null) upgrade.RecordPurchase(price);
     }
 
     private void OnEnable()
