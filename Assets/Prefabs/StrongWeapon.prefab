@@ -139,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14e47ef134cce354a8e81ade5ad1d667, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
-  attackRange: 8
+  attackRange: 6
   weaponUpgrade: {fileID: 0}
 --- !u!114 &5593137553491457004
 MonoBehaviour:
@@ -154,9 +154,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponControl
   bulletSpawnPos: {fileID: 5000899930988835866}
-  damage: 8
+  damage: 10
   fireBullet: {fileID: 8680826643702983046, guid: 113c95b7c4483b848b443c9294631e75, type: 3}
-  firingInterval: 2
+  firingInterval: 2.5
 --- !u!114 &4775250167374610158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,8 +171,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponUpgrade
   upgradeCost: 60
   addCost: 10
-  addDamage: 1
-  decreaseInterval: 0.05
+  addDamage: 2
+  decreaseInterval: 0.25
 --- !u!58 &2909032310384143757
 CircleCollider2D:
   m_ObjectHideFlags: 0
