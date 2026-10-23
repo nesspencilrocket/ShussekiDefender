@@ -36,6 +36,9 @@ public class StageData : ScriptableObject
     [Tooltip("この数だけ敵に通過されると敗北")]
     public int maxEnemyPasses = 50;
 
+    [Tooltip("同時に置いておける武器の数の上限。0 なら上限なし（設置スポットの数だけ置ける）")]
+    [Min(0)] public int maxWeapons = 0;
+
     [Tooltip("ステージ開始時の所持コイン")]
     public int initialCoin = 100;
 
