@@ -64,6 +64,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playTimeDisplay;
     [SerializeField] private TextMeshProUGUI finalCurrencyDisplay;
     [SerializeField] private TextMeshProUGUI totalScoreDisplay;
+    [Tooltip("結果画面の左下に出す「次の処分まで あと N 点」")]
+    [SerializeField] private TextMeshProUGUI nextRankDisplay;
     [SerializeField] private TextMeshProUGUI enemyPassesDisplay;
 
     [Header("Enemy Kill Stats UI")]
@@ -279,11 +281,37 @@ public class GameManager : MonoBehaviour
 
         if (totalScoreDisplay != null) totalScoreDisplay.text = lastTotalScore.ToString();
 
+        if (nextRankDisplay != null)
+        {
+            nextRankDisplay.text = cleared ? NextRankText(lastTotalScore) : SurviveText();
+        }
+
         // 見出しはスコア確定後に決める（順序を逆にすると常に最軽量の処分になる）
         if (titleText != null)
         {
             titleText.text = cleared ? RankOf(lastTotalScore) : gameOverTitle;
         }
+    }
+
+    /// <summary>
+    /// 敗北のときの目標。処分が付くのは時間まで耐えきったときだけなので、
+    /// 点数ではなく、あと何秒耐えればよかったかを出す。
+    /// </summary>
+    private string SurviveText()
+    {
+        return $"あと {Mathf.CeilToInt(RemainingTime)} 秒耐えれば処分が付く";
+    }
+
+    /// <summary>
+    /// 1 つ重い処分まであと何点かの文言。
+    /// 最も重い処分に達していれば、その旨を出す。
+    /// </summary>
+    private string NextRankText(int score)
+    {
+        if (Stage == null) return "";
+
+        int next = Stage.NextRankScore(score);
+        return next < 0 ? "最も重い処分です" : $"次の処分まで あと {next - score} 点";
     }
 
     /// <summary>
