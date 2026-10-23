@@ -19,6 +19,10 @@ public class Weapon : MonoBehaviour
 
     public WeaponUpgrade weaponUpgrade;
 
+    // この武器の種類。設置したときに WeaponShopManager が入れる。
+    // 同じ種類が何基置いてあるかを数え、値段を決めるのに使う
+    [NonSerialized] public WeaponSettings settings;
+
     void Start()
     {
         // プレイ開始時に数値を合わせる

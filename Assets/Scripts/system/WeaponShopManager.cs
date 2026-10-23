@@ -19,6 +19,39 @@ public class WeaponShopManager : MonoBehaviour
     //現在選択中のノードを格納する
     private Node currentNodeSelected;
 
+    public static WeaponShopManager Instance { get; private set; }
+
+    // シーン上の設置スポット。同じ武器が何基置いてあるか数えるのに使う
+    private Node[] nodes = new Node[0];
+
+    private void Awake()
+    {
+        Instance = this;
+        nodes = FindObjectsByType<Node>(FindObjectsSortMode.None);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    /// <summary>この種類の武器がいま何基置いてあるか</summary>
+    public int PlacedCount(WeaponSettings weapon)
+    {
+        int count = 0;
+        foreach (Node n in nodes)
+        {
+            if (n != null && n.weapon != null && n.weapon.settings == weapon) count++;
+        }
+        return count;
+    }
+
+    /// <summary>この種類の武器を次に 1 基置くときの値段</summary>
+    public int PriceOf(WeaponSettings weapon)
+    {
+        return weapon.PriceFor(PlacedCount(weapon));
+    }
+
 
 
     void Start()
@@ -134,7 +167,7 @@ public class WeaponShopManager : MonoBehaviour
 
         // お金が足りなければ何もしない。パネルは開いたままにして、別の武器を選べるようにする
         CurrencyManager wallet = CurrencyManager.instance;
-        int price = weapon.TurretShopCost;
+        int price = PriceOf(weapon);
         if (wallet == null || wallet.totalCoins < price) return;
 
         wallet.RemoveCoins(price);
@@ -154,6 +187,7 @@ public class WeaponShopManager : MonoBehaviour
         //Nodeの変数に設置した武器格納
         Weapon turretPlaced =
             weaponInstance.GetComponent<Weapon>();
+        turretPlaced.settings = weapon;
 
         currentNodeSelected.SetTurret(turretPlaced);
 
