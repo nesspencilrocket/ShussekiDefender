@@ -90,6 +90,8 @@ public class ObjectPooler : MonoBehaviour
 
     public GameObject GetObjectFromPool(GameObject prefab)
     {
+        if (prefab == null) return null;
+
         // 指定されたプレハブのPoolItemを探すためのループ
         foreach (PoolItem item in poolItems) // foreachでアクセス
         {
@@ -117,9 +119,17 @@ public class ObjectPooler : MonoBehaviour
             }
         }
 
-        // プール設定が見つからなかった場合
-        Debug.LogError($"Pool setting for prefab {prefab.name} not found.");
-        return null;
+        // 未登録のプレハブは、その場でプールを作って返す。
+        // 以前はエラーを出して null を返していたため、Inspector に登録し忘れた
+        // 弾や敵は 1 発も出なかった。プレハブの種類が増えるたびに
+        // 全ステージのシーンを開いて登録する手間もなくなる。
+        // 初期生成数は 0 で、必要になった分だけ増える。
+        PoolItem created = new PoolItem { prefab = prefab, size = 0, pool = new List<GameObject>() };
+        poolItems.Add(created);
+
+        GameObject first = CreateObject(prefab);
+        created.pool.Add(first);
+        return first;
     }
 
     public GameObject GetOriginalPrefab(GameObject instance)
