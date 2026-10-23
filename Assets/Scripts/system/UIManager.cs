@@ -192,7 +192,8 @@ public class UIManager : MonoBehaviour
         {
             //売却時の値段を更新する
             int sellAmount = currentNodeSelected.weapon.weaponUpgrade.GetSellValue();
-            sellText.text = sellAmount.ToString();
+            Money.FitOneLine(sellText);
+            sellText.text = Money.Yen(sellAmount);
         }
     }
 
@@ -215,7 +216,8 @@ public class UIManager : MonoBehaviour
             WeaponUpgrade up = currentNodeSelected.weapon.weaponUpgrade;
             // 上限では数字ではなく MAX と出す。
             // 数字のままだと、押しても何も起きない理由が分からない。
-            upgradeText.text = up.IsMaxLevel ? "MAX" : up.currentUpgradeCost.ToString();
+            Money.FitOneLine(upgradeText);
+            upgradeText.text = up.IsMaxLevel ? "MAX" : Money.Yen(up.currentUpgradeCost);
         }
 
         UpdateUpgradeButtonState();
