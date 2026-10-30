@@ -53,12 +53,13 @@ public class EnemyHP : MonoBehaviour
     /// OnEnable より先に呼ばれる必要があるため、Spawner は
     /// SetActive(true) の前にこれを呼ぶ。
     /// </summary>
-    public void Apply(EnemyData data)
+    public void Apply(EnemyData data, float hpMultiplier = 1f)
     {
         Data = data;
         if (data == null) return;
 
-        hp = data.maxHP;
+        // プールから戻っても倍率が累積しないよう、毎回基礎HPから計算し直す。
+        hp = Mathf.Max(0.01f, data.maxHP * hpMultiplier);
         currentHP = hp;
     }
 
