@@ -8736,8 +8736,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovePoint
   points:
-  - {x: -9.2808485, y: -2.487965, z: 0}
-  - {x: -1.3440475, y: -2.6281562, z: 0}
+  - {x: -9.583342, y: -2.858518, z: 0}
+  - {x: -1.3575375, y: -2.8170173, z: 0}
   - {x: -1.4861748, y: 2.5722256, z: 0}
   - {x: 0.08574134, y: 4.9729686, z: 0}
 --- !u!1 &1649878990
@@ -8875,8 +8875,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovePoint
   points:
-  - {x: -9.310593, y: -1.3737226, z: 0}
-  - {x: -1.512819, y: -1.4297212, z: 0}
+  - {x: -9.493643, y: -1.8654878, z: 0}
+  - {x: -1.4723487, y: -1.8614036, z: 0}
   - {x: 0.2967285, y: 1.607259, z: 0}
   - {x: -0.9145689, y: 4.858648, z: 0}
 --- !u!1001 &1666633537
@@ -13320,8 +13320,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovePoint
   points:
-  - {x: -9.29572, y: -1.93084, z: 0}
-  - {x: -1.42843, y: -2.02894, z: 0}
+  - {x: -9.49333, y: -2.393203, z: 0}
+  - {x: -1.0507076, y: -2.271761, z: 0}
   - {x: -0.594723, y: 2.08974, z: 0}
   - {x: -0.414414, y: 4.91581, z: 0}
 --- !u!1 &677855292
@@ -13369,8 +13369,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovePoint
   points:
-  - {x: 10.2519, y: -0.0811939, z: 0}
-  - {x: 2.80261, y: -0.132122, z: 0}
+  - {x: -9.466022, y: -1.3298833, z: 0}
+  - {x: 1.7112856, y: -1.3004817, z: 0}
   - {x: 2.8196, y: 3.19586, z: 0}
   - {x: 3.28333, y: 5.16869, z: 0}
 --- !u!1 &999933335
@@ -13418,10 +13418,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovePoint
   points:
-  - {x: 10.2081, y: 1.21211, z: 0}
-  - {x: 2.99089, y: 1.24392, z: 0}
-  - {x: 3.21809, y: 3.31984, z: 0}
-  - {x: 3.55548, y: 5.16952, z: 0}
+  - {x: 10.412388, y: -1.619373, z: 0}
+  - {x: 2.7137015, y: -1.8000892, z: 0}
+  - {x: 1.9985452, y: 3.2295027, z: 0}
+  - {x: 2.0197573, y: 5.192104, z: 0}
 --- !u!1 &1834027701
 GameObject:
   m_ObjectHideFlags: 0
