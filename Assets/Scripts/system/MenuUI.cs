@@ -30,6 +30,7 @@ public static class MenuUI
         scaler.matchWidthOrHeight = 0.5f;
 
         host.AddComponent<GraphicRaycaster>();
+        AspectRatioController.FitCanvas(canvas);
         return canvas;
     }
 

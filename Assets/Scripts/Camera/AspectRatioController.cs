@@ -1,56 +1,130 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
-/// 画面の縦横比が基準（既定 16:9）と違うとき、カメラの描画範囲を狭めて
-/// 黒帯を付け、映る範囲を基準の比率に保つ。
-///
-/// ビルドはフルスクリーン（ウィンドウ）で起動するため、16:10 のノート PC や
-/// ウルトラワイドのモニターでは画面の比率がそのままゲームの比率になる。
-/// これを付けておくと、マップの見える範囲がどの画面でも同じになる。
-///
-/// Screen Space - Overlay の Canvas はカメラの描画範囲に関係なく画面全体に出るので、
-/// 黒帯の対象はワールドに置いたスプライト（背景・敵・設置スポットなど）だけ。
+/// マップとUIを同じ16:9の表示範囲に収め、余った部分を毎フレーム黒帯で覆う。
 /// </summary>
 [RequireComponent(typeof(Camera))]
+[DefaultExecutionOrder(-100)]
 public class AspectRatioController : MonoBehaviour
 {
-    // 基準にしたいアスペクト比
-    public float targetAspectWidth = 16.0f;
-    public float targetAspectHeight = 9.0f;
+    public float targetAspectWidth = 16f;
+    public float targetAspectHeight = 9f;
 
-    void Awake() // Start()より先に呼ばれるAwake()で実行
+    private Camera viewCamera;
+    private Canvas barsCanvas;
+    private RectTransform[] bars;
+    private int lastWidth;
+    private int lastHeight;
+    private float lastAspect;
+
+    private void Awake()
     {
-        Camera camera = GetComponent<Camera>();
-        float targetAspect = targetAspectWidth / targetAspectHeight;
-        float windowAspect = (float)Screen.width / (float)Screen.height;
+        viewCamera = GetComponent<Camera>();
+        CreateBars();
+        RefreshViewport();
+    }
 
-        // 基準の比率を保ったまま画面に収めたとき、高さが画面の何割になるか。
-        // 以前は targetAspect / windowAspect と逆数になっており、
-        // 16:9 以外の画面では黒帯が付く向きが逆で、比率がかえって崩れていた。
-        float scaleHeight = windowAspect / targetAspect;
+    private void Start()
+    {
+        // 非表示の結果パネルも先に合わせ、開いた瞬間の位置ずれを防ぐ。
+        foreach (Canvas canvas in FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (canvas != barsCanvas && canvas.gameObject.scene == gameObject.scene)
+                ConfigureCanvas(canvas, viewCamera);
+        }
+    }
 
-        // 画面が基準より縦長（例：4:3、16:10）
-        if (scaleHeight < 1.0f)
+    private void LateUpdate()
+    {
+        // 起動時だけでなく、ウィンドウのリサイズやモニター変更にも追従する。
+        RefreshViewport();
+    }
+
+    private void OnEnable()
+    {
+        // 描画直前に解像度が切り替わる環境でも、古い比率を1フレーム残さない。
+        Canvas.preWillRenderCanvases += RefreshViewport;
+    }
+
+    private void OnDisable()
+    {
+        Canvas.preWillRenderCanvases -= RefreshViewport;
+    }
+
+    /// <summary>実行時に作るレベル・雨・必殺技のUIも、シーンのHUDと同じ範囲に収める。</summary>
+    public static void FitCanvas(Canvas canvas)
+    {
+        Camera camera = Camera.main;
+        if (camera == null || camera.GetComponent<AspectRatioController>() == null) return;
+        if (canvas.gameObject.scene != camera.gameObject.scene) return;
+        ConfigureCanvas(canvas, camera);
+    }
+
+    private static void ConfigureCanvas(Canvas canvas, Camera camera)
+    {
+        if (!canvas.isRootCanvas || canvas.renderMode != RenderMode.ScreenSpaceOverlay) return;
+
+        // Overlayの描画順やフォントを変えず、内容だけをカメラと同じ枠へ収める。
+        GameViewportCanvas viewport = canvas.GetComponent<GameViewportCanvas>();
+        if (viewport == null) viewport = canvas.gameObject.AddComponent<GameViewportCanvas>();
+        viewport.Initialize(camera);
+    }
+
+    private void RefreshViewport()
+    {
+        int width = Screen.width;
+        int height = Screen.height;
+        if (width <= 0 || height <= 0) return;
+        float aspect = Mathf.Max(0.01f, targetAspectWidth) / Mathf.Max(0.01f, targetAspectHeight);
+        if (width == lastWidth && height == lastHeight && Mathf.Approximately(aspect, lastAspect)) return;
+
+        lastWidth = width;
+        lastHeight = height;
+        lastAspect = aspect;
+
+        float scaleHeight = (float)width / height / aspect;
+        Rect viewport = scaleHeight < 1f
+            ? new Rect(0f, (1f - scaleHeight) / 2f, 1f, scaleHeight)
+            : new Rect((1f - 1f / scaleHeight) / 2f, 0f, 1f / scaleHeight, 1f);
+        viewCamera.rect = viewport;
+
+        SetBar(0, Vector2.zero, new Vector2(1f, viewport.yMin));
+        SetBar(1, new Vector2(0f, viewport.yMax), Vector2.one);
+        SetBar(2, new Vector2(0f, viewport.yMin), new Vector2(viewport.xMin, viewport.yMax));
+        SetBar(3, new Vector2(viewport.xMax, viewport.yMin), new Vector2(1f, viewport.yMax));
+    }
+
+    private void CreateBars()
+    {
+        var root = new GameObject("LetterboxBars", typeof(RectTransform), typeof(Canvas), typeof(GraphicRaycaster));
+        root.transform.SetParent(transform, false);
+        barsCanvas = root.GetComponent<Canvas>();
+        barsCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        barsCanvas.targetDisplay = viewCamera.targetDisplay;
+        // 明るさの幕（32000）より手前、起動フェード（32767）より奥に置く。
+        barsCanvas.sortingOrder = 32001;
+        bars = new RectTransform[4];
+        for (int i = 0; i < bars.Length; i++)
         {
-            // 上下に黒帯（レターボックス）
-            Rect rect = camera.rect;
-            rect.width = 1.0f;
-            rect.height = scaleHeight;
-            rect.x = 0;
-            rect.y = (1.0f - scaleHeight) / 2.0f;
-            camera.rect = rect;
+            var bar = new GameObject("Bar", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            bar.transform.SetParent(root.transform, false);
+            Image image = bar.GetComponent<Image>();
+            image.color = Color.black;
+            // 黒帯の上では、後ろにあるUIを押せないようにする。
+            image.raycastTarget = true;
+            bars[i] = image.rectTransform;
         }
-        // 画面が基準より横長（例：21:9）、または同じ
-        else
-        {
-            // 左右に黒帯（ピラーボックス）。同じ比率なら scaleWidth が 1 になり帯は付かない
-            float scaleWidth = 1.0f / scaleHeight;
-            Rect rect = camera.rect;
-            rect.width = scaleWidth;
-            rect.height = 1.0f;
-            rect.x = (1.0f - scaleWidth) / 2.0f;
-            rect.y = 0;
-            camera.rect = rect;
-        }
+    }
+
+    private void SetBar(int index, Vector2 min, Vector2 max)
+    {
+        RectTransform bar = bars[index];
+        bar.anchorMin = min;
+        bar.anchorMax = max;
+        bar.offsetMin = Vector2.zero;
+        bar.offsetMax = Vector2.zero;
+        // 描画範囲外はカメラが消去しないため、黒いImageで毎フレーム塗り直す。
+        bar.gameObject.SetActive(max.x > min.x && max.y > min.y);
     }
 }
