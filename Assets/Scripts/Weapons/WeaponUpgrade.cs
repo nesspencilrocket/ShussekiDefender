@@ -9,6 +9,10 @@ public class WeaponUpgrade : MonoBehaviour
     [SerializeField] private float addDamage;//増加ダメージ
     [SerializeField] private float decreaseInterval;//インターバル減少
 
+    [Tooltip("Lv1からLv2への強化だけ、ダメージ増加と発射間隔短縮に掛ける倍率")]
+    [Min(1f)]
+    [SerializeField] private float firstUpgradeMultiplier = 1.2f;
+
     [Header("上限")]
     [Tooltip("この回数まで強化できる。到達すると UI のボタンは効かなくなる")]
     [SerializeField] private int maxLevel = 5;
@@ -54,12 +58,16 @@ public class WeaponUpgrade : MonoBehaviour
         //コインがコストよりあるのか判定
         if (CurrencyManager.instance.totalCoins >= currentUpgradeCost)
         {
+            // 最初の強化の手応えを増やし、Lv2以降は従来の増分で伸ばす。
+            float effectMultiplier = level == 1 ? firstUpgradeMultiplier : 1f;
+
             //能力強化
-            weaponControl.bulletDamage += addDamage;
+            weaponControl.bulletDamage += addDamage * effectMultiplier;
 
             // 発射間隔は下限で止める。上限レベルと二重に守っているのは、
             // decreaseInterval を大きく設定してもゼロ割れしないようにするため。
-            weaponControl.delay = Mathf.Max(minDelay, weaponControl.delay - decreaseInterval);
+            weaponControl.delay = Mathf.Max(minDelay,
+                weaponControl.delay - decreaseInterval * effectMultiplier);
 
             UpdateUpgrade();
         }
