@@ -164,7 +164,8 @@ public class SettingsScreen : MonoBehaviour
     {
         if (speedLabel != null)
         {
-            speedLabel.text = GameSpeed.IsFast ? "×1.5（早送り）" : "×1.0（標準）";
+            speedLabel.text = GameSpeed.IsSlow ? "×0.8（ゆっくり）"
+                : GameSpeed.IsFast ? "×1.5（早送り）" : "×1.0（標準）";
         }
     }
 

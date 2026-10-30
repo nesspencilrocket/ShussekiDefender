@@ -14,6 +14,7 @@
 /// </summary>
 public static class GameSpeed
 {
+    public const float SLOW = 0.8f;
     public const float NORMAL = 1f;
     public const float FAST = 1.5f;
 
@@ -29,9 +30,7 @@ public static class GameSpeed
         {
             if (selected < 0f)
             {
-                selected = PlayerPrefs.GetFloat(SAVE_KEY, NORMAL);
-                // 想定外の値が保存されていても壊れないようにする
-                if (!Mathf.Approximately(selected, FAST)) selected = NORMAL;
+                selected = Normalize(PlayerPrefs.GetFloat(SAVE_KEY, NORMAL));
             }
             return selected;
         }
@@ -39,6 +38,8 @@ public static class GameSpeed
 
     /// <summary>いま倍速が選ばれているか。ボタンの見た目切り替えに使う</summary>
     public static bool IsFast => Mathf.Approximately(Selected, FAST);
+
+    public static bool IsSlow => Mathf.Approximately(Selected, SLOW);
 
     /// <summary>進行が止まっているか</summary>
     public static bool IsPaused => Time.timeScale == 0f;
@@ -49,7 +50,7 @@ public static class GameSpeed
     /// </summary>
     public static void Select(float speed)
     {
-        selected = Mathf.Approximately(speed, FAST) ? FAST : NORMAL;
+        selected = Normalize(speed);
 
         PlayerPrefs.SetFloat(SAVE_KEY, selected);
         PlayerPrefs.Save();
@@ -57,10 +58,17 @@ public static class GameSpeed
         if (!IsPaused) Time.timeScale = selected;
     }
 
-    /// <summary>等速と倍速を入れ替える。ボタンから呼ぶ</summary>
+    /// <summary>標準 → 早送り → ゆっくり の順に切り替える。</summary>
     public static void Toggle()
     {
-        Select(IsFast ? NORMAL : FAST);
+        Select(IsFast ? SLOW : IsSlow ? NORMAL : FAST);
+    }
+
+    private static float Normalize(float speed)
+    {
+        if (Mathf.Approximately(speed, SLOW)) return SLOW;
+        if (Mathf.Approximately(speed, FAST)) return FAST;
+        return NORMAL;
     }
 
     /// <summary>進行を止める（勝敗表示など）</summary>
