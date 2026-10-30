@@ -33,6 +33,11 @@ public class EnemyHP : MonoBehaviour
     /// <summary>最大 HP。残量の割合を出したいときに使う</summary>
     public float MaxHP => hp;
 
+    public bool IsAlive => isActiveAndEnabled && currentHP > 0f;
+
+    // 同じプール個体でも出現し直した敵は別の相手として扱い、古い追尾弾を引き継がせない。
+    public uint SpawnVersion { get; private set; }
+
     /// <summary>この個体の設定。倒したときの報酬や集計に使う</summary>
     public EnemyData Data { get; private set; }
 
@@ -65,6 +70,7 @@ public class EnemyHP : MonoBehaviour
 
     private void OnEnable()
     {
+        SpawnVersion++;
         currentHP = hp;
 
         if (hpBarImage != null)
@@ -97,6 +103,8 @@ public class EnemyHP : MonoBehaviour
 
     public void ReduceHP(float damage)
     {
+        // 同じフレームの貫通・範囲・別の弾で、撃破処理と報酬が重複しないようにする。
+        if (!IsAlive || damage <= 0f) return;
         currentHP -= damage;
 
         // OnEnemyHit は DeathCheck の前に呼ぶ。
