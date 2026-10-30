@@ -157,6 +157,14 @@ MonoBehaviour:
   damage: 10
   fireBullet: {fileID: 8680826643702983046, guid: 113c95b7c4483b848b443c9294631e75, type: 3}
   firingInterval: 2.5
+  levelledPiercingShots: 1
+  upgradedShotDamageScale: 0.8
+  pierceDamageRetention: 0.65
+  splashRadiusAtLevel2: 0.45
+  splashRadiusPerLevel: 0.05
+  splashDamageAtLevel2: 0.1
+  splashDamagePerLevel: 0.01
+  maxSplashTargets: 2
 --- !u!114 &4775250167374610158
 MonoBehaviour:
   m_ObjectHideFlags: 0

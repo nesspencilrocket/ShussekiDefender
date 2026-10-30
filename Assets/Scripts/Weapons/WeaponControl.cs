@@ -22,6 +22,23 @@ public class WeaponControl : MonoBehaviour
     private float nextFireTime;
     [NonSerialized] public float delay;
 
+    [Header("黄色いタワーの貫通強化")]
+    [SerializeField] private bool levelledPiercingShots;
+
+    [Tooltip("Lv2以降は複数体に当たるため、1体目のダメージをこの割合に抑える")]
+    [Range(0f, 1f)] [SerializeField] private float upgradedShotDamageScale = 0.8f;
+
+    [Tooltip("1体貫通するごとに残るダメージの割合")]
+    [Range(0f, 1f)] [SerializeField] private float pierceDamageRetention = 0.65f;
+
+    [Min(0f)] [SerializeField] private float splashRadiusAtLevel2 = 0.45f;
+    [Min(0f)] [SerializeField] private float splashRadiusPerLevel = 0.05f;
+    [Range(0f, 1f)] [SerializeField] private float splashDamageAtLevel2 = 0.1f;
+    [Range(0f, 1f)] [SerializeField] private float splashDamagePerLevel = 0.01f;
+
+    [Tooltip("1発の弾が範囲ダメージを与えられる追加の敵数。貫通1回ごとではなく1発全体で数える")]
+    [Min(0)] [SerializeField] private int maxSplashTargets = 2;
+
     //弾のプール
     private ObjectPooler pooler;
 
@@ -44,7 +61,8 @@ public class WeaponControl : MonoBehaviour
         // ★★★ ロジックを大幅にシンプル化 ★★★
         // 1. 次の発射時間が来ているか？
         // 2. 攻撃対象の敵は存在するか？
-        if (Time.time > nextFireTime && weapon.currentEnemyTarget != null)
+        if (Time.time > nextFireTime && weapon.currentEnemyTarget != null
+            && weapon.currentEnemyTarget.enemyHP != null && weapon.currentEnemyTarget.enemyHP.IsAlive)
         {
             // 上記２つを満たしたら、発射処理を呼び出す
             Fire();
@@ -78,7 +96,18 @@ public class WeaponControl : MonoBehaviour
         if (bullet != null)
         {
             // 弾の初期設定を行い、ターゲットをセットする
-            bullet.BulletInitialization(this, bulletDamage);
+            int level = weapon.weaponUpgrade != null ? Mathf.Max(1, weapon.weaponUpgrade.level) : 1;
+            bool upgradedPiercing = levelledPiercingShots && level >= 2;
+            bullet.BulletInitialization(this,
+                bulletDamage * (upgradedPiercing ? upgradedShotDamageScale : 1f));
+            if (upgradedPiercing)
+            {
+                // 発射時点の性能を弾へ渡し、飛んでいる途中の強化や売却に影響されないようにする。
+                bullet.ConfigurePiercing(level, pierceDamageRetention,
+                    splashRadiusAtLevel2 + splashRadiusPerLevel * (level - 2),
+                    splashDamageAtLevel2 + splashDamagePerLevel * (level - 2),
+                    maxSplashTargets, weapon.attackRange + 2f);
+            }
             bullet.SetTargetEnemy(weapon.currentEnemyTarget);
             // 弾を表示する
             newBulletObject.SetActive(true);
