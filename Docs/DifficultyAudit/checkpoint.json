@@ -1,0 +1,9 @@
+{
+  "totalCompleted": 112,
+  "stage1to3Completed": 61,
+  "remaining": 21,
+  "remainingStage1to3": 17,
+  "lastCompleted": "s1-Normal234-delay5-101",
+  "interrupted": "s1-Normal123-delay10-101",
+  "inputHashesUnchanged": true
+}

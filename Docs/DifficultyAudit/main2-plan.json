@@ -1,0 +1,1059 @@
+{
+  "output": "Temp/DifficultyAudit/main2",
+  "cases": [
+    {
+      "id": "s1-ReactiveNormal-101",
+      "stage": 1,
+      "seed": 101,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "id": "s1-ReactiveNormal-2027",
+      "stage": 1,
+      "seed": 2027,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "id": "s2-ReactiveNormal-101",
+      "stage": 2,
+      "seed": 101,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "id": "s2-ReactiveNormal-2027",
+      "stage": 2,
+      "seed": 2027,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "id": "s3-ReactiveNormal-101",
+      "stage": 3,
+      "seed": 101,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "id": "s3-ReactiveNormal-2027",
+      "stage": 3,
+      "seed": 2027,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "id": "s4-ReactiveNormal-101",
+      "stage": 4,
+      "seed": 101,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "id": "s4-ReactiveNormal-2027",
+      "stage": 4,
+      "seed": 2027,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "id": "s5-ReactiveNormal-101",
+      "stage": 5,
+      "seed": 101,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "id": "s5-ReactiveNormal-2027",
+      "stage": 5,
+      "seed": 2027,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "id": "s6-ReactiveNormal-101",
+      "stage": 6,
+      "seed": 101,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "id": "s6-ReactiveNormal-2027",
+      "stage": 6,
+      "seed": 2027,
+      "fps": 60,
+      "policy": "ReactiveNormal",
+      "delay": 5,
+      "period": 2,
+      "nodes": []
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-InitialNormal-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-ReactiveMixed-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-ReactiveMixedSkill-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 2,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s2-InitialNormal-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 2,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s2-ReactiveMixed-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 2,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s2-ReactiveMixedSkill-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 3,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s3-InitialNormal-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 3,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s3-ReactiveMixed-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 3,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s3-ReactiveMixedSkill-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 4,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s4-InitialNormal-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 4,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s4-ReactiveMixed-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 4,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s4-ReactiveMixedSkill-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 5,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s5-InitialNormal-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 5,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s5-ReactiveMixed-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 5,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s5-ReactiveMixedSkill-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 6,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s6-InitialNormal-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 6,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s6-ReactiveMixed-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 6,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s6-ReactiveMixedSkill-101",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-InitialNormal-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-ReactiveMixed-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-ReactiveMixedSkill-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 2,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s2-InitialNormal-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 2,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s2-ReactiveMixed-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 2,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s2-ReactiveMixedSkill-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 3,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s3-InitialNormal-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 3,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s3-ReactiveMixed-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 3,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s3-ReactiveMixedSkill-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 4,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s4-InitialNormal-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 4,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s4-ReactiveMixed-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 4,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s4-ReactiveMixedSkill-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 5,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s5-InitialNormal-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 5,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s5-ReactiveMixed-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 5,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s5-ReactiveMixedSkill-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 6,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [],
+      "id": "s6-InitialNormal-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 6,
+      "period": 2,
+      "policy": "ReactiveMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s6-ReactiveMixed-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 6,
+      "period": 2,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s6-ReactiveMixedSkill-2027",
+      "delay": 5
+    },
+    {
+      "seed": 17,
+      "stage": 1,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-EarlyMixedSkill-17",
+      "delay": 1
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-EarlyMixedSkill-101",
+      "delay": 1
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-EarlyMixedSkill-2027",
+      "delay": 1
+    },
+    {
+      "seed": 17,
+      "stage": 2,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s2-EarlyMixedSkill-17",
+      "delay": 1
+    },
+    {
+      "seed": 101,
+      "stage": 2,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s2-EarlyMixedSkill-101",
+      "delay": 1
+    },
+    {
+      "seed": 2027,
+      "stage": 2,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s2-EarlyMixedSkill-2027",
+      "delay": 1
+    },
+    {
+      "seed": 17,
+      "stage": 3,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s3-EarlyMixedSkill-17",
+      "delay": 1
+    },
+    {
+      "seed": 101,
+      "stage": 3,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s3-EarlyMixedSkill-101",
+      "delay": 1
+    },
+    {
+      "seed": 2027,
+      "stage": 3,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s3-EarlyMixedSkill-2027",
+      "delay": 1
+    },
+    {
+      "seed": 17,
+      "stage": 4,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s4-EarlyMixedSkill-17",
+      "delay": 1
+    },
+    {
+      "seed": 101,
+      "stage": 4,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s4-EarlyMixedSkill-101",
+      "delay": 1
+    },
+    {
+      "seed": 2027,
+      "stage": 4,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s4-EarlyMixedSkill-2027",
+      "delay": 1
+    },
+    {
+      "seed": 17,
+      "stage": 5,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s5-EarlyMixedSkill-17",
+      "delay": 1
+    },
+    {
+      "seed": 101,
+      "stage": 5,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s5-EarlyMixedSkill-101",
+      "delay": 1
+    },
+    {
+      "seed": 2027,
+      "stage": 5,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s5-EarlyMixedSkill-2027",
+      "delay": 1
+    },
+    {
+      "seed": 17,
+      "stage": 6,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s6-EarlyMixedSkill-17",
+      "delay": 1
+    },
+    {
+      "seed": 101,
+      "stage": 6,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s6-EarlyMixedSkill-101",
+      "delay": 1
+    },
+    {
+      "seed": 2027,
+      "stage": 6,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 60,
+      "nodes": [],
+      "id": "s6-EarlyMixedSkill-2027",
+      "delay": 1
+    },
+    {
+      "seed": 17,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        2,
+        4
+      ],
+      "id": "s1-Normal124-delay5-17",
+      "delay": 5
+    },
+    {
+      "seed": 17,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        3,
+        4
+      ],
+      "id": "s1-Normal134-delay5-17",
+      "delay": 5
+    },
+    {
+      "seed": 17,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        2,
+        3,
+        4
+      ],
+      "id": "s1-Normal234-delay5-17",
+      "delay": 5
+    },
+    {
+      "seed": 17,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        2,
+        3
+      ],
+      "id": "s1-Normal123-delay10-17",
+      "delay": 10
+    },
+    {
+      "seed": 17,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        2,
+        4
+      ],
+      "id": "s1-Normal124-delay10-17",
+      "delay": 10
+    },
+    {
+      "seed": 17,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        3,
+        4
+      ],
+      "id": "s1-Normal134-delay10-17",
+      "delay": 10
+    },
+    {
+      "seed": 17,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        2,
+        3,
+        4
+      ],
+      "id": "s1-Normal234-delay10-17",
+      "delay": 10
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        2,
+        4
+      ],
+      "id": "s1-Normal124-delay5-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        3,
+        4
+      ],
+      "id": "s1-Normal134-delay5-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        2,
+        3,
+        4
+      ],
+      "id": "s1-Normal234-delay5-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        2,
+        3
+      ],
+      "id": "s1-Normal123-delay10-101",
+      "delay": 10
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        2,
+        4
+      ],
+      "id": "s1-Normal124-delay10-101",
+      "delay": 10
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        3,
+        4
+      ],
+      "id": "s1-Normal134-delay10-101",
+      "delay": 10
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        2,
+        3,
+        4
+      ],
+      "id": "s1-Normal234-delay10-101",
+      "delay": 10
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        2,
+        4
+      ],
+      "id": "s1-Normal124-delay5-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        3,
+        4
+      ],
+      "id": "s1-Normal134-delay5-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        2,
+        3,
+        4
+      ],
+      "id": "s1-Normal234-delay5-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        2,
+        3
+      ],
+      "id": "s1-Normal123-delay10-2027",
+      "delay": 10
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        2,
+        4
+      ],
+      "id": "s1-Normal124-delay10-2027",
+      "delay": 10
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        1,
+        3,
+        4
+      ],
+      "id": "s1-Normal134-delay10-2027",
+      "delay": 10
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialNormal",
+      "fps": 60,
+      "nodes": [
+        2,
+        3,
+        4
+      ],
+      "id": "s1-Normal234-delay10-2027",
+      "delay": 10
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "SkillOnly",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-SkillOnly-101",
+      "delay": 5
+    },
+    {
+      "seed": 101,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-InitialMixed-101",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "SkillOnly",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-SkillOnly-2027",
+      "delay": 5
+    },
+    {
+      "seed": 2027,
+      "stage": 1,
+      "period": 2,
+      "policy": "InitialMixed",
+      "fps": 60,
+      "nodes": [],
+      "id": "s1-InitialMixed-2027",
+      "delay": 5
+    },
+    {
+      "seed": 17,
+      "stage": 1,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 30,
+      "nodes": [],
+      "id": "s1-EarlyMixedSkill-fps30-17",
+      "delay": 1
+    },
+    {
+      "seed": 17,
+      "stage": 5,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 30,
+      "nodes": [],
+      "id": "s5-EarlyMixedSkill-fps30-17",
+      "delay": 1
+    },
+    {
+      "seed": 17,
+      "stage": 6,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 30,
+      "nodes": [],
+      "id": "s6-EarlyMixedSkill-fps30-17",
+      "delay": 1
+    },
+    {
+      "seed": 17,
+      "stage": 1,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 120,
+      "nodes": [],
+      "id": "s1-EarlyMixedSkill-fps120-17",
+      "delay": 1
+    },
+    {
+      "seed": 17,
+      "stage": 5,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 120,
+      "nodes": [],
+      "id": "s5-EarlyMixedSkill-fps120-17",
+      "delay": 1
+    },
+    {
+      "seed": 17,
+      "stage": 6,
+      "period": 1,
+      "policy": "ReactiveMixedSkill",
+      "fps": 120,
+      "nodes": [],
+      "id": "s6-EarlyMixedSkill-fps120-17",
+      "delay": 1
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "path": "Assets/ScriptableObject/Stages/Stage_1.asset",
+    "sha256": "EAC734567B740688645BDA9E3CCED9B2E040D839FA8C6B1B7E987416A93CE794"
+  },
+  {
+    "path": "Assets/ScriptableObject/Stages/Stage_2.asset",
+    "sha256": "DD028121BB87D0272A995D0C64D59894FB6CA54BD833280BC5137DB052CD7E82"
+  },
+  {
+    "path": "Assets/ScriptableObject/Stages/Stage_3.asset",
+    "sha256": "CDD21F1B0272383659D24311DAFC00CE90B98C73660D5463201860038DCC8B71"
+  },
+  {
+    "path": "Assets/ScriptableObject/Stages/Stage_4.asset",
+    "sha256": "453CFBA583495858FD978F8922B55455126E06770081D68F90DC0F55046DC0A7"
+  },
+  {
+    "path": "Assets/ScriptableObject/Stages/Stage_5.asset",
+    "sha256": "DEE0795DB0E7B2A696917C4D77D450479AB74AD12BFFB5D94A03C88C67DC9F42"
+  },
+  {
+    "path": "Assets/ScriptableObject/Stages/Stage_6.asset",
+    "sha256": "5CBA53AB36939BA18E2EABC89C16EE75590894D9EA4DEFFCF6DED71F73BCB561"
+  },
+  {
+    "path": "Assets/ScriptableObject/Weapon.asset",
+    "sha256": "9374666350D943120596CD94389167CCA7971A979E6AC87170B23D0587ACAC43"
+  },
+  {
+    "path": "Assets/ScriptableObject/StrongWeapon.asset",
+    "sha256": "951A6B665AAC0F1319AA24E4E5780865AECAAC5008BB55A01260FF0290150D77"
+  },
+  {
+    "path": "Assets/ScriptableObject/Enemies/Pedestrian.asset",
+    "sha256": "B319122B25F063EC2F89B2C32F7DFDC5F930656EF5606EB616D852944B1F4FC3"
+  },
+  {
+    "path": "Assets/Scenes/Stage_1.unity",
+    "sha256": "964A848A9BB3B46BDB90E4FE5CF42959FDF6A5F7785CBCB4F783CBD5E2E573D7"
+  },
+  {
+    "path": "Assets/Scripts/system/Spawner.cs",
+    "sha256": "DE42D3D5BB28FA90514775A93E2C2A745FB5F00D3989855502FE71E551CE3AF3"
+  },
+  {
+    "path": "Assets/Scripts/system/GameManager.cs",
+    "sha256": "71D833CC124411C8ACFFF7E87B0BD1188CA27EF107D6F78F00B1DCE5CB8A44C2"
+  },
+  {
+    "path": "Assets/Scripts/enemy/Enemy.cs",
+    "sha256": "FE8C48E65FAFD11CFC7E5FE52B12638E76615817DC3D79F8E2434048610434C1"
+  },
+  {
+    "path": "Assets/Scripts/Weapons/WeaponControl.cs",
+    "sha256": "F5B5853C0848AB44ACC0F66DDD316CF8ECC00467579701A7698A5CE99F1D7191"
+  },
+  {
+    "path": "Assets/Scripts/Weapons/WeaponUpgrade.cs",
+    "sha256": "874A093CFEB0B3D0D8C6E2CC73C40F9A7ED5027A55A78DA89C4DE2C9FA7456DA"
+  },
+  {
+    "path": "Assets/Scripts/Weapons/Bullet.cs",
+    "sha256": "0FBD7798E3310DDBBF0D7CCD3AD451DA5155CC8C673AE340AA9026DD69985BCF"
+  }
+]

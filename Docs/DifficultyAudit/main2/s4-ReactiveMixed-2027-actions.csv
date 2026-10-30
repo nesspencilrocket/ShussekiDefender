@@ -1,0 +1,6 @@
+time,action,node,cost,goldAfter
+5.000,buyNormal,1,20,100
+7.000,buyYellow,2,40,60
+9.000,buyNormal,3,30,30
+17.017,buyYellow,4,60,10
+21.017,upgradeTo2,1,50,10

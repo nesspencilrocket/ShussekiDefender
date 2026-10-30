@@ -1,0 +1,605 @@
+[
+  {
+    "stage": 1,
+    "hp": 8.0,
+    "time": 30.0,
+    "loss": 50.0,
+    "money": 100.0,
+    "maxTowers": 0.0,
+    "ramp": 4,
+    "nodesPerLevel": 2.0,
+    "waves": [
+      {
+        "count": 5,
+        "gap": 1.0,
+        "constant": 0.85,
+        "minimum": 0.7,
+        "maximum": 1.0
+      },
+      {
+        "count": 10,
+        "gap": 1.0,
+        "constant": 0.5,
+        "minimum": 0.4,
+        "maximum": 0.6
+      },
+      {
+        "count": 20,
+        "gap": 1.0,
+        "constant": 0.3,
+        "minimum": 0.24,
+        "maximum": 0.36
+      },
+      {
+        "count": 30,
+        "gap": 1.5,
+        "constant": 0.18,
+        "minimum": 0.144,
+        "maximum": 0.216
+      },
+      {
+        "count": 200,
+        "gap": 0.0,
+        "constant": 0.15,
+        "minimum": 0.12,
+        "maximum": 0.18
+      }
+    ],
+    "normalShots": [
+      4,
+      3,
+      2,
+      2,
+      2
+    ],
+    "yellowFirstShots": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "unlockKills": [
+      5,
+      15,
+      30
+    ],
+    "minimumSchedule": {
+      "waveStarts": [
+        0.0,
+        4.5,
+        10.250000000000002,
+        16.450000000000006,
+        22.509999999999962
+      ],
+      "lastSpawn": 46.44999999999973,
+      "spawnsBeforeClear": 127
+    },
+    "meanSchedule": {
+      "waveStarts": [
+        0.0,
+        5.25,
+        12.125,
+        19.62500000000001,
+        26.825000000000003
+      ],
+      "lastSpawn": 56.74999999999973,
+      "spawnsBeforeClear": 86
+    },
+    "maximumSchedule": {
+      "waveStarts": [
+        0.0,
+        6.0,
+        13.999999999999998,
+        22.79999999999999,
+        31.140000000000015
+      ],
+      "lastSpawn": 67.05000000000008,
+      "spawnsBeforeClear": 65
+    }
+  },
+  {
+    "stage": 2,
+    "hp": 8.6,
+    "time": 40.0,
+    "loss": 45.0,
+    "money": 100.0,
+    "maxTowers": 9.0,
+    "ramp": 4,
+    "nodesPerLevel": 2.0,
+    "waves": [
+      {
+        "count": 8,
+        "gap": 1.0,
+        "constant": 0.775,
+        "minimum": 0.635,
+        "maximum": 0.915
+      },
+      {
+        "count": 14,
+        "gap": 1.0,
+        "constant": 0.46,
+        "minimum": 0.368,
+        "maximum": 0.552
+      },
+      {
+        "count": 26,
+        "gap": 1.0,
+        "constant": 0.28,
+        "minimum": 0.224,
+        "maximum": 0.336
+      },
+      {
+        "count": 40,
+        "gap": 1.5,
+        "constant": 0.17,
+        "minimum": 0.136,
+        "maximum": 0.204
+      },
+      {
+        "count": 220,
+        "gap": 0.0,
+        "constant": 0.14,
+        "minimum": 0.112,
+        "maximum": 0.168
+      }
+    ],
+    "normalShots": [
+      5,
+      3,
+      3,
+      2,
+      2
+    ],
+    "yellowFirstShots": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "unlockKills": [
+      6,
+      20,
+      40
+    ],
+    "minimumSchedule": {
+      "waveStarts": [
+        0.0,
+        6.079999999999999,
+        12.899500000000002,
+        20.083500000000004,
+        27.243499999999976
+      ],
+      "lastSpawn": 51.83150000000024,
+      "spawnsBeforeClear": 202
+    },
+    "meanSchedule": {
+      "waveStarts": [
+        0.0,
+        7.200000000000001,
+        15.42750000000001,
+        24.157500000000038,
+        32.7325000000001
+      ],
+      "lastSpawn": 63.46750000000023,
+      "spawnsBeforeClear": 140
+    },
+    "maximumSchedule": {
+      "waveStarts": [
+        0.0,
+        8.32,
+        17.955499999999994,
+        28.23149999999996,
+        38.22149999999998
+      ],
+      "lastSpawn": 75.1035000000003,
+      "spawnsBeforeClear": 99
+    }
+  },
+  {
+    "stage": 3,
+    "hp": 9.200000000000001,
+    "time": 50.0,
+    "loss": 40.0,
+    "money": 120.0,
+    "maxTowers": 9.0,
+    "ramp": 4,
+    "nodesPerLevel": 2.0,
+    "waves": [
+      {
+        "count": 10,
+        "gap": 1.0,
+        "constant": 0.7,
+        "minimum": 0.57,
+        "maximum": 0.83
+      },
+      {
+        "count": 18,
+        "gap": 1.0,
+        "constant": 0.42,
+        "minimum": 0.336,
+        "maximum": 0.504
+      },
+      {
+        "count": 32,
+        "gap": 1.0,
+        "constant": 0.26,
+        "minimum": 0.208,
+        "maximum": 0.312
+      },
+      {
+        "count": 50,
+        "gap": 1.5,
+        "constant": 0.16,
+        "minimum": 0.128,
+        "maximum": 0.192
+      },
+      {
+        "count": 240,
+        "gap": 0.0,
+        "constant": 0.13,
+        "minimum": 0.104,
+        "maximum": 0.156
+      }
+    ],
+    "normalShots": [
+      5,
+      3,
+      3,
+      2,
+      2
+    ],
+    "yellowFirstShots": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "unlockKills": [
+      8,
+      28,
+      60
+    ],
+    "minimumSchedule": {
+      "waveStarts": [
+        0.0,
+        6.7,
+        14.333000000000006,
+        22.308999999999966,
+        30.408999999999967
+      ],
+      "lastSpawn": 55.32499999999978,
+      "spawnsBeforeClear": 298
+    },
+    "meanSchedule": {
+      "waveStarts": [
+        0.0,
+        8.0,
+        17.259999999999998,
+        26.980000000000043,
+        36.72999999999998
+      ],
+      "lastSpawn": 67.87500000000037,
+      "spawnsBeforeClear": 212
+    },
+    "maximumSchedule": {
+      "waveStarts": [
+        0.0,
+        9.299999999999999,
+        20.187000000000005,
+        31.65100000000004,
+        43.051000000000045
+      ],
+      "lastSpawn": 80.42500000000051,
+      "spawnsBeforeClear": 154
+    }
+  },
+  {
+    "stage": 4,
+    "hp": 9.8,
+    "time": 60.0,
+    "loss": 35.0,
+    "money": 120.0,
+    "maxTowers": 8.0,
+    "ramp": 4,
+    "nodesPerLevel": 1.0,
+    "waves": [
+      {
+        "count": 12,
+        "gap": 1.0,
+        "constant": 0.625,
+        "minimum": 0.505,
+        "maximum": 0.745
+      },
+      {
+        "count": 22,
+        "gap": 1.0,
+        "constant": 0.38,
+        "minimum": 0.304,
+        "maximum": 0.456
+      },
+      {
+        "count": 38,
+        "gap": 1.0,
+        "constant": 0.24,
+        "minimum": 0.192,
+        "maximum": 0.288
+      },
+      {
+        "count": 60,
+        "gap": 1.5,
+        "constant": 0.15,
+        "minimum": 0.12,
+        "maximum": 0.18
+      },
+      {
+        "count": 260,
+        "gap": 0.0,
+        "constant": 0.12,
+        "minimum": 0.096,
+        "maximum": 0.144
+      }
+    ],
+    "normalShots": [
+      5,
+      4,
+      3,
+      2,
+      2
+    ],
+    "yellowFirstShots": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "unlockKills": [
+      8,
+      20,
+      35,
+      55,
+      80,
+      110
+    ],
+    "minimumSchedule": {
+      "waveStarts": [
+        0.0,
+        7.06,
+        15.250500000000004,
+        23.82650000000001,
+        32.70650000000006
+      ],
+      "lastSpawn": 57.630499999999174,
+      "spawnsBeforeClear": 392
+    },
+    "meanSchedule": {
+      "waveStarts": [
+        0.0,
+        8.5,
+        18.472500000000007,
+        28.942499999999953,
+        39.667499999999876
+      ],
+      "lastSpawn": 70.82249999999962,
+      "spawnsBeforeClear": 301
+    },
+    "maximumSchedule": {
+      "waveStarts": [
+        0.0,
+        9.94,
+        21.69449999999999,
+        34.05849999999999,
+        46.62849999999997
+      ],
+      "lastSpawn": 84.01450000000052,
+      "spawnsBeforeClear": 225
+    }
+  },
+  {
+    "stage": 5,
+    "hp": 10.4,
+    "time": 70.0,
+    "loss": 30.0,
+    "money": 150.0,
+    "maxTowers": 8.0,
+    "ramp": 4,
+    "nodesPerLevel": 1.0,
+    "waves": [
+      {
+        "count": 14,
+        "gap": 1.0,
+        "constant": 0.55,
+        "minimum": 0.44,
+        "maximum": 0.66
+      },
+      {
+        "count": 26,
+        "gap": 1.0,
+        "constant": 0.34,
+        "minimum": 0.272,
+        "maximum": 0.408
+      },
+      {
+        "count": 44,
+        "gap": 1.0,
+        "constant": 0.22,
+        "minimum": 0.176,
+        "maximum": 0.264
+      },
+      {
+        "count": 70,
+        "gap": 1.5,
+        "constant": 0.14,
+        "minimum": 0.112,
+        "maximum": 0.168
+      },
+      {
+        "count": 280,
+        "gap": 0.0,
+        "constant": 0.11,
+        "minimum": 0.088,
+        "maximum": 0.132
+      }
+    ],
+    "normalShots": [
+      6,
+      4,
+      3,
+      2,
+      2
+    ],
+    "yellowFirstShots": [
+      2,
+      2,
+      1,
+      1,
+      1
+    ],
+    "unlockKills": [
+      10,
+      25,
+      45,
+      70,
+      100,
+      140
+    ],
+    "minimumSchedule": {
+      "waveStarts": [
+        0.0,
+        7.160000000000002,
+        15.652000000000006,
+        24.635999999999942,
+        34.13599999999985
+      ],
+      "lastSpawn": 58.74800000000011,
+      "spawnsBeforeClear": 434
+    },
+    "meanSchedule": {
+      "waveStarts": [
+        0.0,
+        8.7,
+        19.064999999999998,
+        30.044999999999952,
+        41.54499999999999
+      ],
+      "lastSpawn": 72.30999999999983,
+      "spawnsBeforeClear": 413
+    },
+    "maximumSchedule": {
+      "waveStarts": [
+        0.0,
+        10.24,
+        22.478000000000012,
+        35.45400000000002,
+        48.95399999999998
+      ],
+      "lastSpawn": 85.87200000000057,
+      "spawnsBeforeClear": 313
+    }
+  },
+  {
+    "stage": 6,
+    "hp": 11.0,
+    "time": 90.0,
+    "loss": 25.0,
+    "money": 150.0,
+    "maxTowers": 7.0,
+    "ramp": 0,
+    "nodesPerLevel": 1.0,
+    "waves": [
+      {
+        "count": 16,
+        "gap": 1.0,
+        "constant": 1.0,
+        "minimum": 0.35,
+        "maximum": 0.6
+      },
+      {
+        "count": 30,
+        "gap": 2.0,
+        "constant": 1.0,
+        "minimum": 0.16,
+        "maximum": 0.25
+      },
+      {
+        "count": 52,
+        "gap": 1.0,
+        "constant": 1.0,
+        "minimum": 0.13,
+        "maximum": 0.2
+      },
+      {
+        "count": 84,
+        "gap": 3.0,
+        "constant": 1.0,
+        "minimum": 0.08,
+        "maximum": 0.13
+      },
+      {
+        "count": 320,
+        "gap": 5.0,
+        "constant": 1.0,
+        "minimum": 0.07,
+        "maximum": 0.12
+      }
+    ],
+    "normalShots": [
+      6,
+      4,
+      3,
+      3,
+      2
+    ],
+    "yellowFirstShots": [
+      2,
+      2,
+      1,
+      1,
+      1
+    ],
+    "unlockKills": [
+      15,
+      40,
+      70,
+      110,
+      160,
+      220
+    ],
+    "minimumSchedule": {
+      "waveStarts": [
+        0.0,
+        6.599999999999999,
+        13.400000000000002,
+        21.159999999999986,
+        30.879999999999843
+      ],
+      "lastSpawn": 53.20999999999993,
+      "spawnsBeforeClear": 502
+    },
+    "meanSchedule": {
+      "waveStarts": [
+        0.0,
+        8.599999999999998,
+        16.75,
+        26.329999999999956,
+        38.149999999999885
+      ],
+      "lastSpawn": 68.45499999999953,
+      "spawnsBeforeClear": 502
+    },
+    "maximumSchedule": {
+      "waveStarts": [
+        0.0,
+        10.599999999999998,
+        20.099999999999998,
+        31.49999999999996,
+        45.420000000000165
+      ],
+      "lastSpawn": 83.70000000000051,
+      "spawnsBeforeClear": 502
+    }
+  }
+]
