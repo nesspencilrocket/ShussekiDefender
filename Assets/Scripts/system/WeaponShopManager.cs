@@ -46,6 +46,12 @@ public class WeaponShopManager : MonoBehaviour
         return count;
     }
 
+    /// <summary>この種類の武器を、次に 1 基置くときの値段（置いてある数が多いほど高い）</summary>
+    public int PriceOf(WeaponSettings weapon)
+    {
+        return weapon.PriceFor(PlacedCount(weapon));
+    }
+
     /// <summary>この種類の武器が、置ける数の上限（WeaponSettings.maxPlaced）に達しているか</summary>
     public bool IsAtLimit(WeaponSettings weapon)
     {
@@ -171,7 +177,7 @@ public class WeaponShopManager : MonoBehaviour
         // この種類の武器が上限まで置いてあれば、置かない
         if (IsAtLimit(weapon)) return;
 
-        int price = weapon.TurretShopCost;
+        int price = PriceOf(weapon);
         if (wallet == null || wallet.totalCoins < price) return;
 
         wallet.RemoveCoins(price);

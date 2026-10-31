@@ -42,7 +42,7 @@ public class WeaponUI : MonoBehaviour
 
     private Button button;
 
-    // 買えるかどうかは持ち金で変わるので、購入パネルを開くたびと、開いている間に合わせ直す
+    // 値段は同じ武器を置くほど上がり、買えるかどうかは持ち金で変わるので、購入パネルを開くたびと、開いている間に合わせ直す
     private void OnEnable()
     {
         RefreshPrice();
@@ -62,8 +62,9 @@ public class WeaponUI : MonoBehaviour
     {
         if (weaponSettings == null || weaponCost == null) return;
 
-        int price = weaponSettings.TurretShopCost;
         WeaponShopManager shop = WeaponShopManager.Instance;
+        // 値段は、同じ武器を置くほど上がる。売ると下がる
+        int price = (shop != null) ? shop.PriceOf(weaponSettings) : weaponSettings.TurretShopCost;
         bool atLimit = shop != null && shop.IsAtLimit(weaponSettings);
 
         if (price != shownPrice || atLimit != shownAtLimit)
