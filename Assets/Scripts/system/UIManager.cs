@@ -113,6 +113,20 @@ public class UIManager : MonoBehaviour
 
     // 【修正】メソッド名を変更したり、引数を変えたりしていないか確認し、
     // イベント登録で参照できるようにします。元の名前を維持。
+    /// <summary>
+    /// target が、いま開いている購入パネル・強化／売却パネルの中にあるか。
+    /// パネルの上のクリックで、後ろの設置スポットを選ばないために使う（NodeClickInput）。
+    /// </summary>
+    public bool IsGameplayPanel(GameObject target)
+    {
+        if (target == null) return false;
+        if (weaponShopPanel != null && weaponShopPanel.activeInHierarchy
+            && target.transform.IsChildOf(weaponShopPanel.transform)) return true;
+        if (nodeUIPanel != null && nodeUIPanel.activeInHierarchy
+            && target.transform.IsChildOf(nodeUIPanel.transform)) return true;
+        return false;
+    }
+
     private void NodeSelected(Node nodeSelected) // メソッド自体は問題ありません
     {
         if (!GameManager.IsGameActive || nodeSelected == null) return;

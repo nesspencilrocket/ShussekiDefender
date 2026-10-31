@@ -29,7 +29,6 @@ public class Node : MonoBehaviour
 
     private SpriteRenderer baseSprite;
     private Color baseColor = Color.white;
-    private Button button;
 
 
     public static Action OnWeaponSold;
@@ -77,31 +76,27 @@ public class Node : MonoBehaviour
 
         baseSprite = GetComponent<SpriteRenderer>();
         if (baseSprite != null) baseColor = baseSprite.color;
-        button = GetComponentInChildren<Button>(true);
-        FitSelectionArea();
+
+        // 選ぶ操作は NodeClickInput が、クリックの位置から決める。
+        // 以前の「Node ごとの World Space Canvas とボタン」は、上に重なった見えない UI に
+        // クリックを奪われて押せない場所ができたので、使わない（二重に反応しないよう消す）
+        Canvas legacyCanvas = GetComponentInChildren<Canvas>(true);
+        if (legacyCanvas != null) legacyCanvas.gameObject.SetActive(false);
+        NodeClickInput.Ensure().Register(this);
+
         ApplyLock();
     }
 
-    /// <summary>白い台座全体を押せるよう、個別の位置ずれと小さな判定範囲を補正する。</summary>
-    private void FitSelectionArea()
+    /// <summary>
+    /// 世界の座標 point が、この台座の範囲（外側へ margin ずつ広げる）に入っているか。
+    /// 選ぶ操作（NodeClickInput）が使う。
+    /// </summary>
+    public bool ContainsPoint(Vector2 point, float margin)
     {
-        if (button == null || baseSprite == null) return;
-        Canvas canvas = button.GetComponentInParent<Canvas>();
-        if (canvas == null || canvas.renderMode != RenderMode.WorldSpace) return;
-
-        RectTransform canvasRect = (RectTransform)canvas.transform;
-        Bounds visible = baseSprite.bounds;
-        Vector3 min = canvasRect.InverseTransformPoint(visible.min);
-        Vector3 max = canvasRect.InverseTransformPoint(visible.max);
-        Vector2 size = new Vector2(Mathf.Abs(max.x - min.x), Mathf.Abs(max.y - min.y));
-        // 各辺に6%の余裕を付ける。隣の台座まで判定が伸びない小さな範囲に留める。
-        canvasRect.sizeDelta = size * 1.12f;
-        canvasRect.position = visible.center;
-        RectTransform hit = (RectTransform)button.transform;
-        hit.anchorMin = Vector2.zero;
-        hit.anchorMax = Vector2.one;
-        hit.offsetMin = Vector2.zero;
-        hit.offsetMax = Vector2.zero;
+        if (baseSprite == null) return false;
+        Bounds b = baseSprite.bounds;
+        return point.x >= b.min.x - margin && point.x <= b.max.x + margin
+            && point.y >= b.min.y - margin && point.y <= b.max.y + margin;
     }
 
     private void OnEnable()
@@ -126,7 +121,6 @@ public class Node : MonoBehaviour
     {
         bool unlocked = IsUnlocked;
         if (baseSprite != null) baseSprite.color = unlocked ? baseColor : baseColor * lockedTint;
-        if (button != null) button.interactable = unlocked;
     }
 
 
