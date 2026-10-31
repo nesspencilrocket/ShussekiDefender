@@ -43,6 +43,12 @@ public class UIManager : MonoBehaviour
 
     }
 
+    private void Start()
+    {
+        // 桁が増えても所持金を次の行へ落とさず、財布の表示枠へ収める。
+        Money.FitOneLine(totalCoinsText);
+    }
+
     // 直前に表示した値。変わったときだけ文字列を作り直す
     private int lastCoins = int.MinValue;
     private int lastPasses = int.MinValue;
@@ -93,13 +99,23 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void CloseTurretShopPanel()
     {
-        weaponShopPanel.SetActive(false);
+        if (weaponShopPanel != null) weaponShopPanel.SetActive(false);
+    }
+
+    /// <summary>結果に切り替わったら、購入・強化パネルと攻撃範囲も閉じる。</summary>
+    public void CloseGameplayPanels()
+    {
+        CloseTurretShopPanel();
+        if (nodeUIPanel != null) nodeUIPanel.SetActive(false);
+        if (currentNodeSelected != null) currentNodeSelected.CloseAttackRange();
+        currentNodeSelected = null;
     }
 
     // 【修正】メソッド名を変更したり、引数を変えたりしていないか確認し、
     // イベント登録で参照できるようにします。元の名前を維持。
     private void NodeSelected(Node nodeSelected) // メソッド自体は問題ありません
     {
+        if (!GameManager.IsGameActive || nodeSelected == null) return;
         // 別のノードに移ったら、前のノードの攻撃範囲は閉じる
         if (currentNodeSelected != null && currentNodeSelected != nodeSelected)
         {
@@ -173,6 +189,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void UpgradeWeapon()
     {
+        if (!GameManager.IsGameActive) return;
         // Nullチェックを追加
         if (currentNodeSelected != null && currentNodeSelected.weapon != null)
         {
@@ -240,6 +257,7 @@ public class UIManager : MonoBehaviour
     //ボタンに登録する
     public void SellWeapon()
     {
+        if (!GameManager.IsGameActive) return;
         if (currentNodeSelected != null && nodeUIPanel != null)
         {
             currentNodeSelected.SellWeapon();

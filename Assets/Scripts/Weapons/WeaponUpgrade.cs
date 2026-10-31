@@ -38,7 +38,7 @@ public class WeaponUpgrade : MonoBehaviour
     /// <summary>UI 表示用（例：Level 3 / 5）</summary>
     public int MaxLevel => maxLevel;
 
-    void Start()
+    void Awake()
     {
         //変数に格納
         weaponControl = GetComponent<WeaponControl>();
@@ -50,6 +50,8 @@ public class WeaponUpgrade : MonoBehaviour
 
     public void UpgradeWeapon()
     {
+        // 結果表示後は、残っていた選択や連打から所持金・性能を変えさせない。
+        if (!GameManager.IsGameActive || weaponControl == null || CurrencyManager.instance == null) return;
         // 【重要】上限に達していたら何もしない。
         // 上限が無いと delay が 0 以下まで下がり、WeaponControl が
         // 毎フレーム発射する状態になってゲームが成立しなくなる。

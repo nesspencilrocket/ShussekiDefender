@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
     [Header("UI Panels & Buttons")]
     [SerializeField] private List<GameObject> gameOverPanels = new List<GameObject>();
     [SerializeField] private List<GameObject> gameClearPanels = new List<GameObject>();
-    [Tooltip("クリアパネル内の「次の時限へ」ボタン。最終ステージでは自動的に隠れる")]
+    [Tooltip("クリアパネル内の「次の時限へ」ボタン。遷移を見直すまで一時的に非表示")]
     [SerializeField] private GameObject nextStageButton;
 
     [Header("UI Text References")]
@@ -131,6 +131,8 @@ public class GameManager : MonoBehaviour
 
         SetPanelActive(gameOverPanels, false);
         SetPanelActive(gameClearPanels, false);
+
+        if (nextStageButton != null) nextStageButton.SetActive(false);
 
         if (currencyManager == null) currencyManager = FindAnyObjectByType<CurrencyManager>();
         if (scoreManager == null) scoreManager = FindAnyObjectByType<ScoreManager>();
@@ -230,6 +232,7 @@ public class GameManager : MonoBehaviour
 
         IsGameClear = true;
         IsGameActive = false;
+        if (UIManager.instance != null) UIManager.instance.CloseGameplayPanels();
         GameSpeed.Pause();
         SetPanelActive(gameClearPanels, true);
 
@@ -241,12 +244,8 @@ public class GameManager : MonoBehaviour
             StageProgress.SubmitScore(Stage.stageNumber, lastTotalScore);
         }
 
-        // 最終ステージでは「次の時限へ」を出さない
-        if (nextStageButton != null)
-        {
-            bool hasNext = catalog != null && catalog.Next(Stage) != null;
-            nextStageButton.SetActive(hasNext);
-        }
+        // 遷移を見直すまで、クリア時も「次の時限へ」を再表示しない。
+        if (nextStageButton != null) nextStageButton.SetActive(false);
     }
 
     public void GameOver()
@@ -255,6 +254,7 @@ public class GameManager : MonoBehaviour
 
         IsGameOver = true;
         IsGameActive = false;
+        if (UIManager.instance != null) UIManager.instance.CloseGameplayPanels();
         GameSpeed.Pause();
         SetPanelActive(gameOverPanels, true);
         DisplayStats(false);

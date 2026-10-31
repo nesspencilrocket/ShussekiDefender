@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float nextPointThreshold = 0.2f;
 
     private float moveSpeed;
+    private int skillMovementStops;
     [NonSerialized] public MovePoint movePoint;
     private int currentMovePointIndex;
 
@@ -45,7 +46,9 @@ public class Enemy : MonoBehaviour
     void OnEnable()
     {
         currentMovePointIndex = 0;
-        SetMoveSpeed();
+        skillMovementStops = 0;
+        // 被弾アニメーションのOnEnableより先でも、前回の停止を持ち越さない。
+        SetMoveSpeed(true);
 
         // 被弾表現で色を変えるため、プールから出るたびに白へ戻しておく。
         // 被弾中に倒されると色が戻らないまま返却されるため、ここが最後の砦になる。
@@ -58,9 +61,23 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void SetMoveSpeed()
+    public void SetMoveSpeed(bool ignoreHitStop = false)
     {
-        moveSpeed = setMoveSpeed;
+        bool hitStopped = !ignoreHitStop && enemyAnimations != null && enemyAnimations.IsHitStopped;
+        moveSpeed = skillMovementStops > 0 || hitStopped ? 0f : setMoveSpeed;
+    }
+
+    /// <summary>必殺技の停止を別に数え、被弾演出の終了で解除されないようにする。</summary>
+    public void BeginSkillStop()
+    {
+        skillMovementStops++;
+        StopMovement();
+    }
+
+    public void EndSkillStop()
+    {
+        skillMovementStops = Mathf.Max(0, skillMovementStops - 1);
+        SetMoveSpeed();
     }
 
     /// <summary>
@@ -86,7 +103,7 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        if (movePoint == null) return;
+        if (movePoint == null || enemyHP == null || !enemyHP.IsAlive) return;
         Move();
         if (NextPointReached())
         {

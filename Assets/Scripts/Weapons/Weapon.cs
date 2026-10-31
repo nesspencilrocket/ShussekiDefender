@@ -23,7 +23,7 @@ public class Weapon : MonoBehaviour
     // 同じ種類が何基置いてあるかを数え、値段を決めるのに使う
     [NonSerialized] public WeaponSettings settings;
 
-    void Start()
+    void Awake()
     {
         // プレイ開始時に数値を合わせる
         GetComponent<CircleCollider2D>().radius = attackRange;
@@ -32,17 +32,21 @@ public class Weapon : MonoBehaviour
 
         weaponUpgrade = GetComponent<WeaponUpgrade>();
 
-        // 【追加】イベントの購読を開始
+    }
+
+    private void OnEnable()
+    {
         EnemyHP.OnEnemyDead += OnEnemyDead;
         Enemy.OnReachedGoal += RemoveInvalidEnemy;
     }
 
-    // 【追加】シーンを移動する際にイベント購読を解除 (メモリリーク防止)
-    private void OnDestroy()
+    private void OnDisable()
     {
         // Nullチェックはイベントの呼び出し側で安全に処理されていることが多いが、明示的に解除する
         EnemyHP.OnEnemyDead -= OnEnemyDead;
         Enemy.OnReachedGoal -= RemoveInvalidEnemy;
+        enemies.Clear();
+        currentEnemyTarget = null;
     }
 
     void Update()
@@ -121,7 +125,7 @@ public class Weapon : MonoBehaviour
         {
             Enemy enemy = enemies[i];
 
-            if (enemy == null || enemy.enemyHP == null || enemy.enemyHP.currentHP <= 0)
+            if (enemy == null || enemy.enemyHP == null || !enemy.enemyHP.IsAlive)
             {
                 enemies.RemoveAt(i);
             }
@@ -147,7 +151,7 @@ public class Weapon : MonoBehaviour
         CleanEnemyList();
 
         // 現在のターゲットが無効になっていたら、即座にnullにする
-        if (currentEnemyTarget == null || currentEnemyTarget.enemyHP == null || currentEnemyTarget.enemyHP.currentHP <= 0)
+        if (currentEnemyTarget == null || currentEnemyTarget.enemyHP == null || !currentEnemyTarget.enemyHP.IsAlive)
         {
             currentEnemyTarget = null;
         }

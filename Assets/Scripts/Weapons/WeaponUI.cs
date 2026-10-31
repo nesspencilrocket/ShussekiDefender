@@ -72,7 +72,7 @@ public class WeaponUI : MonoBehaviour
         {
             CurrencyManager wallet = CurrencyManager.instance;
             bool affordable = wallet != null && wallet.totalCoins >= price;
-            button.interactable = affordable;
+            button.interactable = GameManager.IsGameActive && affordable;
         }
     }
 

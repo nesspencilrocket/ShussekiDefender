@@ -62,6 +62,8 @@ public class EnemyAnimations : MonoBehaviour
     private int patternIndex;
     private bool walking = true;
 
+    public bool IsHitStopped => isActiveAndEnabled && !walking;
+
     void Awake()
     {
         enemy = GetComponent<Enemy>();

@@ -78,7 +78,30 @@ public class Node : MonoBehaviour
         baseSprite = GetComponent<SpriteRenderer>();
         if (baseSprite != null) baseColor = baseSprite.color;
         button = GetComponentInChildren<Button>(true);
+        FitSelectionArea();
         ApplyLock();
+    }
+
+    /// <summary>白い台座全体を押せるよう、個別の位置ずれと小さな判定範囲を補正する。</summary>
+    private void FitSelectionArea()
+    {
+        if (button == null || baseSprite == null) return;
+        Canvas canvas = button.GetComponentInParent<Canvas>();
+        if (canvas == null || canvas.renderMode != RenderMode.WorldSpace) return;
+
+        RectTransform canvasRect = (RectTransform)canvas.transform;
+        Bounds visible = baseSprite.bounds;
+        Vector3 min = canvasRect.InverseTransformPoint(visible.min);
+        Vector3 max = canvasRect.InverseTransformPoint(visible.max);
+        Vector2 size = new Vector2(Mathf.Abs(max.x - min.x), Mathf.Abs(max.y - min.y));
+        // 各辺に6%の余裕を付ける。隣の台座まで判定が伸びない小さな範囲に留める。
+        canvasRect.sizeDelta = size * 1.12f;
+        canvasRect.position = visible.center;
+        RectTransform hit = (RectTransform)button.transform;
+        hit.anchorMin = Vector2.zero;
+        hit.anchorMax = Vector2.one;
+        hit.offsetMin = Vector2.zero;
+        hit.offsetMax = Vector2.zero;
     }
 
     private void OnEnable()
@@ -130,10 +153,10 @@ public class Node : MonoBehaviour
     //ボタンに設定
     public void SelectNode()
     {
-        // 開始前カウントダウン中は設置・強化を受け付けない。
+        // 開始前と結果表示中は設置・強化を受け付けない。
         // 暗幕でもクリックを塞いでいるが、Canvas の重なり順に依存しない
         // よう、ここでも確実に止めておく。
-        if (GameManager.Instance != null && GameManager.Instance.IsCountingDown)
+        if (!GameManager.IsGameActive)
         {
             return;
         }
@@ -180,6 +203,7 @@ public class Node : MonoBehaviour
     /// </summary>
     public void SellWeapon()
     {
+        if (!GameManager.IsGameActive || CurrencyManager.instance == null) return;
         if (!IsEmpty())
         {
             CurrencyManager.instance.AddCoins(weapon.weaponUpgrade.GetSellValue());
