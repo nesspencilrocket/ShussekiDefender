@@ -109,9 +109,6 @@ public class RainController : MonoBehaviour
         Canvas canvas = MenuUI.CreateCanvas(gameObject);
         // リザルトや開始カウントダウンより下に置く。本編中だけの UI
         canvas.sortingOrder = -1;
-        // 倍速ボタンのある Canvas と同じく幅に合わせて縮める。
-        // 縮み方が違うと、画面の縦横比によって 2 つのボタンが重なる
-        GetComponent<CanvasScaler>().matchWidthOrHeight = 0f;
 
         button = MenuUI.TextButton(transform, "RainButton", "", Vector2.zero, ButtonSize,
                                    28f, ButtonColor, TextMain, font);
@@ -154,6 +151,8 @@ public class RainController : MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920f, 1080f);
         scaler.matchWidthOrHeight = 0.5f;
+
+        AspectRatioController.FitCanvas(overlayCanvas);
 
         overlayGroup = overlay.AddComponent<CanvasGroup>();
         overlayGroup.blocksRaycasts = false;
@@ -317,14 +316,16 @@ public class RainController : MonoBehaviour
     /// <summary>
     /// 雨粒を動かす範囲の半分の大きさ（画面中央が原点）。画面の外に雨粒 1 本ぶんの余白を取る。
     ///
-    /// Canvas の矩形（rect）は有効にした直後だとまだ画面の大きさになっていないことがあるので、
-    /// 画面の大きさを CanvasScaler が決めた倍率で割って求める。
+    /// カメラに合わせた描画範囲を使い、黒帯の上には雨粒を広げない。
     /// </summary>
     private Vector2 HalfArea()
     {
         float scale = Mathf.Max(0.0001f, overlayCanvas.scaleFactor);
-        return new Vector2(Screen.width / scale / 2f + DropSize.y,
-                           Screen.height / scale / 2f + DropSize.y);
+        GameViewportCanvas viewport = overlayCanvas.GetComponent<GameViewportCanvas>();
+        Vector2 pixels = viewport != null
+            ? viewport.ViewCamera.pixelRect.size
+            : overlayCanvas.renderingDisplaySize;
+        return pixels / scale / 2f + Vector2.one * DropSize.y;
     }
 
     private void HideOverlayNow()
