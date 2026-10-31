@@ -29,7 +29,7 @@ public class LevelBar : MonoBehaviour
 
     private static readonly Vector2 Size = new Vector2(560f, 104f);
     // 時限の札：パネルの右隣。右上の時計（x 1620 から）に届かない幅にする
-    private static readonly Vector2 BadgeSize = new Vector2(330f, 96f);
+    private static readonly Vector2 BadgeSize = new Vector2(260f, 96f);
     private const float BadgeGap = 15f;
     private static readonly Color PanelColor = new Color(0.07f, 0.09f, 0.14f, 0.78f);
     private static readonly Color TextMain = new Color(0.93f, 0.95f, 0.98f, 1f);
@@ -108,7 +108,7 @@ public class LevelBar : MonoBehaviour
         badgeBg.raycastTarget = false;
         MenuUI.Panel(badge, "BadgeLine", new Vector2(0f, -BadgeSize.y / 2f + 5f), new Vector2(BadgeSize.x - 32f, 6f), Accent);
         stageText = MenuUI.Text(badge, "Stage", "", new Vector2(0f, 4f), new Vector2(BadgeSize.x, BadgeSize.y - 10f),
-                                68f, TextMain, font, TextAlignmentOptions.Center);
+                                54f, TextMain, font, TextAlignmentOptions.Center);
 
         levelText = MenuUI.Text(rt, "Level", "", new Vector2(-half + 90f, 14f), new Vector2(160f, 60f),
                                 44f, Accent, font, TextAlignmentOptions.Center);
