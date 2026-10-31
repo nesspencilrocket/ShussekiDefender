@@ -13,6 +13,15 @@ public class WeaponUpgrade : MonoBehaviour
     [Min(1f)]
     [SerializeField] private float firstUpgradeMultiplier = 1.2f;
 
+    [Header("最後の強化（最大レベルの 1 つ前 → 最大）")]
+    [Tooltip("最後の強化の値段に、さらに足す額。0 なら、ほかの強化と同じ増え方")]
+    [Min(0)]
+    [SerializeField] private int finalUpgradeExtraCost = 0;
+
+    [Tooltip("最後の強化で、発射間隔をさらに短くする秒数。0 なら、ほかの強化と同じ")]
+    [Min(0f)]
+    [SerializeField] private float finalUpgradeExtraIntervalCut = 0f;
+
     [Header("上限")]
     [Tooltip("この回数まで強化できる。到達すると UI のボタンは効かなくなる")]
     [SerializeField] private int maxLevel = 5;
@@ -68,8 +77,10 @@ public class WeaponUpgrade : MonoBehaviour
 
             // 発射間隔は下限で止める。上限レベルと二重に守っているのは、
             // decreaseInterval を大きく設定してもゼロ割れしないようにするため。
+            // 最後の強化だけ、発射間隔をさらに短くする（最大レベルの特別な伸び）
+            float extraCut = (level + 1 == maxLevel) ? finalUpgradeExtraIntervalCut : 0f;
             weaponControl.delay = Mathf.Max(minDelay,
-                weaponControl.delay - decreaseInterval * effectMultiplier);
+                weaponControl.delay - decreaseInterval * effectMultiplier - extraCut);
 
             UpdateUpgrade();
         }
@@ -84,6 +95,8 @@ public class WeaponUpgrade : MonoBehaviour
         currentUpgradeCost += addCost;
         //レベルの数値を上げる
         level++;
+        // 次が最後の強化なら、値段をさらに上乗せする
+        if (level == maxLevel - 1) currentUpgradeCost += finalUpgradeExtraCost;
     }
 
     /// <summary>

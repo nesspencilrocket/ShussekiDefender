@@ -182,6 +182,8 @@ MonoBehaviour:
   addDamage: 3
   decreaseInterval: 0.095
   firstUpgradeMultiplier: 1.2
+  finalUpgradeExtraCost: 120
+  finalUpgradeExtraIntervalCut: 0.45
 --- !u!58 &2909032310384143757
 CircleCollider2D:
   m_ObjectHideFlags: 0
