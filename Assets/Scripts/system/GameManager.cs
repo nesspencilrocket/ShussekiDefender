@@ -139,10 +139,28 @@ public class GameManager : MonoBehaviour
 
         if (nextStageButton != null) nextStageButton.SetActive(false);
 
+        ReleaseTextRaycasts();
+
         if (currencyManager == null) currencyManager = FindAnyObjectByType<CurrencyManager>();
         if (scoreManager == null) scoreManager = FindAnyObjectByType<ScoreManager>();
 
         StartCoroutine(BeginStage());
+    }
+
+    /// <summary>
+    /// ボタンではない文字（結果の処分名や数字など）が、クリックを受け止めないようにする。
+    /// 結果画面の文字は、ゲーム中は空でも、枠だけがメインの Canvas の上に広がっている。
+    /// 左下の技のボタン（SkillBar）は Canvas の順番が下なので、枠と重なったところを押しても
+    /// 枠に吸われ、ボタンの一部（時間停止の上のほう）しか反応しなかった。
+    /// ボタンの上の文字は、押したときボタンへ伝わるのでそのままにする。
+    /// </summary>
+    private static void ReleaseTextRaycasts()
+    {
+        foreach (TextMeshProUGUI text in FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (text.GetComponentInParent<UnityEngine.UI.Selectable>(true) != null) continue;
+            text.raycastTarget = false;
+        }
     }
 
     /// <summary>
