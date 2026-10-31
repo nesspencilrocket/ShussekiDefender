@@ -5,8 +5,11 @@ using UnityEngine.UI;
 /// <summary>
 /// 画面上端の中央に、ステージのレベルと設置スポットの解放状況を出す。
 ///
+///   3限目
 ///   Lv.2        設置場所 6 / 10
 ///   ■■■■□□□□  次の解放まで あと 4 人
+///
+/// 左上の「3限目」は、いま遊んでいる時限（StageData.displayName）。
 ///
 /// レベルが上がった瞬間は、下に「設置場所が 2 つ増えた！」を少しの間出す。
 /// UI は実行時に MenuUI で組み立てるので、シーンにはこのコンポーネントと
@@ -34,6 +37,7 @@ public class LevelBar : MonoBehaviour
     private Node[] nodes = new Node[0];
 
     private GameObject panel;
+    private TextMeshProUGUI stageText;
     private TextMeshProUGUI levelText;
     private TextMeshProUGUI slotsText;
     private TextMeshProUGUI nextText;
@@ -49,6 +53,11 @@ public class LevelBar : MonoBehaviour
         level = StageLevel.Ensure();
         nodes = FindObjectsByType<Node>(FindObjectsSortMode.None);
         Build();
+
+        // 時限の名前は GameManager.Awake で解決済み（Start より前）
+        StageData stage = (GameManager.Instance != null) ? GameManager.Instance.Stage : null;
+        stageText.text = (stage != null) ? stage.displayName : "";
+
         Refresh();
     }
 
@@ -81,8 +90,12 @@ public class LevelBar : MonoBehaviour
 
         float half = Size.x / 2f;
 
-        levelText = MenuUI.Text(rt, "Level", "", new Vector2(-half + 90f, 14f), new Vector2(160f, 60f),
-                                44f, Accent, font, TextAlignmentOptions.Center);
+        // 左のブロックは 2 段。上に時限、下にレベル
+        stageText = MenuUI.Text(rt, "Stage", "", new Vector2(-half + 90f, 30f), new Vector2(160f, 34f),
+                                26f, TextMain, font, TextAlignmentOptions.Center);
+
+        levelText = MenuUI.Text(rt, "Level", "", new Vector2(-half + 90f, -8f), new Vector2(160f, 54f),
+                                40f, Accent, font, TextAlignmentOptions.Center);
 
         slotsText = MenuUI.Text(rt, "Slots", "", new Vector2(80f, 22f), new Vector2(360f, 40f),
                                 28f, TextMain, font, TextAlignmentOptions.Right);
