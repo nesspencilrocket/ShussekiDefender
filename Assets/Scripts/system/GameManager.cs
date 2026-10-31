@@ -303,7 +303,10 @@ public class GameManager : MonoBehaviour
         // 見出しはスコア確定後に決める（順序を逆にすると常に最軽量の処分になる）
         if (titleText != null)
         {
-            titleText.text = cleared ? RankOf(lastTotalScore) : gameOverTitle;
+            string title = cleared ? RankOf(lastTotalScore) : gameOverTitle;
+            titleText.text = title;
+            // 処分ごとに文字の色を変える。敗北（処分なし）は、落ち着いた灰青
+            titleText.color = cleared ? StageData.ColorOfRank(title) : new Color(0.36f, 0.42f, 0.54f, 1f);
         }
     }
 

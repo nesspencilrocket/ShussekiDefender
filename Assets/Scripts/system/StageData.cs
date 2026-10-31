@@ -92,6 +92,27 @@ public class StageData : ScriptableObject
     public static readonly string[] Ranks =
         { "訓告", "厳重注意", "1週間停学", "無期限停学", "退学処分" };
 
+    /// <summary>
+    /// 処分名の文字の色。Ranks と添字を対応させる。軽い処分は落ち着いた色、
+    /// 重い処分ほど濃い赤へ（重い処分ほど良い結果、が色でも分かる）。
+    /// </summary>
+    public static readonly Color[] RankColors =
+    {
+        new Color(0.36f, 0.42f, 0.54f, 1f),   // 訓告：灰青
+        new Color(0.78f, 0.52f, 0.06f, 1f),   // 厳重注意：琥珀
+        new Color(0.86f, 0.36f, 0.06f, 1f),   // 1週間停学：橙
+        new Color(0.78f, 0.12f, 0.08f, 1f),   // 無期限停学：赤
+        new Color(0.56f, 0.04f, 0.22f, 1f),   // 退学処分：濃い紅
+    };
+
+    /// <summary>処分名の文字の色。知らない名前は、最も重い処分の色</summary>
+    public static Color ColorOfRank(string rank)
+    {
+        int i = System.Array.IndexOf(Ranks, rank);
+        if (i < 0) i = RankColors.Length - 1;
+        return RankColors[Mathf.Clamp(i, 0, RankColors.Length - 1)];
+    }
+
     /// <summary>スコアから処分の重さを決める。</summary>
     public string RankOf(int score)
     {
