@@ -32,6 +32,9 @@ public class SkillBar : MonoBehaviour
     private readonly List<Button> buttons = new List<Button>();
     private readonly List<Image> cooldownMasks = new List<Image>();
     private readonly List<TextMeshProUGUI> cooldownLabels = new List<TextMeshProUGUI>();
+    // ボタンの名前と値段の文字。値段が使うたびに増える技のために、変わったときだけ書き直す
+    private readonly List<TextMeshProUGUI> nameLabels = new List<TextMeshProUGUI>();
+    private readonly List<string> shownNames = new List<string>();
 
     // 発動に使うキー。技の並び順と対応する
     private static readonly Key[] Hotkeys = { Key.Digit1, Key.Digit2, Key.Digit3, Key.Digit4 };
@@ -73,8 +76,7 @@ public class SkillBar : MonoBehaviour
         // 左下原点で右へ並べる。pivot が左下なので pos は左下角の位置
         Vector2 pos = new Vector2(index * (buttonSize.x + spacing), 0f);
         string hint = (index < Hotkeys.Length) ? $"[{index + 1}] " : "";
-        string label = hint + skill.displayName;
-        if (skill.coinCost > 0) label += $"\n{skill.coinCost}円";
+        string label = ButtonText(hint, skill, skill.CostAfter(0));
 
         Button btn = MenuUI.TextButton(parent, $"Skill_{index}", label,
                                        Vector2.zero, buttonSize, 28f,
@@ -113,6 +115,8 @@ public class SkillBar : MonoBehaviour
         btn.onClick.AddListener(() => controller.TryActivate(captured));
 
         buttons.Add(btn);
+        nameLabels.Add(text);
+        shownNames.Add(label);
         cooldownMasks.Add(mask);
         cooldownLabels.Add(remain);
     }
@@ -136,9 +140,25 @@ public class SkillBar : MonoBehaviour
             if (cooldownLabels[i].text != label) cooldownLabels[i].text = label;
 
             buttons[i].interactable = controller.CanActivate(i);
+
+            // 値段が使うたびに増える技は、いまの値段を出す
+            string hint = (i < Hotkeys.Length) ? $"[{i + 1}] " : "";
+            string name = ButtonText(hint, controller.Skills[i], controller.CurrentCost(i));
+            if (shownNames[i] != name)
+            {
+                shownNames[i] = name;
+                if (nameLabels[i] != null) nameLabels[i].text = name;
+            }
         }
 
         ReadHotkeys();
+    }
+
+    private static string ButtonText(string hint, PlayerSkill skill, int cost)
+    {
+        string label = hint + skill.displayName;
+        if (cost > 0) label += $"\n{cost}円";
+        return label;
     }
 
     private void ReadHotkeys()

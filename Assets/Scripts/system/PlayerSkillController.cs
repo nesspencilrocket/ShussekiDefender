@@ -24,6 +24,11 @@ public class PlayerSkillController : MonoBehaviour
     // 敵の動きも速いので体感の長さは揃う（ProfessorIll と同じ考え方）
     private float[] readyAt = new float[0];
 
+    // 各技を、このステージで何回使ったか。コストと待ち時間が、使うたびに増える技のために数える
+    private int[] uses = new int[0];
+    // いま進んでいる待ち時間の長さ（使ったときに決まる）。幕の縮み方の割合に使う
+    private float[] cooldownLength = new float[0];
+
     private SkillContext context;
 
     public IReadOnlyList<PlayerSkill> Skills => skills;
@@ -79,6 +84,8 @@ public class PlayerSkillController : MonoBehaviour
         }
 
         readyAt = new float[skills.Count];
+        uses = new int[skills.Count];
+        cooldownLength = new float[skills.Count];
         context = new SkillContext(this, CurrencyManager.instance);
     }
 
@@ -93,9 +100,16 @@ public class PlayerSkillController : MonoBehaviour
     public float CooldownRatio(int index)
     {
         if (index < 0 || index >= skills.Count) return 0f;
-        float cd = skills[index].cooldown;
+        float cd = cooldownLength[index];
         if (cd <= 0f) return 0f;
         return Mathf.Clamp01(CooldownRemaining(index) / cd);
+    }
+
+    /// <summary>いま発動するのに必要なコイン（使うたびに増える分を含む）</summary>
+    public int CurrentCost(int index)
+    {
+        if (index < 0 || index >= skills.Count) return 0;
+        return skills[index].CostAfter(uses[index]);
     }
 
     /// <summary>
@@ -107,7 +121,7 @@ public class PlayerSkillController : MonoBehaviour
         if (index < 0 || index >= skills.Count) return false;
         if (!GameManager.IsGameActive) return false;
         if (CooldownRemaining(index) > 0f) return false;
-        return skills[index].CanActivate(context);
+        return skills[index].CanActivate(context, CurrentCost(index));
     }
 
     /// <summary>
@@ -118,13 +132,18 @@ public class PlayerSkillController : MonoBehaviour
         if (!CanActivate(index)) return false;
 
         PlayerSkill skill = skills[index];
-        if (skill.coinCost > 0 && context.Currency != null)
+        int cost = CurrentCost(index);
+        if (cost > 0 && context.Currency != null)
         {
-            context.Currency.RemoveCoins(skill.coinCost);
+            context.Currency.RemoveCoins(cost);
         }
 
         skill.Activate(context);
-        readyAt[index] = Time.time + skill.cooldown;
+
+        // この回の待ち時間は、使った回数に応じた長さ。そのあと、使った回数を 1 つ増やす
+        cooldownLength[index] = skill.CooldownAfter(uses[index]);
+        readyAt[index] = Time.time + cooldownLength[index];
+        uses[index]++;
         OnActivated?.Invoke(index);
         return true;
     }

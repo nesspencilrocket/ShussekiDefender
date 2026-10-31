@@ -37,19 +37,38 @@ public abstract class PlayerSkill : ScriptableObject
     [Tooltip("再使用までの待ち時間（秒）。0 なら制限なし")]
     [Min(0f)] public float cooldown = 30f;
 
-    [Tooltip("発動に必要なコイン。0 なら無料")]
+    [Tooltip("1 回目の発動に必要なコイン。0 なら無料")]
     [Min(0)] public int coinCost = 0;
+
+    [Tooltip("使うたびに増えるコイン。2 回目は coinCost + この値、3 回目は + 2 倍…。0 なら増えない")]
+    [Min(0)] public int coinCostIncreasePerUse = 0;
+
+    [Tooltip("使うたびに長くなる待ち時間（秒）。2 回目の後は cooldown + この値、…。0 なら増えない")]
+    [Min(0f)] public float cooldownIncreasePerUse = 0f;
+
+    /// <summary>uses 回使ったあとの、次の発動に必要なコイン</summary>
+    public int CostAfter(int uses)
+    {
+        return coinCost + coinCostIncreasePerUse * Mathf.Max(0, uses);
+    }
+
+    /// <summary>uses 回使ったあとの、次の発動で始まる待ち時間（秒）</summary>
+    public float CooldownAfter(int uses)
+    {
+        return cooldown + cooldownIncreasePerUse * Mathf.Max(0, uses);
+    }
 
     /// <summary>
     /// いま使えるか。コイン以外の条件を足したいときに override する。
     /// クールダウンの判定は発動側が持つので、ここでは見ない。
+    /// cost は、いまの発動に必要なコイン（使うたびに増える分を含む）。
     /// </summary>
-    public virtual bool CanActivate(SkillContext context)
+    public virtual bool CanActivate(SkillContext context, int cost)
     {
-        if (coinCost <= 0) return true;
+        if (cost <= 0) return true;
         return context != null
             && context.Currency != null
-            && context.Currency.totalCoins >= coinCost;
+            && context.Currency.totalCoins >= cost;
     }
 
     /// <summary>
