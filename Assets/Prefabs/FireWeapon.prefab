@@ -152,6 +152,7 @@ MonoBehaviour:
   addCost: 10
   addDamage: 1
   decreaseInterval: 0.05
+  firstUpgradeMultiplier: 1.2
 --- !u!1 &3770819046793241999
 GameObject:
   m_ObjectHideFlags: 0
