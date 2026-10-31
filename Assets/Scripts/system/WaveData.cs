@@ -22,6 +22,10 @@ public class WaveData
     public float maxRandomDelay = 1.5f;
 
     [Header("出現させる敵")]
+    [Tooltip("この波で湧く敵の HP（そのままの値）。0 なら、ステージの enemyHP を使う。"
+           + "前の波より高くなると、画面に「敵の体力が強化」と出る")]
+    [Min(0f)] public float enemyHP = 0f;
+
     [Tooltip("敵の種類と割合。空の波からは何も湧かない")]
     public List<SpawnEntry> spawnTable = new List<SpawnEntry>();
 

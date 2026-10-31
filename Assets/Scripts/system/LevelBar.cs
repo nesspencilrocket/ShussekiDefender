@@ -45,6 +45,9 @@ public class LevelBar : MonoBehaviour
     private Image fill;
 
     private float noticeUntil;
+    // 出すお知らせの待ち行列。レベルアップと敵の強化が重なっても、1 つずつ順に出す
+    private readonly System.Collections.Generic.Queue<string> pendingNotices =
+        new System.Collections.Generic.Queue<string>();
     private int shownLevel = -1;
     private int shownKills = -1;
 
@@ -64,11 +67,13 @@ public class LevelBar : MonoBehaviour
     private void OnEnable()
     {
         StageLevel.OnLevelChanged += OnLevelUp;
+        Spawner.OnEnemyHPRaised += OnEnemyHPRaised;
     }
 
     private void OnDisable()
     {
         StageLevel.OnLevelChanged -= OnLevelUp;
+        Spawner.OnEnemyHPRaised -= OnEnemyHPRaised;
     }
 
     private void Build()
@@ -131,6 +136,13 @@ public class LevelBar : MonoBehaviour
         // 本編中だけ出す。カウントダウン中とリザルト中は隠す
         bool show = GameManager.IsGameActive;
         if (panel.activeSelf != show) panel.SetActive(show);
+
+        // 今のお知らせが終わっていたら、待っている次のお知らせを出す
+        if (show && Time.time >= noticeUntil && pendingNotices.Count > 0)
+        {
+            noticeText.text = pendingNotices.Dequeue();
+            noticeUntil = Time.time + noticeSeconds;
+        }
 
         bool notice = show && Time.time < noticeUntil;
         if (noticeText.gameObject.activeSelf != notice) noticeText.gameObject.SetActive(notice);
@@ -199,13 +211,15 @@ public class LevelBar : MonoBehaviour
     private void OnLevelUp(int newLevel)
     {
         int opened = CountUnlockingAt(newLevel);
-        if (noticeText != null)
-        {
-            noticeText.text = opened > 0
-                ? $"Lv.{newLevel}！ 設置場所が {opened} つ増えた"
-                : $"Lv.{newLevel}！";
-        }
-        noticeUntil = Time.time + noticeSeconds;
+        pendingNotices.Enqueue(opened > 0
+            ? $"Lv.{newLevel}！ 設置場所が {opened} つ増えた"
+            : $"Lv.{newLevel}！");
         Refresh();
+    }
+
+    /// <summary>波が変わって、敵の HP が上がったとき。レベルアップと同じ場所に知らせる</summary>
+    private void OnEnemyHPRaised(float oldHP, float newHP)
+    {
+        pendingNotices.Enqueue($"敵の体力が強化！ {oldHP:0.#} → {newHP:0.#}");
     }
 }

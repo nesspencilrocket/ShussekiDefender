@@ -56,6 +56,31 @@ public class Spawner : MonoBehaviour
 
     public static bool IsSpawnPaused => Time.time < SpawnPausedUntil;
 
+    /// <summary>
+    /// 波が変わって、湧く敵の HP が上がったとき（前の HP、新しい HP）。
+    /// 画面のお知らせ（LevelBar）が使う。
+    /// </summary>
+    public static Action<float, float> OnEnemyHPRaised;
+
+    // 直前の波で湧かせた敵の HP。0 以下は、まだ決まっていない
+    private float lastWaveHP = -1f;
+
+    /// <summary>この波で湧かせる敵の HP。波に指定があればそれ、なければステージの値</summary>
+    private float HPFor(WaveData wave)
+    {
+        return wave.enemyHP > 0f ? wave.enemyHP : stageEnemyHP;
+    }
+
+    // 波の最初の 1 体を湧かせるときに呼ぶ。HP が上がっていたら知らせる
+    private void AnnounceWaveHP(WaveData wave)
+    {
+        float hp = HPFor(wave);
+        if (hp <= 0f) return;   // 敵アセットの値を使う（ステージにも波にも指定がない）
+
+        if (lastWaveHP > 0f && hp > lastWaveHP + 0.01f) OnEnemyHPRaised?.Invoke(lastWaveHP, hp);
+        lastWaveHP = hp;
+    }
+
     private void Awake()
     {
         pooler = ObjectPooler.Instance;
@@ -159,6 +184,7 @@ public class Spawner : MonoBehaviour
                 // 時刻に遅れた分は、同じフレームで続けて湧かせる
                 while (spawned < currentWave.enemyCount && Time.time >= nextSpawnAt)
                 {
+                    if (spawned == 0) AnnounceWaveHP(currentWave);
                     spawned++;
                     SpawnEnemy(currentWave);
                     spawnTimer = GetSpawnDelay(currentWave);
@@ -205,7 +231,7 @@ public class Spawner : MonoBehaviour
             return;
         }
 
-        SetEnemy(newInstance, route, prefab, data);
+        SetEnemy(newInstance, route, prefab, data, HPFor(currentWave));
         newInstance.SetActive(true);
     }
 
@@ -228,7 +254,7 @@ public class Spawner : MonoBehaviour
         return currentWave.PickWeighted();
     }
 
-    private void SetEnemy(GameObject newInstance, MovePoint route, GameObject prefabToSpawn, EnemyData data)
+    private void SetEnemy(GameObject newInstance, MovePoint route, GameObject prefabToSpawn, EnemyData data, float hp)
     {
         Enemy enemy = newInstance.GetComponent<Enemy>();
         EnemyHP enemyHP = newInstance.GetComponent<EnemyHP>();
@@ -238,7 +264,7 @@ public class Spawner : MonoBehaviour
         // EnemyData の HP・速度・報酬をこの個体へ反映する。
         // SetActive(true) より前に呼ぶ必要がある（OnEnable が currentHP = hp を読むため）。
         // data が null（旧形式の波）なら何もせず、プレハブの値のまま湧く。
-        enemyHP.Apply(data, stageEnemyHP);
+        enemyHP.Apply(data, hp);
         enemy.Apply(data);
 
         enemyHP.originalPrefab = prefabToSpawn;
