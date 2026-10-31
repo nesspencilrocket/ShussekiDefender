@@ -47,6 +47,9 @@ public class UIManager : MonoBehaviour
     {
         // 桁が増えても所持金を次の行へ落とさず、財布の表示枠へ収める。
         Money.FitOneLine(totalCoinsText);
+
+        // 最大レベルが 10 になっても、「Level 10 / 10」を 2 行に折り返さず、枠に収める
+        Money.FitOneLine(weaponLevelText);
     }
 
     // 直前に表示した値。変わったときだけ文字列を作り直す
