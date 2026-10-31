@@ -9,9 +9,10 @@ using UnityEngine;
 /// Node.closesInFinalPhase が ON の設置スポットが、置いてある武器ごと消える。
 /// 売ったときと違って、お金は戻らない。消える前に、画面上部のお知らせで予告する。
 ///
-///   あと 10 秒で 右下・左下の設置場所が使用不可！
-///   右下・左下の設置場所が使用不可！
+///   あと 10 秒で 右下・左下の設置場所と雨が使用不可！
+///   右下・左下の設置場所と雨が使用不可！
 ///
+/// 同じときに、雨（RainController）も使えなくなる（IsClosed を見る）。
 /// どの設置スポットが消えるかはシーン（各 Node の設定）、いつ消えるかはステージ（StageData）で決める。
 /// 6 つの時限は同じシーンを使うので、「場所はシーン、時刻はステージ」と分けてある。
 ///
@@ -27,6 +28,18 @@ public class NodeFinalPhase : MonoBehaviour
     private const float WarnSeconds = 10f;
 
     private static NodeFinalPhase instance;
+
+    /// <summary>
+    /// 終盤になって、設置スポットと雨が使えなくなったか。
+    /// ステージの開始時に GameManager が ResetState で戻す（シーンをまたいで持ち越さない）
+    /// </summary>
+    public static bool IsClosed { get; private set; }
+
+    /// <summary>ステージの開始時に呼ぶ</summary>
+    public static void ResetState()
+    {
+        IsClosed = false;
+    }
 
     private readonly List<Node> nodes = new List<Node>();
     private bool warned;
@@ -78,13 +91,14 @@ public class NodeFinalPhase : MonoBehaviour
             // 時限が短くて、始まった時点で予告の時間を過ぎているときは、予告を飛ばす
             if (remaining > stage.finalPhaseSeconds)
             {
-                OnNotice?.Invoke($"あと {Mathf.CeilToInt(remaining - stage.finalPhaseSeconds)} 秒で {AreaNames()}の設置場所が使用不可！");
+                OnNotice?.Invoke($"あと {Mathf.CeilToInt(remaining - stage.finalPhaseSeconds)} 秒で {AreaNames()}の設置場所と雨が使用不可！");
             }
         }
 
         if (remaining <= stage.finalPhaseSeconds)
         {
             closed = true;
+            IsClosed = true;
             CloseAll();
         }
     }
@@ -101,7 +115,7 @@ public class NodeFinalPhase : MonoBehaviour
         // 開いていた購入・強化パネルは、消えた設置スポットのものかもしれないので閉じる
         if (UIManager.instance != null) UIManager.instance.CloseGameplayPanels();
 
-        OnNotice?.Invoke($"{names}の設置場所が使用不可！");
+        OnNotice?.Invoke($"{names}の設置場所と雨が使用不可！");
     }
 
     // 「右下・左下」のように、消える場所の名前を並べる。名前が無ければ「一部」

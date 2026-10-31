@@ -195,6 +195,9 @@ public class RainController : MonoBehaviour
             return;
         }
 
+        // 終盤は雨を使えない。降っている最中なら、すぐやませる
+        if (NodeFinalPhase.IsClosed && IsRaining) StopRain();
+
         float dt = Time.deltaTime;
         if (IsRaining)
         {
@@ -217,6 +220,7 @@ public class RainController : MonoBehaviour
     private void TryStartRain()
     {
         if (!GameManager.IsGameActive) return;
+        if (NodeFinalPhase.IsClosed) return;
         if (IsRaining || cooldownLeft > 0f) return;
         if (currency == null || currency.totalCoins < cost) return;
 
@@ -244,7 +248,8 @@ public class RainController : MonoBehaviour
         if (button == null) return;
 
         bool affordable = currency != null && currency.totalCoins >= cost;
-        bool usable = !IsRaining && cooldownLeft <= 0f && affordable;
+        bool locked = NodeFinalPhase.IsClosed;
+        bool usable = !locked && !IsRaining && cooldownLeft <= 0f && affordable;
         button.interactable = usable;
 
         // 押せない間は文字も薄くする（ボタンの地の色が変わるだけでは分かりにくい）
@@ -256,7 +261,7 @@ public class RainController : MonoBehaviour
         }
 
         // 表示が変わるときだけ文字を作り直す（毎フレーム文字列を作らない）
-        int mode = IsRaining ? 1 : (cooldownLeft > 0f ? 2 : 0);
+        int mode = locked ? 3 : (IsRaining ? 1 : (cooldownLeft > 0f ? 2 : 0));
         int value = mode == 1 ? Mathf.CeilToInt(rainLeft)
                   : mode == 2 ? Mathf.CeilToInt(cooldownLeft)
                   : cost;
@@ -264,7 +269,8 @@ public class RainController : MonoBehaviour
         if (key == shownSubKey) return;
         shownSubKey = key;
 
-        if (mode == 1) subText.text = $"あと {value} 秒";
+        if (mode == 3) subText.text = "使用不可";
+        else if (mode == 1) subText.text = $"あと {value} 秒";
         else if (mode == 2) subText.text = $"次まで {value} 秒";
         else subText.text = $"{value}円";
     }

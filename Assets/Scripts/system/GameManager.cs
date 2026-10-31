@@ -110,6 +110,7 @@ public class GameManager : MonoBehaviour
         // 前のステージの時間停止を持ち越さない（Time.time は、シーンをまたいで進み続ける）
         Enemy.ClearTimeStop();
         Spawner.SpawnPausedUntil = 0f;
+        NodeFinalPhase.ResetState();
 
         // 【重要】StageData を解決するのはこの 1 箇所だけ。
         // Awake はすべての Start より先に走るので、他のコンポーネントは
