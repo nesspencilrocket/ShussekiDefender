@@ -126,7 +126,7 @@ public class SettingsScreen : MonoBehaviour
         speedLabel = speedButton.GetComponentInChildren<TextMeshProUGUI>();
         speedButton.onClick.AddListener(() =>
         {
-            GameSpeed.Next();
+            GameSpeed.Toggle();
             RefreshSpeedLabel();
         });
         RefreshSpeedLabel();
@@ -164,8 +164,8 @@ public class SettingsScreen : MonoBehaviour
     {
         if (speedLabel != null)
         {
-            bool standard = Mathf.Approximately(GameSpeed.Selected, GameSpeed.NORMAL);
-            speedLabel.text = standard ? GameSpeed.SelectedLabel + "（標準）" : GameSpeed.SelectedLabel;
+            speedLabel.text = GameSpeed.IsSlow ? "×0.5（ゆっくり）"
+                : GameSpeed.IsFast ? "×1.5（早送り）" : "×1.0（標準）";
         }
     }
 
