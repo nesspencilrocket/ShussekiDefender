@@ -35,23 +35,6 @@ public class WeaponShopManager : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
-    /// <summary>この種類の武器がいま何基置いてあるか</summary>
-    public int PlacedCount(WeaponSettings weapon)
-    {
-        int count = 0;
-        foreach (Node n in nodes)
-        {
-            if (n != null && n.weapon != null && n.weapon.settings == weapon) count++;
-        }
-        return count;
-    }
-
-    /// <summary>この種類の武器を次に 1 基置くときの値段</summary>
-    public int PriceOf(WeaponSettings weapon)
-    {
-        return weapon.PriceFor(PlacedCount(weapon));
-    }
-
 
 
     void Start()
@@ -167,7 +150,7 @@ public class WeaponShopManager : MonoBehaviour
 
         // お金が足りなければ何もしない。パネルは開いたままにして、別の武器を選べるようにする
         CurrencyManager wallet = CurrencyManager.instance;
-        int price = PriceOf(weapon);
+        int price = weapon.TurretShopCost;
         if (wallet == null || wallet.totalCoins < price) return;
 
         wallet.RemoveCoins(price);
