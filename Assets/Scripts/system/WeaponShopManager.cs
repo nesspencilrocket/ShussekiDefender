@@ -142,7 +142,8 @@ public class WeaponShopManager : MonoBehaviour
     /// </summary>
     private void PressWeaponUI(WeaponSettings weapon)
     {
-        if (currentNodeSelected == null || !currentNodeSelected.IsEmpty())
+        if (!GameManager.IsGameActive || weapon == null || weapon.TurretPrefab == null) return;
+        if (currentNodeSelected == null || !currentNodeSelected.IsUnlocked || !currentNodeSelected.IsEmpty())
         {
             UIManager.instance.CloseTurretShopPanel();
             return;

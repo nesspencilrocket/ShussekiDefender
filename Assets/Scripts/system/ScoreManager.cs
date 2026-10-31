@@ -54,6 +54,7 @@ public class ScoreManager : MonoBehaviour
     /// <param name="enemyPrefab">倒された敵の元のプレハブ</param>
     public void RecordDefeat(GameObject enemyPrefab)
     {
+        if (enemyPrefab == null) return;
         // 辞書にキーが存在するかチェック（Inspectorで設定されている敵か）
         if (defeatedCounts.ContainsKey(enemyPrefab))
         {
@@ -85,6 +86,10 @@ public class ScoreManager : MonoBehaviour
             int kills = defeatedCounts.ContainsKey(setting.enemyPrefab)
                          ? defeatedCounts[setting.enemyPrefab]
                          : 0;
+
+            // 値型なので、結果表示へ渡す撃破数もリストに書き戻す。
+            setting.killCount = kills;
+            enemyStatsSettings[i] = setting;
 
             // UIを直接更新
             if (setting.killCountDisplay != null)

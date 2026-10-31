@@ -33,6 +33,7 @@ public class RageOnLowHP : EnemyAbility
 
         // 被弾で止められた足を即座に戻す。
         // 以降も EnemyAnimations が止めにくるが、そのたびに打ち消される。
-        context.Enemy.SetMoveSpeed();
+        // 怯みだけを打ち消し、教授の急病による停止は解除しない。
+        context.Enemy.SetMoveSpeed(true);
     }
 }

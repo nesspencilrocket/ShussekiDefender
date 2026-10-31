@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -63,6 +64,12 @@ public class RecordsScreen : MonoBehaviour
     private const float COL_SCORE = 280f;
     private const float COL_NEXT = 540f;
 
+    private Canvas canvas;
+    private RectTransform content;
+    private GameObject resetConfirmation;
+    private Button resetButton;
+    private Button backButton;
+
     private void Start()
     {
         // 敗北で止めたまま戻ってくると、ボタンのアニメーションが動かない
@@ -72,8 +79,17 @@ public class RecordsScreen : MonoBehaviour
 
     private void Build()
     {
-        Canvas canvas = MenuUI.CreateCanvas(gameObject);
-        Transform root = canvas.transform;
+        if (canvas == null) canvas = MenuUI.CreateCanvas(gameObject);
+
+        // 初期化後は同じ画面内で作り直し、古い表示やボタンを残さない。
+        if (content != null)
+        {
+            content.gameObject.SetActive(false);
+            Destroy(content.gameObject);
+        }
+        resetConfirmation = null;
+        content = MenuUI.Stretch(canvas.transform, "RecordsContent");
+        Transform root = content;
 
         MenuUI.Background(root, backgroundImage, background, scrimAlpha);
 
@@ -206,9 +222,66 @@ public class RecordsScreen : MonoBehaviour
 
     private void BuildBackButton(Transform root)
     {
-        Button back = MenuUI.TextButton(root, "BackButton", "戻る",
-                                        new Vector2(0f, -450f), new Vector2(320f, 84f),
+        resetButton = MenuUI.TextButton(root, "ResetRecordsButton", "成績を初期化",
+                                        new Vector2(-190f, -450f), new Vector2(320f, 84f),
+                                        30f, buttonFill, textMain, font);
+        resetButton.onClick.AddListener(ShowResetConfirmation);
+
+        backButton = MenuUI.TextButton(root, "BackButton", "戻る",
+                                        new Vector2(190f, -450f), new Vector2(320f, 84f),
                                         34f, buttonFill, textMain, font);
-        back.onClick.AddListener(() => SceneManager.LoadScene(backSceneName));
+        backButton.onClick.AddListener(() => SceneManager.LoadScene(backSceneName));
+    }
+
+    private void ShowResetConfirmation()
+    {
+        if (resetConfirmation == null)
+        {
+            RectTransform overlay = MenuUI.Stretch(content, "ResetConfirmation");
+            resetConfirmation = overlay.gameObject;
+            Image blocker = resetConfirmation.AddComponent<Image>();
+            blocker.color = new Color(0f, 0f, 0f, 0.72f);
+            blocker.raycastTarget = true;
+
+            MenuUI.Panel(overlay, "Dialog", Vector2.zero, new Vector2(1000f, 380f), background);
+            MenuUI.Text(overlay, "ConfirmTitle", "成績を初期化しますか？",
+                        new Vector2(0f, 112f), new Vector2(900f, 60f),
+                        40f, textMain, font, TextAlignmentOptions.Center);
+            MenuUI.Text(overlay, "ConfirmDescription",
+                        "全時限のベストスコアを消去します。\n時限の解放状況は保持されます。",
+                        new Vector2(0f, 20f), new Vector2(900f, 100f),
+                        28f, textMuted, font, TextAlignmentOptions.Center);
+
+            Button cancel = MenuUI.TextButton(overlay, "CancelResetButton", "キャンセル",
+                        new Vector2(-190f, -112f), new Vector2(320f, 76f),
+                        30f, buttonFill, textMain, font);
+            cancel.onClick.AddListener(CancelReset);
+            Button confirm = MenuUI.TextButton(overlay, "ConfirmResetButton", "初期化する",
+                        new Vector2(190f, -112f), new Vector2(320f, 76f),
+                        30f, new Color(0.58f, 0.18f, 0.14f, 1f), textMain, font);
+            confirm.onClick.AddListener(ResetRecords);
+        }
+
+        resetConfirmation.SetActive(true);
+        // 確認中は、キーボードの移動でも背後のボタンを押せないようにする。
+        resetButton.interactable = false;
+        backButton.interactable = false;
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(resetConfirmation.transform.Find("CancelResetButton").gameObject);
+    }
+
+    private void CancelReset()
+    {
+        resetConfirmation.SetActive(false);
+        resetButton.interactable = true;
+        backButton.interactable = true;
+        if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(resetButton.gameObject);
+    }
+
+    private void ResetRecords()
+    {
+        StageProgress.ResetBestScores();
+        Build();
+        if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(resetButton.gameObject);
     }
 }

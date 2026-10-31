@@ -30,10 +30,13 @@ public class ProfessorIll : PlayerSkill
     {
         // 発動時点で居た敵だけを止める。あとから湧いた敵は対象外。
         List<Enemy> targets = context.ActiveEnemies();
+        var versions = new Dictionary<Enemy, uint>();
 
         foreach (Enemy e in targets)
         {
-            if (e != null) e.StopMovement();
+            if (e == null || e.enemyHP == null) continue;
+            versions[e] = e.enemyHP.SpawnVersion;
+            e.BeginSkillStop();
         }
 
         yield return new WaitForSeconds(duration);
@@ -44,8 +47,10 @@ public class ProfessorIll : PlayerSkill
             // 動かすと、次に湧いた別の敵の速度を書き換えてしまう。
             if (e == null || !e.isActiveAndEnabled) continue;
             if (e.enemyHP == null || e.enemyHP.currentHP <= 0f) continue;
+            // 同じGameObjectでも、再出現した敵へ古い解除処理を適用しない。
+            if (!versions.TryGetValue(e, out uint version) || e.enemyHP.SpawnVersion != version) continue;
 
-            e.SetMoveSpeed();
+            e.EndSkillStop();
         }
     }
 }

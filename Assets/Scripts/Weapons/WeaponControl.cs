@@ -42,9 +42,16 @@ public class WeaponControl : MonoBehaviour
     //弾のプール
     private ObjectPooler pooler;
 
+    private void Awake()
+    {
+        // 購入したフレームで強化されても、Startで強化値を上書きしない。
+        weapon = GetComponent<Weapon>();
+        bulletDamage = damage;
+        delay = firingInterval;
+    }
+
     private void Start()
     {
-        weapon = GetComponent<Weapon>();
         pooler = ObjectPooler.Instance;
 
         if (pooler == null)
@@ -52,12 +59,11 @@ public class WeaponControl : MonoBehaviour
             Debug.LogError("グローバルな ObjectPooler がシーンに見つかりません。設置を確認してください。");
         }
 
-        bulletDamage = damage;
-        delay = firingInterval;
     }
 
     private void Update()
     {
+        if (!GameManager.IsGameActive) return;
         // ★★★ ロジックを大幅にシンプル化 ★★★
         // 1. 次の発射時間が来ているか？
         // 2. 攻撃対象の敵は存在するか？

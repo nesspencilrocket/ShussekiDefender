@@ -41,6 +41,15 @@ public static class StageProgress
         }
     }
 
+    /// <summary>
+    /// 成績だけを消す。解放済みの時限や音量などの設定は保持する。
+    /// </summary>
+    public static void ResetBestScores()
+    {
+        for (int i = 1; i <= 6; i++) PlayerPrefs.DeleteKey(KEY_SCORE + i);
+        PlayerPrefs.Save();
+    }
+
 #if UNITY_EDITOR
     /// <summary>
     /// テスト用。解放を実装すると毎回 1限目からやり直しになるため、
@@ -50,8 +59,7 @@ public static class StageProgress
     private static void ResetProgress()
     {
         PlayerPrefs.DeleteKey(KEY_CLEARED);
-        for (int i = 1; i <= 6; i++) PlayerPrefs.DeleteKey(KEY_SCORE + i);
-        PlayerPrefs.Save();
+        ResetBestScores();
         Debug.Log("進行状況をリセットしました");
     }
 #endif
