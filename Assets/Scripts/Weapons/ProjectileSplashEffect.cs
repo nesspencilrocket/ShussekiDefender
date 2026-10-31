@@ -3,7 +3,7 @@
 /// <summary>小さな範囲攻撃の広さが分かるよう、短い輪だけを表示する。</summary>
 public sealed class ProjectileSplashEffect : MonoBehaviour
 {
-    private const float Duration = 0.18f;
+    private const float Duration = 0.25f;
     private LineRenderer ring;
     private float elapsed;
 
@@ -19,7 +19,7 @@ public sealed class ProjectileSplashEffect : MonoBehaviour
         effect.ring.sortingOrder = source.sortingOrder + 1;
         effect.ring.useWorldSpace = false;
         effect.ring.loop = true;
-        effect.ring.widthMultiplier = 0.04f;
+        effect.ring.widthMultiplier = 0.07f;
         effect.ring.positionCount = 32;
         for (int i = 0; i < 32; i++)
         {
@@ -39,7 +39,7 @@ public sealed class ProjectileSplashEffect : MonoBehaviour
     private void Draw(float progress)
     {
         transform.localScale = Vector3.one * Mathf.Lerp(0.7f, 1f, progress);
-        Color tint = new Color(1f, 0.8f, 0.15f, 0.65f * (1f - progress));
+        Color tint = new Color(1f, 0.8f, 0.15f, 0.95f * (1f - progress));
         ring.startColor = tint;
         ring.endColor = tint;
     }
