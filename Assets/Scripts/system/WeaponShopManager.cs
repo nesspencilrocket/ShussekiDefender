@@ -55,7 +55,10 @@ public class WeaponShopManager : MonoBehaviour
     /// <summary>この種類の武器が、置ける数の上限（WeaponSettings.maxPlaced）に達しているか</summary>
     public bool IsAtLimit(WeaponSettings weapon)
     {
-        return weapon != null && weapon.maxPlaced > 0 && PlacedCount(weapon) >= weapon.maxPlaced;
+        if (weapon == null || weapon.maxPlaced <= 0) return false;
+        StageLevel level = StageLevel.Instance;
+        int max = weapon.MaxPlacedAt(level != null ? level.Level : 1);
+        return PlacedCount(weapon) >= max;
     }
 
 

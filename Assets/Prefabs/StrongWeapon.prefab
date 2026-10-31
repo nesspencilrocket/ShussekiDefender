@@ -177,13 +177,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ee92b648c86b7340999d6d4b1b28675, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponUpgrade
-  upgradeCost: 60
-  addCost: 10
-  addDamage: 3
-  decreaseInterval: 0.095
+  upgradeCost: 120
+  addCost: 30
+  addDamage: 5
+  decreaseInterval: 0.1
   firstUpgradeMultiplier: 1.2
-  finalUpgradeExtraCost: 120
-  finalUpgradeExtraIntervalCut: 0.45
+  finalUpgradeExtraCost: 100
+  maxLevel: 10
+  finalUpgradeExtraIntervalCut: 0.15
 --- !u!58 &2909032310384143757
 CircleCollider2D:
   m_ObjectHideFlags: 0
