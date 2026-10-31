@@ -35,6 +35,23 @@ public class WeaponShopManager : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
+    /// <summary>この種類の武器が、いま何基置いてあるか</summary>
+    public int PlacedCount(WeaponSettings weapon)
+    {
+        int count = 0;
+        foreach (Node n in nodes)
+        {
+            if (n != null && n.weapon != null && n.weapon.settings == weapon) count++;
+        }
+        return count;
+    }
+
+    /// <summary>この種類の武器が、置ける数の上限（WeaponSettings.maxPlaced）に達しているか</summary>
+    public bool IsAtLimit(WeaponSettings weapon)
+    {
+        return weapon != null && weapon.maxPlaced > 0 && PlacedCount(weapon) >= weapon.maxPlaced;
+    }
+
 
 
     void Start()
@@ -151,6 +168,9 @@ public class WeaponShopManager : MonoBehaviour
 
         // お金が足りなければ何もしない。パネルは開いたままにして、別の武器を選べるようにする
         CurrencyManager wallet = CurrencyManager.instance;
+        // この種類の武器が上限まで置いてあれば、置かない
+        if (IsAtLimit(weapon)) return;
+
         int price = weapon.TurretShopCost;
         if (wallet == null || wallet.totalCoins < price) return;
 
