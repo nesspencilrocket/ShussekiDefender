@@ -29,7 +29,7 @@ public class Spawner : MonoBehaviour
 
     // 波の内容は StageData から受け取る。シーンには持たせない。
     private List<WaveData> waves;
-    private float enemyHPMultiplier = 1f;
+    private float stageEnemyHP;
     private int waveSpawnRampCount;
 
     private int currentWaveIndex = 0;
@@ -72,7 +72,7 @@ public class Spawner : MonoBehaviour
         }
 
         waves = stage.waves;
-        enemyHPMultiplier = stage.enemyHPMultiplier;
+        stageEnemyHP = stage.enemyHP;
         waveSpawnRampCount = stage.waveSpawnRampCount;
 
         CollectRoutes();
@@ -201,7 +201,7 @@ public class Spawner : MonoBehaviour
         // EnemyData の HP・速度・報酬をこの個体へ反映する。
         // SetActive(true) より前に呼ぶ必要がある（OnEnable が currentHP = hp を読むため）。
         // data が null（旧形式の波）なら何もせず、プレハブの値のまま湧く。
-        enemyHP.Apply(data, enemyHPMultiplier);
+        enemyHP.Apply(data, stageEnemyHP);
         enemy.Apply(data);
 
         enemyHP.originalPrefab = prefabToSpawn;
