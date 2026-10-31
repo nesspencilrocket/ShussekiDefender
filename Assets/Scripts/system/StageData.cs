@@ -43,6 +43,10 @@ public class StageData : ScriptableObject
     [Tooltip("この数だけ敵に通過されると敗北")]
     public int maxEnemyPasses = 50;
 
+    [Tooltip("時限の残りがこの秒数になると、Node.closesInFinalPhase が ON の設置スポットが、"
+           + "置いてある武器ごと使えなくなる。0 なら何も起きない")]
+    [Min(0f)] public float finalPhaseSeconds = 0f;
+
     [Tooltip("ステージ開始時の所持コイン")]
     public int initialCoin = 100;
 

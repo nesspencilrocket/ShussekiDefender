@@ -68,12 +68,14 @@ public class LevelBar : MonoBehaviour
     {
         StageLevel.OnLevelChanged += OnLevelUp;
         Spawner.OnEnemyHPRaised += OnEnemyHPRaised;
+        NodeFinalPhase.OnNotice += OnNodeNotice;
     }
 
     private void OnDisable()
     {
         StageLevel.OnLevelChanged -= OnLevelUp;
         Spawner.OnEnemyHPRaised -= OnEnemyHPRaised;
+        NodeFinalPhase.OnNotice -= OnNodeNotice;
     }
 
     private void Build()
@@ -215,6 +217,12 @@ public class LevelBar : MonoBehaviour
             ? $"Lv.{newLevel}！ 設置場所が {opened} つ増えた"
             : $"Lv.{newLevel}！");
         Refresh();
+    }
+
+    /// <summary>終盤に設置スポットが使えなくなるとき（予告と当日）</summary>
+    private void OnNodeNotice(string message)
+    {
+        pendingNotices.Enqueue(message);
     }
 
     /// <summary>波が変わって、敵の HP が上がったとき。レベルアップと同じ場所に知らせる</summary>

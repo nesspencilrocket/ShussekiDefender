@@ -27,14 +27,32 @@ public class Node : MonoBehaviour
     [Tooltip("まだ使えないときの色。台座の色に掛ける")]
     [SerializeField] private Color lockedTint = new Color(0.3f, 0.3f, 0.3f, 0.55f);
 
+    [Header("終盤で使えなくなる")]
+    [Tooltip("ON：時限の終盤（StageData.finalPhaseSeconds 秒前）に、この設置スポットが使えなくなる。"
+           + "置いてある武器も消える（お金は戻らない）。何秒前かは、ステージごとに決める")]
+    [SerializeField] private bool closesInFinalPhase = false;
+
+    [Tooltip("使えなくなるときのお知らせに出す場所の名前（例：右下）")]
+    [SerializeField] private string areaLabel = "";
+
     private SpriteRenderer baseSprite;
     private Color baseColor = Color.white;
+    private bool closed;
 
 
     public static Action OnWeaponSold;
 
     /// <summary>使えるようになる順番。0 は常に使える</summary>
     public int UnlockOrder => unlockOrder;
+
+    /// <summary>終盤に使えなくなる設置スポットか</summary>
+    public bool ClosesInFinalPhase => closesInFinalPhase;
+
+    /// <summary>お知らせに出す場所の名前（例：右下）</summary>
+    public string AreaLabel => areaLabel;
+
+    /// <summary>終盤になって、もう使えなくなったか</summary>
+    public bool IsClosed => closed;
 
     /// <summary>
     /// 今使えるか。順番が今のレベルで開いている数以内なら使える。
@@ -44,6 +62,7 @@ public class Node : MonoBehaviour
     {
         get
         {
+            if (closed) return false;
             if (unlockOrder <= 0) return true;
             StageLevel level = StageLevel.Instance;
             return level != null && unlockOrder <= level.UnlockedCount;
@@ -57,6 +76,7 @@ public class Node : MonoBehaviour
     {
         get
         {
+            if (closed) return false;
             if (unlockOrder <= 0) return true;
             StageLevel level = StageLevel.Instance;
             return level == null || level.MaxNodes <= 0 || unlockOrder <= level.MaxNodes;
@@ -83,6 +103,7 @@ public class Node : MonoBehaviour
         Canvas legacyCanvas = GetComponentInChildren<Canvas>(true);
         if (legacyCanvas != null) legacyCanvas.gameObject.SetActive(false);
         NodeClickInput.Ensure().Register(this);
+        if (closesInFinalPhase) NodeFinalPhase.Ensure().Register(this);
 
         ApplyLock();
     }
@@ -93,7 +114,7 @@ public class Node : MonoBehaviour
     /// </summary>
     public bool ContainsPoint(Vector2 point, float margin)
     {
-        if (baseSprite == null) return false;
+        if (closed || baseSprite == null) return false;
         Bounds b = baseSprite.bounds;
         return point.x >= b.min.x - margin && point.x <= b.max.x + margin
             && point.y >= b.min.y - margin && point.y <= b.max.y + margin;
@@ -123,6 +144,24 @@ public class Node : MonoBehaviour
         if (baseSprite != null) baseSprite.color = unlocked ? baseColor : baseColor * lockedTint;
     }
 
+
+    /// <summary>
+    /// 終盤になって、この設置スポットを使えなくする。置いてある武器も消える（お金は戻らない）。
+    /// NodeFinalPhase が呼ぶ。
+    /// </summary>
+    public void CloseForFinalPhase()
+    {
+        if (closed) return;
+        closed = true;
+
+        if (weapon != null)
+        {
+            Destroy(weapon.gameObject);
+            weapon = null;
+        }
+        CloseAttackRange();
+        gameObject.SetActive(false);
+    }
 
     /// <summary>
     /// このノードに武器をセット（変数に格納）
