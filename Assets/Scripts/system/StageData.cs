@@ -30,8 +30,9 @@ public class StageData : ScriptableObject
     [Tooltip("出現させる敵の波表。Spawner がここから読む")]
     public List<WaveData> waves = new List<WaveData>();
 
-    [Tooltip("敵の基礎HPに掛ける倍率。敵アセットを共有したまま時限ごとの難しさを調整する")]
-    [Min(0.01f)] public float enemyHPMultiplier = 1f;
+    [Tooltip("このステージで湧く敵の HP（そのままの値）。0 なら EnemyData.maxHP を使う。"
+           + "敵アセットを共有したまま、時限ごとの難しさをこの 1 つの数で調整する")]
+    [Min(0f)] public float enemyHP = 0f;
 
     [Tooltip("次の波の出現間隔へ徐々に切り替える出現数。0なら即座に切り替える")]
     [Min(0)] public int waveSpawnRampCount = 0;
