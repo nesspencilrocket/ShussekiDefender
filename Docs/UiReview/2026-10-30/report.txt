@@ -1,0 +1,48 @@
+PASS GameClear displays 無期限停学
+PASS 1920x1080 訓告 lines=1 font=124.3 text=(248.60, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1920x1080 厳重注意 lines=1 font=124.3 text=(497.20, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1920x1080 1週間停学 lines=1 font=124.3 text=(559.35, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1920x1080 無期限停学 lines=1 font=122 text=(610.00, 176.66, 0.00) box=(610.00, 180.00)
+PASS 1920x1080 退学処分 lines=1 font=124.3 text=(497.20, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1920x1080 処分なし lines=1 font=124.3 text=(497.20, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1280x800 訓告 lines=1 font=124.3 text=(248.60, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1280x800 厳重注意 lines=1 font=124.3 text=(497.20, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1280x800 1週間停学 lines=1 font=124.3 text=(559.35, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1280x800 無期限停学 lines=1 font=122 text=(610.00, 176.66, 0.00) box=(610.00, 180.00)
+PASS 1280x800 退学処分 lines=1 font=124.3 text=(497.20, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1280x800 処分なし lines=1 font=124.3 text=(497.20, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1024x768 訓告 lines=1 font=124.3 text=(248.60, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1024x768 厳重注意 lines=1 font=124.3 text=(497.20, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1024x768 1週間停学 lines=1 font=124.3 text=(559.35, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1024x768 無期限停学 lines=1 font=122 text=(610.00, 176.66, 0.00) box=(610.00, 180.00)
+PASS 1024x768 退学処分 lines=1 font=124.3 text=(497.20, 179.99, 0.00) box=(610.00, 180.00)
+PASS 1024x768 処分なし lines=1 font=124.3 text=(497.20, 179.99, 0.00) box=(610.00, 180.00)
+TITLE_READY failures=0
+PASS reset confirmation blocks background buttons
+PASS cancel returns to records
+PASS cancel preserves all six scores
+PASS confirm removes all six scores
+PASS reset preserves stage unlocks
+PASS reset rebuilds records without duplicate buttons
+PASS total score refreshed to zero
+PASS rank refreshed to 記録なし
+PASS original progress and scores restored
+RECORDS_READY failures=0
+UNITY_ERROR Invalid index 4 7 5
+System.Reflection.MethodBase:Invoke (object,object[])
+UiReviewProbe:OnDestroy () (at Assets/Scripts/system/UiReviewProbe.cs:203)
+
+UNITY_ERROR Invalid index 3 7 5
+System.Reflection.MethodBase:Invoke (object,object[])
+UiReviewProbe:OnDestroy () (at Assets/Scripts/system/UiReviewProbe.cs:203)
+
+UNITY_ERROR Invalid index 2 7 5
+System.Reflection.MethodBase:Invoke (object,object[])
+UiReviewProbe:OnDestroy () (at Assets/Scripts/system/UiReviewProbe.cs:203)
+
+UNITY_ERROR Invalid index 1 7 5
+System.Reflection.MethodBase:Invoke (object,object[])
+UiReviewProbe:OnDestroy () (at Assets/Scripts/system/UiReviewProbe.cs:203)
+
+RESTORED
+CLEANUP_FIXED removedTemporarySizes=4; original sizes retained

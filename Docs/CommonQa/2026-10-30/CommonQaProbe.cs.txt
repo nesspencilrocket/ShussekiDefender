@@ -1,0 +1,466 @@
+﻿#if UNITY_EDITOR
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.Video;
+
+// 今回の総点検だけで使用する。保存値とGame View設定を退避し、再生停止時に戻す。
+[DefaultExecutionOrder(10000)]
+public sealed class CommonQaProbe : MonoBehaviour
+{
+    private const string Flag="CommonQaProbe.Run";
+    private const string Root="Temp/CommonQa";
+    private string output, run;
+    private readonly Dictionary<string,int> ints=new Dictionary<string,int>();
+    private readonly Dictionary<string,float> floats=new Dictionary<string,float>();
+    private readonly HashSet<string> existed=new HashSet<string>();
+    private readonly Dictionary<string,int> sizeIndexes=new Dictionary<string,int>();
+    private EditorWindow view;
+    private object group;
+    private PropertyInfo selection;
+    private int oldSize, passed, failed, errors;
+    private bool oldMax, oldBackground, restored;
+    private float oldVolume;
+    private UnityEngine.Random.State oldRandom;
+
+    [MenuItem("Shusseki/一通りデバッグ %#j")]
+    private static void Launch()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode)return;
+        if(SceneManager.GetActiveScene().name!="Stage_1"||SceneManager.GetActiveScene().isDirty)
+            throw new Exception("保存済みStage_1から実行してください");
+        SessionState.SetBool(Flag,true);
+        EditorApplication.isPlaying=true;
+    }
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Inject()
+    {
+        if(SessionState.GetBool(Flag,false))new GameObject("CommonQaProbe").AddComponent<CommonQaProbe>();
+    }
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+        run=File.ReadAllText(Root+"/run.txt").Trim();
+        output=Root+"/"+run;
+        Directory.CreateDirectory(output);
+        File.WriteAllText(output+"/report.txt", "RUN "+run+"\n");
+        foreach(string key in new[]{"CLEARED_STAGE","BEST_SCORE_1","BEST_SCORE_2","BEST_SCORE_3","BEST_SCORE_4","BEST_SCORE_5","BEST_SCORE_6"})
+        {ints[key]=PlayerPrefs.GetInt(key);if(PlayerPrefs.HasKey(key))existed.Add(key);}
+        foreach(string key in new[]{"GAME_SPEED","SET_MASTER_VOLUME","SET_BGM_VOLUME","SET_BRIGHTNESS"})
+        {floats[key]=PlayerPrefs.GetFloat(key,key=="GAME_SPEED"?1f:key=="SET_MASTER_VOLUME"?.8f:key=="SET_BGM_VOLUME"?.6f:1f);if(PlayerPrefs.HasKey(key))existed.Add(key);}
+        File.WriteAllLines(output+"/save-backup.txt",ints.Select(p=>p.Key+","+existed.Contains(p.Key)+","+p.Value)
+            .Concat(floats.Select(p=>p.Key+","+existed.Contains(p.Key)+","+p.Value)));
+        oldVolume=AudioListener.volume;oldBackground=Application.runInBackground;oldRandom=UnityEngine.Random.state;
+        Application.runInBackground=true;
+        view=EditorWindow.GetWindow(typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView"));
+        oldMax=view.maximized;
+        selection=view.GetType().GetProperty("selectedSizeIndex",BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance);
+        oldSize=(int)selection.GetValue(view);
+        view.maximized=true;view.Focus();
+        Application.logMessageReceived+=Log;
+        GameSpeed.Select(1f);
+        AudioListener.volume=0;
+    }
+    private void Log(string message,string stack,LogType type)
+    {
+        if(type==LogType.Error||type==LogType.Exception){errors++;File.AppendAllText(output+"/errors.txt",message+"\n"+stack+"\n");}
+        else if(type==LogType.Warning)File.AppendAllText(output+"/warnings.txt",message+"\n");
+    }
+    private void Check(bool condition,string label)
+    {
+        if(condition)passed++;else failed++;
+        File.AppendAllText(output+"/report.txt",(condition?"PASS ":"FAIL ")+label+"\n");
+    }
+    private void Attempt(Action action,string label)
+    {try{action();Check(true,label);}catch(Exception error){Check(false,label+" EXCEPTION "+error.GetBaseException().GetType().Name);}}
+    private static T Get<T>(object host,string name)=> (T)host.GetType().GetField(name,BindingFlags.NonPublic|BindingFlags.Instance).GetValue(host);
+    private static void Set(object host,string name,object value)=>host.GetType().GetField(name,BindingFlags.NonPublic|BindingFlags.Instance).SetValue(host,value);
+    private static void Call(object host,string name)=>host.GetType().GetMethod(name,BindingFlags.NonPublic|BindingFlags.Instance).Invoke(host,null);
+    private void Resize(int width,int height)
+    {
+        string key=width+"x"+height;
+        if(!sizeIndexes.ContainsKey(key))
+        {
+            Assembly editor=typeof(EditorWindow).Assembly;
+            Type sizes=editor.GetType("UnityEditor.GameViewSizes");
+            object instance=sizes.GetProperty("instance",BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy).GetValue(null);
+            group=sizes.GetMethod("GetGroup").Invoke(instance,new[]{Enum.Parse(editor.GetType("UnityEditor.GameViewSizeGroupType"),"Standalone")});
+            object size=Activator.CreateInstance(editor.GetType("UnityEditor.GameViewSize"),Enum.Parse(editor.GetType("UnityEditor.GameViewSizeType"),"FixedResolution"),width,height,"CommonQa-"+key);
+            group.GetType().GetMethod("AddCustomSize").Invoke(group,new[]{size});
+            sizeIndexes[key]=(int)group.GetType().GetMethod("GetBuiltinCount").Invoke(group,null)+(int)group.GetType().GetMethod("GetCustomCount").Invoke(group,null)-1;
+        }
+        selection.SetValue(view,sizeIndexes[key]);view.Repaint();
+    }
+    private IEnumerator Ready()
+    {for(int frame=0;frame<3;frame++)yield return null;while(GameManager.Instance!=null&&GameManager.Instance.IsCountingDown)yield return null;}
+    private IEnumerator LoadStage(int stage)
+    {
+        StageContext.Select(AssetDatabase.LoadAssetAtPath<StageData>("Assets/ScriptableObject/Stages/Stage_"+stage+".asset"));
+        GameSpeed.Resume();SceneManager.LoadScene("Stage_1");yield return Ready();GameSpeed.Pause();
+    }
+    private IEnumerator Capture(string name)
+    {yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(output+"/"+name+".png");yield return null;}
+    private void Fit(TextMeshProUGUI text,string label)
+    {
+        if(text==null||!text.gameObject.activeInHierarchy||string.IsNullOrWhiteSpace(text.text))return;
+        text.ForceMeshUpdate();Rect r=text.rectTransform.rect;Vector4 m=text.margin;Bounds b=text.textBounds;
+        Check(!text.isTextOverflowing&&b.min.x>=r.xMin+m.x-2&&b.max.x<=r.xMax-m.z+2
+            &&b.min.y>=r.yMin+m.w-2&&b.max.y<=r.yMax-m.y+2,label+" fits text="+text.text.Replace("\n","/")+" size="+text.fontSize+" lines="+text.textInfo.lineCount);
+    }
+    private void Visible(TextMeshProUGUI text,string label)
+    {
+        if(text==null||!text.gameObject.activeInHierarchy)return;
+        text.ForceMeshUpdate();Bounds bounds=text.textBounds;Rect pixels=Camera.main.pixelRect;
+        Vector2 min=RectTransformUtility.WorldToScreenPoint(null,text.transform.TransformPoint(bounds.min));
+        Vector2 max=RectTransformUtility.WorldToScreenPoint(null,text.transform.TransformPoint(bounds.max));
+        Check(min.x>=pixels.xMin-2&&max.x<=pixels.xMax+2&&min.y>=pixels.yMin-2&&max.y<=pixels.yMax+2,label+" stays inside gameplay viewport");
+    }
+    private void Buttons(string label)
+    {
+        foreach(Button button in FindObjectsByType<Button>(FindObjectsSortMode.None))
+        {
+            Canvas canvas=button.GetComponentInParent<Canvas>();
+            if(!button.IsInteractable()||canvas==null||canvas.renderMode!=RenderMode.ScreenSpaceOverlay)continue;
+            RectTransform rt=(RectTransform)button.transform;
+            Vector2 point=RectTransformUtility.WorldToScreenPoint(null,rt.TransformPoint(rt.rect.center));
+            var hits=new List<RaycastResult>();
+            EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);
+            Check(hits.Count>0&&hits[0].gameObject.GetComponentInParent<Button>()==button,label+" button raycast "+button.name);
+        }
+    }
+    private IEnumerator Start()
+    {
+        yield return Ready();GameSpeed.Pause();Resize(1920,1080);yield return null;
+        if(run.StartsWith("node")){yield return NodeChecks();yield break;}
+        if(run.StartsWith("edges")){yield return EdgeChecks();yield break;}
+        GameManager gm=GameManager.Instance;CurrencyManager wallet=CurrencyManager.instance;
+        ScoreManager score=FindFirstObjectByType<ScoreManager>();
+        var settings=score.GetStatsSettings();score.RecordDefeat(settings[0].enemyPrefab);score.UpdateStatsUI();
+        Check(score.TotalKills==1&&score.GetStatsSettings()[0].killCount==1,"kill counts exported to result data");
+        Attempt(()=>score.RecordDefeat(null),"null defeat is ignored safely");
+        WeaponSettings normal=AssetDatabase.LoadAssetAtPath<WeaponSettings>("Assets/ScriptableObject/Weapon.asset");
+        WeaponSettings yellow=AssetDatabase.LoadAssetAtPath<WeaponSettings>("Assets/ScriptableObject/StrongWeapon.asset");
+        // 黄色の設定アセット名は実プロジェクトから確認して差し替える。
+        foreach(WeaponSettings data in new[]{normal,yellow})
+        {
+            GameObject go=Instantiate(data.TurretPrefab);Weapon w=go.GetComponent<Weapon>();WeaponUpgrade up=go.GetComponent<WeaponUpgrade>();
+            wallet.totalCoins=2000;
+            Check(w.weaponUpgrade!=null&&up.level==1&&up.currentUpgradeCost>0&&go.GetComponent<WeaponControl>().bulletDamage>0,"new tower ready immediately "+data.name);
+            Attempt(()=>up.UpgradeWeapon(),"same-frame upgrade "+data.name);
+            Check(up.level==2,"same-frame upgrade reaches level 2 "+data.name);
+            Destroy(go);yield return null;
+        }
+        Node[] nodes=FindObjectsByType<Node>(FindObjectsSortMode.None).OrderBy(n=>n.UnlockOrder).ToArray();
+        nodes[0].SelectNode();wallet.totalCoins=normal.TurretShopCost-1;
+        WeaponUI.OnPressedWeaponsUI?.Invoke(normal);
+        Check(nodes[0].IsEmpty()&&wallet.totalCoins==normal.TurretShopCost-1,"insufficient purchase does not charge");
+        wallet.totalCoins=normal.TurretShopCost;
+        WeaponUI.OnPressedWeaponsUI?.Invoke(normal);yield return null;
+        Check(!nodes[0].IsEmpty()&&wallet.totalCoins==0,"exact-price purchase works");
+        wallet.totalCoins=2000;int coins=wallet.totalCoins;
+        WeaponUI.OnPressedWeaponsUI?.Invoke(normal);
+        Check(wallet.totalCoins==coins&&WeaponShopManager.Instance.TotalPlaced()==1,"double purchase cannot stack towers");
+        WeaponUpgrade installed=nodes[0].weapon.weaponUpgrade;
+        int expectedSpend=normal.TurretShopCost;
+        while(!installed.IsMaxLevel){expectedSpend+=installed.currentUpgradeCost;installed.UpgradeWeapon();}
+        coins=wallet.totalCoins;installed.UpgradeWeapon();
+        Check(installed.level==5&&wallet.totalCoins==coins,"max level does not charge again");
+        Check(installed.GetSellValue()==Mathf.RoundToInt(expectedSpend*.5f),"sale refunds half of paid purchase and upgrades");
+        nodes[0].SellWeapon();int sold=wallet.totalCoins;nodes[0].SellWeapon();
+        Check(wallet.totalCoins==sold&&nodes[0].IsEmpty(),"double sell cannot refund twice");
+        yield return null;
+        nodes[0].SelectNode();WeaponUI.OnPressedWeaponsUI?.Invoke(normal);yield return null;
+        nodes[1].SelectNode();
+        gm.GameClear();yield return null;
+        Check(!Get<GameObject>(UIManager.instance,"weaponShopPanel").activeSelf&&!Get<GameObject>(UIManager.instance,"nodeUIPanel").activeSelf,"result closes gameplay panels");
+        int selectedEvents=0;Action<Node> listener=n=>selectedEvents++;Node.OnNodeSelected+=listener;nodes[2].SelectNode();Node.OnNodeSelected-=listener;
+        Check(selectedEvents==0,"result blocks node selection");
+        coins=wallet.totalCoins;int towers=WeaponShopManager.Instance.TotalPlaced();WeaponUI.OnPressedWeaponsUI?.Invoke(normal);
+        Check(coins==wallet.totalCoins&&WeaponShopManager.Instance.TotalPlaced()==towers,"result blocks purchases");
+        int level=nodes[0].weapon.weaponUpgrade.level;coins=wallet.totalCoins;nodes[0].weapon.weaponUpgrade.UpgradeWeapon();
+        Check(level==nodes[0].weapon.weaponUpgrade.level&&coins==wallet.totalCoins,"result blocks direct upgrades");
+        coins=wallet.totalCoins;nodes[0].SellWeapon();
+        Check(coins==wallet.totalCoins&&!nodes[0].IsEmpty(),"result blocks selling");
+        int passes=gm.EnemiesPassed;gm.RecordEnemyPass();Check(gm.EnemiesPassed==passes,"result freezes pass count");
+        GameSpeed.Toggle();Check(GameSpeed.IsPaused,"speed toggle cannot unpause result");
+        Check(!PlayerSkillController.Instance.TryActivate(0),"skills blocked during result");
+        yield return Capture("result");
+        if(run=="baseline")
+        {File.AppendAllText(output+"/report.txt","BASELINE_DONE passed="+passed+" failed="+failed+" errors="+errors+"\n");yield break;}
+        gm.OnRetryButtonClicked();yield return Ready();
+        Check(GameManager.Instance.Stage.stageNumber==1&&CurrencyManager.instance.totalCoins==GameManager.Instance.Stage.initialCoin&&WeaponShopManager.Instance.TotalPlaced()==0,"retry resets coins and towers");
+        Check(!GameSpeed.IsPaused&&Mathf.Approximately(Time.timeScale,GameSpeed.Selected),"retry restores selected speed");
+        GameSpeed.Pause();
+        int[] widths={1920,1280,1024,2560,1920,720,1280};int[] heights={1080,800,768,1080,540,1280,720};
+        for(int stage=1;stage<=6;stage++)
+        {
+            yield return LoadStage(stage);gm=GameManager.Instance;wallet=CurrencyManager.instance;
+            Check(gm.Stage.stageNumber==stage&&wallet.totalCoins==gm.Stage.initialCoin,"stage "+stage+" loads correct rules and money");
+            Check(StageLevel.Instance.Level==1&&StageLevel.Instance.UnlockedCount==gm.Stage.initialNodes,"stage "+stage+" resets level and nodes");
+            Check(Mathf.Approximately(Enemy.WeatherSpeedScale,1f),"stage "+stage+" resets weather");
+            Check(PlayerSkillController.Instance.Skills.Count==gm.Stage.skills.Count,"stage "+stage+" loads skills");
+            if(stage==1||stage==6)
+            {
+                wallet.totalCoins=999999;
+                for(int i=0;i<widths.Length;i++)
+                {
+                    Resize(widths[i],heights[i]);for(int frame=0;frame<4;frame++)yield return null;
+                    string label="stage "+stage+" "+widths[i]+"x"+heights[i];
+                    Rect rect=Camera.main.pixelRect;Check(Mathf.Abs(rect.width/rect.height-16f/9f)<.002f,label+" camera aspect");
+                    Visible(Get<TextMeshProUGUI>(UIManager.instance,"totalCoinsText"),label+" money");
+                    Visible(Get<TextMeshProUGUI>(gm,"enemyPassesDisplay"),label+" passed");
+                    Visible(Get<TextMeshProUGUI>(FindFirstObjectByType<CountdownTimer>(),"timerText"),label+" timer");
+                    Buttons(label);
+                    if(i<4||i==5)yield return Capture("stage"+stage+"-"+widths[i]+"x"+heights[i]);
+                }
+            }
+            RainController rain=FindFirstObjectByType<RainController>();wallet.totalCoins=49;Call(rain,"TryStartRain");
+            Check(!rain.IsRaining&&wallet.totalCoins==49,"stage "+stage+" rain rejects insufficient coins");
+            wallet.totalCoins=100;Call(rain,"TryStartRain");Call(rain,"TryStartRain");
+            Check(rain.IsRaining&&wallet.totalCoins==50&&Mathf.Approximately(Enemy.WeatherSpeedScale,.5f),"stage "+stage+" rain charges only once");
+            gm.GameOver();yield return null;
+            Check(!rain.IsRaining&&Mathf.Approximately(Enemy.WeatherSpeedScale,1f)&&GameSpeed.IsPaused,"stage "+stage+" defeat resets rain and pauses");
+            Fit(Get<TextMeshProUGUI>(gm,"titleText"),"defeat title stage "+stage);
+        }
+        Resize(1920,1080);PlayerPrefs.SetInt("CLEARED_STAGE",5);GameSpeed.Resume();SceneManager.LoadScene("StageSelect");yield return null;yield return null;
+        StageSelectManager select=FindFirstObjectByType<StageSelectManager>();
+        Check(!select.startButtonObj.activeSelf&&!select.previewObj.activeSelf,"stage select begins with no stale selection");
+        for(int stage=0;stage<6;stage++)
+        {
+            select.OnStageImageClicked(stage);yield return null;Fit(select.descriptionText,"stage select description "+(stage+1));Fit(select.startButtonLabel,"stage start label "+(stage+1));
+            Check(select.previewObj.activeSelf&&select.startButtonObj.activeSelf,"stage "+(stage+1)+" preview and start available");
+        }
+        Buttons("stage select");yield return Capture("stage-select");
+        select.OnStartButtonClick();yield return Ready();
+        Check(GameManager.Instance.Stage.stageNumber==6,"stage selection carries selected stage");
+        GameManager.Instance.OnTitleButtonClicked();yield return null;yield return null;
+        Check(SceneManager.GetActiveScene().name=="StartMenu"&&!GameSpeed.IsPaused,"title return resumes time");
+        yield return Capture("start-menu");
+        SceneManager.LoadScene("Settings");yield return null;yield return null;
+        SettingsScreen screen=FindFirstObjectByType<SettingsScreen>();
+        Get<Slider>(screen,"masterSlider").value=.45f;Get<Slider>(screen,"bgmSlider").value=.3f;Get<Slider>(screen,"brightnessSlider").value=.75f;
+        Check(Mathf.Approximately(GameSettings.MasterVolume,.45f)&&Mathf.Approximately(GameSettings.BgmVolume,.3f)&&Mathf.Approximately(GameSettings.Brightness,.75f),"settings sliders change saved values");
+        foreach(int i in new[]{0,2,3,5})
+        {
+            Resize(widths[i],heights[i]);for(int frame=0;frame<3;frame++)yield return null;
+            Buttons("settings "+widths[i]+"x"+heights[i]);yield return Capture("settings-"+widths[i]+"x"+heights[i]);
+        }
+        Call(screen,"ResetAll");Check(Mathf.Approximately(GameSettings.MasterVolume,.8f)&&Mathf.Approximately(GameSettings.Brightness,1f)&&Mathf.Approximately(GameSpeed.Selected,1f),"settings default reset");
+        GameSettings.Brightness=1f;Resize(1920,1080);SceneManager.LoadScene("Records");yield return null;yield return null;
+        for(int i=1;i<=6;i++)PlayerPrefs.SetInt("BEST_SCORE_"+i,999999);PlayerPrefs.SetInt("CLEARED_STAGE",6);
+        RecordsScreen records=FindFirstObjectByType<RecordsScreen>();Call(records,"Build");yield return null;
+        foreach(int i in new[]{0,2,3,5})
+        {
+            Resize(widths[i],heights[i]);for(int frame=0;frame<3;frame++)yield return null;
+            Buttons("records "+widths[i]+"x"+heights[i]);
+            foreach(TextMeshProUGUI text in records.GetComponentsInChildren<TextMeshProUGUI>())Fit(text,"records "+text.name);
+            yield return Capture("records-"+widths[i]+"x"+heights[i]);
+        }
+        Resize(1920,1080);GameSpeed.Pause();SceneManager.LoadScene("SeapSplash");yield return null;
+        bool unity=false,seap=false;double deadline=Time.realtimeSinceStartupAsDouble+16;
+        while(Time.realtimeSinceStartupAsDouble<deadline)
+        {
+            SeapSplash splash=FindFirstObjectByType<SeapSplash>();
+            if(splash==null&&SceneManager.GetActiveScene().name=="StartMenu")break;
+            if(splash!=null)
+            {
+                Image fade=Get<Image>(splash,"fadeOverlay");
+                if(fade!=null&&fade.color.a<.03f)
+                {
+                    if(!unity&&Get<GameObject>(splash,"unityScreen").activeSelf){unity=true;yield return Capture("startup-unity");}
+                    if(!seap&&Get<GameObject>(splash,"seapScreen").activeSelf){seap=true;yield return Capture("startup-seap");}
+                }
+            }
+            yield return null;
+        }
+        Check(unity&&seap&&SceneManager.GetActiveScene().name=="StartMenu","startup Unity then SEAP then title under paused entry");
+        RestorePrefs();
+        Check(ints.All(p=>PlayerPrefs.HasKey(p.Key)==existed.Contains(p.Key)&&PlayerPrefs.GetInt(p.Key)==p.Value),"original scores and unlocks restored");
+        Check(errors==0,"no runtime errors during full suite");
+        File.AppendAllText(output+"/report.txt","MANUAL_READY passed="+passed+" failed="+failed+" errors="+errors+"\n");
+    }
+    private Node HitNode(Vector3 world)
+    {
+        var hits=new List<RaycastResult>();
+        EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=Camera.main.WorldToScreenPoint(world)},hits);
+        return hits.Count==0?null:hits[0].gameObject.GetComponentInParent<Node>();
+    }
+    private IEnumerator NodeChecks()
+    {
+        Node target=FindObjectsByType<Node>(FindObjectsSortMode.None).Single(n=>n.UnlockOrder==1);
+        SpriteRenderer sprite=target.GetComponent<SpriteRenderer>();
+        Node[] unlocked=FindObjectsByType<Node>(FindObjectsSortMode.None).Where(n=>n.IsUnlocked).ToArray();
+        FindFirstObjectByType<Spawner>().StopAllCoroutines();
+        foreach(Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None))e.gameObject.SetActive(false);
+        int[] widths={1920,1280,1024};int[] heights={1080,800,768};
+        File.AppendAllText(output+"/report.txt","TARGET "+target.name+" world="+target.transform.position+" visual="+sprite.bounds.size+"\n");
+        for(int i=0;i<widths.Length;i++)
+        {
+            Resize(widths[i],heights[i]);for(int frame=0;frame<4;frame++)yield return null;
+            string label=widths[i]+"x"+heights[i];
+            foreach(float y in new[]{-.45f,-.225f,0f,.225f,.45f})
+                foreach(float x in new[]{-.45f,-.225f,0f,.225f,.45f})
+                {
+                    Vector3 world=sprite.bounds.center+new Vector3(sprite.bounds.size.x*x,sprite.bounds.size.y*y,0);
+                    Check(HitNode(world)==target,label+" target node hit x="+x+" y="+y);
+                }
+            foreach(Node n in unlocked)Check(HitNode(n.GetComponent<SpriteRenderer>().bounds.center)==n,label+" other node center "+n.UnlockOrder);
+            Node neighbor=unlocked.OrderBy(n=>Vector3.Distance(n.transform.position,target.transform.position)).Skip(1).First();
+            Check(HitNode((target.transform.position+neighbor.transform.position)/2f)==null,label+" gap between nodes stays nonclickable");
+            Vector3 top=sprite.bounds.center+Vector3.up*(sprite.bounds.size.y*.45f);
+            var hits=new List<RaycastResult>();
+            EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=Camera.main.WorldToScreenPoint(top)},hits);
+            if(hits.Count>0)ExecuteEvents.Execute(hits[0].gameObject,new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left},ExecuteEvents.pointerClickHandler);
+            Check(Get<GameObject>(UIManager.instance,"weaponShopPanel").activeSelf,label+" upper edge opens shop");
+            UIManager.instance.CloseTurretShopPanel();
+        }
+        int selected=0;Action<Node> handler=n=>selected++;Node.OnNodeSelected+=handler;
+        FindObjectsByType<Node>(FindObjectsSortMode.None).Single(n=>n.UnlockOrder==5).SelectNode();
+        Check(selected==0,"locked nodes remain locked");
+        GameManager.Instance.GameOver();target.SelectNode();
+        Check(selected==0&&!Get<GameObject>(UIManager.instance,"weaponShopPanel").activeSelf,"result still blocks node selection");
+        Node.OnNodeSelected-=handler;
+        if(run=="node-manual")
+        {
+            GameManager.Instance.OnRetryButtonClicked();yield return Ready();GameSpeed.Pause();FindFirstObjectByType<Spawner>().StopAllCoroutines();
+            foreach(Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None))e.gameObject.SetActive(false);
+            Resize(1920,1080);for(int frame=0;frame<3;frame++)yield return null;
+            yield return Capture("node-fixed");
+        }
+        RestorePrefs();File.AppendAllText(output+"/report.txt","NODES_DONE passed="+passed+" failed="+failed+" errors="+errors+"\n");
+    }
+    private IEnumerator EdgeChecks()
+    {
+        GameManager gm=GameManager.Instance;
+        CurrencyManager wallet=CurrencyManager.instance;
+        int[] widths={1920,1280,1024,2560,1920,720,1280};int[] heights={1080,800,768,1080,540,1280,720};
+        wallet.totalCoins=999999;
+        TextMeshProUGUI money=Get<TextMeshProUGUI>(UIManager.instance,"totalCoinsText");
+        for(int i=0;i<widths.Length;i++)
+        {
+            Resize(widths[i],heights[i]);for(int frame=0;frame<4;frame++)yield return null;
+            Fit(money,"large money "+widths[i]+"x"+heights[i]);
+            Check(money.textInfo.lineCount==1,"large money remains one line "+widths[i]+"x"+heights[i]);
+            Visible(money,"large money "+widths[i]+"x"+heights[i]);
+            if(i<4||i==5)yield return Capture("money-"+widths[i]+"x"+heights[i]);
+        }
+        foreach(string path in new[]{"Assets/ScriptableObject/Weapon.asset","Assets/ScriptableObject/StrongWeapon.asset"})
+        {
+            WeaponSettings data=AssetDatabase.LoadAssetAtPath<WeaponSettings>(path);
+            GameObject go=Instantiate(data.TurretPrefab);WeaponUpgrade up=go.GetComponent<WeaponUpgrade>();WeaponControl control=go.GetComponent<WeaponControl>();
+            float initial=control.bulletDamage;up.UpgradeWeapon();float upgraded=control.bulletDamage;
+            yield return null;
+            Check(up.level==2&&upgraded>initial&&Mathf.Approximately(control.bulletDamage,upgraded),"Start preserves same-frame upgrade "+data.name);
+            Destroy(go);yield return null;
+        }
+        FindFirstObjectByType<Spawner>().StopAllCoroutines();
+        foreach(Enemy e in FindObjectsByType<Enemy>(FindObjectsSortMode.None))e.gameObject.SetActive(false);
+        ScoreManager score=FindFirstObjectByType<ScoreManager>();GameObject prefab=score.GetStatsSettings()[0].enemyPrefab;
+        EnemyData dataEnemy=AssetDatabase.LoadAssetAtPath<EnemyData>("Assets/ScriptableObject/Enemies/Pedestrian.asset");
+        GameObject obj=ObjectPooler.Instance.GetObjectFromPool(prefab);Enemy enemy=obj.GetComponent<Enemy>();EnemyHP hp=obj.GetComponent<EnemyHP>();
+        enemy.movePoint=FindObjectsByType<MovePoint>(FindObjectsSortMode.None).First(route=>route.points!=null&&route.points.Length>1);
+        hp.originalPrefab=prefab;hp.Apply(dataEnemy,gm.Stage.enemyHPMultiplier);obj.SetActive(true);enemy.SnapToStartPoint();
+        EnemyAnimations animation=obj.GetComponent<EnemyAnimations>();animation.enabled=false;
+        int coins=wallet.totalCoins;int kills=score.TotalKills;int stageKills=StageLevel.Instance.Kills;
+        Check(PlayerSkillController.Instance.TryActivate(0),"emergency skill activates");
+        Check(!PlayerSkillController.Instance.TryActivate(0),"skill cooldown blocks repeated activation");
+        hp.ReduceHP(100);
+        Check(score.TotalKills==kills+1&&StageLevel.Instance.Kills==stageKills+1&&wallet.totalCoins==coins+dataEnemy.rewardCoin,"one kill grants one reward and one level credit");
+        for(int stage=1;stage<=6;stage++)
+        {
+            StageData sd=AssetDatabase.LoadAssetAtPath<StageData>("Assets/ScriptableObject/Stages/Stage_"+stage+".asset");
+            hp.Apply(dataEnemy,sd.enemyHPMultiplier);obj.SetActive(true);
+            float max=hp.MaxHP;obj.SetActive(false);hp.Apply(dataEnemy,sd.enemyHPMultiplier);obj.SetActive(true);
+            Check(Mathf.Approximately(max,dataEnemy.maxHP*sd.enemyHPMultiplier)&&Mathf.Approximately(hp.MaxHP,max)&&Mathf.Approximately(hp.currentHP,max),"pooled HP does not compound stage "+stage);
+            obj.SetActive(false);
+        }
+        hp.Apply(dataEnemy,gm.Stage.enemyHPMultiplier);obj.SetActive(true);enemy.SnapToStartPoint();
+        ProfessorIll freeze=ScriptableObject.CreateInstance<ProfessorIll>();freeze.duration=.12f;
+        SkillContext context=new SkillContext(this,wallet);freeze.Activate(context);
+        Check(Mathf.Approximately(Get<float>(enemy,"moveSpeed"),0f),"professor skill stops current target");
+        uint version=hp.SpawnVersion;
+        obj.SetActive(false);hp.Apply(dataEnemy,gm.Stage.enemyHPMultiplier);obj.SetActive(true);enemy.StopMovement();
+        GameSpeed.Resume();yield return new WaitForSeconds(.2f);GameSpeed.Pause();
+        Check(hp.SpawnVersion!=version&&Mathf.Approximately(Get<float>(enemy,"moveSpeed"),0f),"old freeze release cannot change recycled enemy");
+        freeze.Activate(context);GameSpeed.Resume();yield return new WaitForSeconds(.2f);GameSpeed.Pause();
+        Check(Mathf.Approximately(Get<float>(enemy,"moveSpeed"),dataEnemy.moveSpeed),"professor skill releases original surviving target");
+        animation.enabled=true;
+        freeze.duration=.3f;freeze.Activate(context);enemy.SetMoveSpeed(true);
+        Check(Mathf.Approximately(Get<float>(enemy,"moveSpeed"),0f),"rage cannot override professor freeze");
+        hp.ReduceHP(1f);GameSpeed.Resume();yield return new WaitForSeconds(.2f);GameSpeed.Pause();
+        Check(Mathf.Approximately(Get<float>(enemy,"moveSpeed"),0f),"hit recovery cannot cancel professor freeze");
+        GameSpeed.Resume();yield return new WaitForSeconds(.2f);GameSpeed.Pause();
+        Check(Mathf.Approximately(Get<float>(enemy,"moveSpeed"),dataEnemy.moveSpeed),"overlapping stops eventually release");
+        freeze.duration=.08f;freeze.Activate(context);hp.ReduceHP(1f);
+        GameSpeed.Resume();yield return new WaitForSeconds(.1f);GameSpeed.Pause();
+        Check(Mathf.Approximately(Get<float>(enemy,"moveSpeed"),0f),"freeze expiry does not cancel ongoing hit stop");
+        GameSpeed.Resume();yield return new WaitForSeconds(.1f);GameSpeed.Pause();
+        Check(Mathf.Approximately(Get<float>(enemy,"moveSpeed"),dataEnemy.moveSpeed),"hit stop ends after freeze expiry");
+        hp.ReduceHP(1f);enemy.SetMoveSpeed(true);
+        Check(Mathf.Approximately(Get<float>(enemy,"moveSpeed"),dataEnemy.moveSpeed),"rage still bypasses ordinary hit stop");
+        hp.currentHP=0;enemy.SetMoveSpeed(true);Vector3 deathPosition=enemy.transform.position;
+        GameSpeed.Resume();yield return new WaitForSeconds(.1f);GameSpeed.Pause();
+        Check(Vector3.Distance(deathPosition,enemy.transform.position)<.001f,"dead enemy cannot walk during death animation");
+        Destroy(freeze);obj.SetActive(false);
+        Node[] nodes=FindObjectsByType<Node>(FindObjectsSortMode.None).OrderBy(n=>n.UnlockOrder).ToArray();
+        int nodeEvents=0;Action<Node> handler=n=>nodeEvents++;Node.OnNodeSelected+=handler;nodes.Last().SelectNode();Node.OnNodeSelected-=handler;
+        Check(nodeEvents==0,"locked node cannot be selected");
+        StageData original=gm.Stage;StageData copy=Instantiate(original);copy.maxWeapons=2;
+        typeof(GameManager).GetField("<Stage>k__BackingField",BindingFlags.NonPublic|BindingFlags.Instance).SetValue(gm,copy);
+        WeaponSettings normal=AssetDatabase.LoadAssetAtPath<WeaponSettings>("Assets/ScriptableObject/Weapon.asset");
+        wallet.totalCoins=20000;
+        for(int i=0;i<3;i++){nodes[i].SelectNode();WeaponUI.OnPressedWeaponsUI?.Invoke(normal);}
+        Check(WeaponShopManager.Instance.TotalPlaced()==2&&nodes[2].IsEmpty(),"weapon capacity blocks third placement");
+        typeof(GameManager).GetField("<Stage>k__BackingField",BindingFlags.NonPublic|BindingFlags.Instance).SetValue(gm,original);Destroy(copy);
+        yield return null;
+        RainController rain=FindFirstObjectByType<RainController>();Set(rain,"duration",.15f);Set(rain,"cooldown",.15f);
+        Call(rain,"TryStartRain");GameSpeed.Resume();yield return new WaitForSeconds(.2f);GameSpeed.Pause();
+        Check(!rain.IsRaining&&Mathf.Approximately(Enemy.WeatherSpeedScale,1f),"rain expiry restores speed");
+        GameSpeed.Resume();yield return new WaitForSeconds(.2f);GameSpeed.Pause();Call(rain,"TryStartRain");
+        Check(rain.IsRaining,"rain becomes reusable after cooldown");
+        gm.GameOver();yield return null;
+        Check(!Get<GameObject>(UIManager.instance,"weaponShopPanel").activeSelf,"defeat also closes purchase panel");
+        Resize(1920,1080);GameSpeed.Resume();PlayerPrefs.SetInt("CLEARED_STAGE",5);SceneManager.LoadScene("StageSelect");yield return null;yield return null;
+        StageSelectManager select=FindFirstObjectByType<StageSelectManager>();select.OnStageImageClicked(5);yield return null;
+        Fit(select.descriptionText,"corrected final-stage description");
+        Check(select.descriptionText.text.Contains("25人"),"stage description matches defeat threshold");
+        yield return Capture("stage-select-corrected");
+        RestorePrefs();
+        File.AppendAllText(output+"/report.txt","EDGES_DONE passed="+passed+" failed="+failed+" errors="+errors+"\n");
+    }
+    private void RestorePrefs()
+    {
+        GameSettings.MasterVolume=floats["SET_MASTER_VOLUME"];GameSettings.BgmVolume=floats["SET_BGM_VOLUME"];GameSettings.Brightness=floats["SET_BRIGHTNESS"];GameSpeed.Select(floats["GAME_SPEED"]);
+        foreach(var p in ints){if(existed.Contains(p.Key))PlayerPrefs.SetInt(p.Key,p.Value);else PlayerPrefs.DeleteKey(p.Key);}
+        foreach(var p in floats){if(existed.Contains(p.Key))PlayerPrefs.SetFloat(p.Key,p.Value);else PlayerPrefs.DeleteKey(p.Key);}
+        PlayerPrefs.Save();
+    }
+    private void OnDestroy()
+    {
+        if(restored)return;restored=true;
+        RestorePrefs();
+        if(view!=null)
+        {
+            selection.SetValue(view,oldSize);
+            if(group!=null)
+            {
+                string[] labels=(string[])group.GetType().GetMethod("GetDisplayTexts").Invoke(group,null);
+                for(int i=labels.Length-1;i>=0;i--)if(labels[i].StartsWith("CommonQa-"))group.GetType().GetMethod("RemoveCustomSize").Invoke(group,new object[]{i});
+            }
+            view.maximized=oldMax;
+        }
+        AudioListener.volume=oldVolume;Application.runInBackground=oldBackground;UnityEngine.Random.state=oldRandom;
+        Application.logMessageReceived-=Log;SessionState.SetBool(Flag,false);
+        File.AppendAllText(output+"/report.txt","RESTORED\n");
+    }
+}
+#endif

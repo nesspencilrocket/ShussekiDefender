@@ -1,0 +1,25 @@
+RUN baseline
+FAIL kill counts exported to result data
+FAIL null defeat is ignored safely EXCEPTION ArgumentNullException
+FAIL new tower ready immediately Weapon
+FAIL same-frame upgrade Weapon EXCEPTION NullReferenceException
+FAIL same-frame upgrade reaches level 2 Weapon
+FAIL new tower ready immediately StrongWeapon
+FAIL same-frame upgrade StrongWeapon EXCEPTION NullReferenceException
+FAIL same-frame upgrade reaches level 2 StrongWeapon
+PASS insufficient purchase does not charge
+PASS exact-price purchase works
+PASS double purchase cannot stack towers
+PASS max level does not charge again
+PASS sale refunds half of paid purchase and upgrades
+PASS double sell cannot refund twice
+FAIL result closes gameplay panels
+FAIL result blocks node selection
+FAIL result blocks purchases
+FAIL result blocks direct upgrades
+FAIL result blocks selling
+PASS result freezes pass count
+PASS speed toggle cannot unpause result
+PASS skills blocked during result
+BASELINE_DONE passed=9 failed=13 errors=0
+RESTORED

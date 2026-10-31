@@ -1,0 +1,366 @@
+RUN final
+PASS kill counts exported to result data
+PASS null defeat is ignored safely
+PASS new tower ready immediately Weapon
+PASS same-frame upgrade Weapon
+PASS same-frame upgrade reaches level 2 Weapon
+PASS new tower ready immediately StrongWeapon
+PASS same-frame upgrade StrongWeapon
+PASS same-frame upgrade reaches level 2 StrongWeapon
+PASS insufficient purchase does not charge
+PASS exact-price purchase works
+PASS double purchase cannot stack towers
+PASS max level does not charge again
+PASS sale refunds half of paid purchase and upgrades
+PASS double sell cannot refund twice
+PASS result closes gameplay panels
+PASS result blocks node selection
+PASS result blocks purchases
+PASS result blocks direct upgrades
+PASS result blocks selling
+PASS result freezes pass count
+PASS speed toggle cannot unpause result
+PASS skills blocked during result
+PASS retry resets coins and towers
+PASS retry restores selected speed
+PASS stage 1 loads correct rules and money
+PASS stage 1 resets level and nodes
+PASS stage 1 resets weather
+PASS stage 1 loads skills
+PASS stage 1 1920x1080 camera aspect
+PASS stage 1 1920x1080 money stays inside gameplay viewport
+PASS stage 1 1920x1080 passed stays inside gameplay viewport
+PASS stage 1 1920x1080 timer stays inside gameplay viewport
+PASS stage 1 1920x1080 button raycast SpeedToggleButton
+PASS stage 1 1920x1080 button raycast Skill_0
+PASS stage 1 1920x1080 button raycast RainButton
+PASS stage 1 1280x800 camera aspect
+PASS stage 1 1280x800 money stays inside gameplay viewport
+PASS stage 1 1280x800 passed stays inside gameplay viewport
+PASS stage 1 1280x800 timer stays inside gameplay viewport
+PASS stage 1 1280x800 button raycast SpeedToggleButton
+PASS stage 1 1280x800 button raycast Skill_0
+PASS stage 1 1280x800 button raycast RainButton
+PASS stage 1 1024x768 camera aspect
+PASS stage 1 1024x768 money stays inside gameplay viewport
+PASS stage 1 1024x768 passed stays inside gameplay viewport
+PASS stage 1 1024x768 timer stays inside gameplay viewport
+PASS stage 1 1024x768 button raycast SpeedToggleButton
+PASS stage 1 1024x768 button raycast Skill_0
+PASS stage 1 1024x768 button raycast RainButton
+PASS stage 1 2560x1080 camera aspect
+PASS stage 1 2560x1080 money stays inside gameplay viewport
+PASS stage 1 2560x1080 passed stays inside gameplay viewport
+PASS stage 1 2560x1080 timer stays inside gameplay viewport
+PASS stage 1 2560x1080 button raycast SpeedToggleButton
+PASS stage 1 2560x1080 button raycast Skill_0
+PASS stage 1 2560x1080 button raycast RainButton
+PASS stage 1 1920x540 camera aspect
+PASS stage 1 1920x540 money stays inside gameplay viewport
+PASS stage 1 1920x540 passed stays inside gameplay viewport
+PASS stage 1 1920x540 timer stays inside gameplay viewport
+PASS stage 1 1920x540 button raycast SpeedToggleButton
+PASS stage 1 1920x540 button raycast Skill_0
+PASS stage 1 1920x540 button raycast RainButton
+PASS stage 1 720x1280 camera aspect
+PASS stage 1 720x1280 money stays inside gameplay viewport
+PASS stage 1 720x1280 passed stays inside gameplay viewport
+PASS stage 1 720x1280 timer stays inside gameplay viewport
+PASS stage 1 720x1280 button raycast SpeedToggleButton
+PASS stage 1 720x1280 button raycast Skill_0
+PASS stage 1 720x1280 button raycast RainButton
+PASS stage 1 1280x720 camera aspect
+PASS stage 1 1280x720 money stays inside gameplay viewport
+PASS stage 1 1280x720 passed stays inside gameplay viewport
+PASS stage 1 1280x720 timer stays inside gameplay viewport
+PASS stage 1 1280x720 button raycast SpeedToggleButton
+PASS stage 1 1280x720 button raycast Skill_0
+PASS stage 1 1280x720 button raycast RainButton
+PASS stage 1 rain rejects insufficient coins
+PASS stage 1 rain charges only once
+PASS stage 1 defeat resets rain and pauses
+PASS defeat title stage 1 fits text=処分なし size=124.3 lines=1
+PASS stage 2 loads correct rules and money
+PASS stage 2 resets level and nodes
+PASS stage 2 resets weather
+PASS stage 2 loads skills
+PASS stage 2 rain rejects insufficient coins
+PASS stage 2 rain charges only once
+PASS stage 2 defeat resets rain and pauses
+PASS defeat title stage 2 fits text=処分なし size=124.3 lines=1
+PASS stage 3 loads correct rules and money
+PASS stage 3 resets level and nodes
+PASS stage 3 resets weather
+PASS stage 3 loads skills
+PASS stage 3 rain rejects insufficient coins
+PASS stage 3 rain charges only once
+PASS stage 3 defeat resets rain and pauses
+PASS defeat title stage 3 fits text=処分なし size=124.3 lines=1
+PASS stage 4 loads correct rules and money
+PASS stage 4 resets level and nodes
+PASS stage 4 resets weather
+PASS stage 4 loads skills
+PASS stage 4 rain rejects insufficient coins
+PASS stage 4 rain charges only once
+PASS stage 4 defeat resets rain and pauses
+PASS defeat title stage 4 fits text=処分なし size=124.3 lines=1
+PASS stage 5 loads correct rules and money
+PASS stage 5 resets level and nodes
+PASS stage 5 resets weather
+PASS stage 5 loads skills
+PASS stage 5 rain rejects insufficient coins
+PASS stage 5 rain charges only once
+PASS stage 5 defeat resets rain and pauses
+PASS defeat title stage 5 fits text=処分なし size=124.3 lines=1
+PASS stage 6 loads correct rules and money
+PASS stage 6 resets level and nodes
+PASS stage 6 resets weather
+PASS stage 6 loads skills
+PASS stage 6 1920x1080 camera aspect
+PASS stage 6 1920x1080 money stays inside gameplay viewport
+PASS stage 6 1920x1080 passed stays inside gameplay viewport
+PASS stage 6 1920x1080 timer stays inside gameplay viewport
+PASS stage 6 1920x1080 button raycast Skill_0
+PASS stage 6 1920x1080 button raycast RainButton
+PASS stage 6 1920x1080 button raycast Skill_1
+PASS stage 6 1920x1080 button raycast SpeedToggleButton
+PASS stage 6 1280x800 camera aspect
+PASS stage 6 1280x800 money stays inside gameplay viewport
+PASS stage 6 1280x800 passed stays inside gameplay viewport
+PASS stage 6 1280x800 timer stays inside gameplay viewport
+PASS stage 6 1280x800 button raycast Skill_0
+PASS stage 6 1280x800 button raycast RainButton
+PASS stage 6 1280x800 button raycast Skill_1
+PASS stage 6 1280x800 button raycast SpeedToggleButton
+PASS stage 6 1024x768 camera aspect
+PASS stage 6 1024x768 money stays inside gameplay viewport
+PASS stage 6 1024x768 passed stays inside gameplay viewport
+PASS stage 6 1024x768 timer stays inside gameplay viewport
+PASS stage 6 1024x768 button raycast Skill_0
+PASS stage 6 1024x768 button raycast RainButton
+PASS stage 6 1024x768 button raycast Skill_1
+PASS stage 6 1024x768 button raycast SpeedToggleButton
+PASS stage 6 2560x1080 camera aspect
+PASS stage 6 2560x1080 money stays inside gameplay viewport
+PASS stage 6 2560x1080 passed stays inside gameplay viewport
+PASS stage 6 2560x1080 timer stays inside gameplay viewport
+PASS stage 6 2560x1080 button raycast Skill_0
+PASS stage 6 2560x1080 button raycast RainButton
+PASS stage 6 2560x1080 button raycast Skill_1
+PASS stage 6 2560x1080 button raycast SpeedToggleButton
+PASS stage 6 1920x540 camera aspect
+PASS stage 6 1920x540 money stays inside gameplay viewport
+PASS stage 6 1920x540 passed stays inside gameplay viewport
+PASS stage 6 1920x540 timer stays inside gameplay viewport
+PASS stage 6 1920x540 button raycast Skill_0
+PASS stage 6 1920x540 button raycast RainButton
+PASS stage 6 1920x540 button raycast Skill_1
+PASS stage 6 1920x540 button raycast SpeedToggleButton
+PASS stage 6 720x1280 camera aspect
+PASS stage 6 720x1280 money stays inside gameplay viewport
+PASS stage 6 720x1280 passed stays inside gameplay viewport
+PASS stage 6 720x1280 timer stays inside gameplay viewport
+PASS stage 6 720x1280 button raycast Skill_0
+PASS stage 6 720x1280 button raycast RainButton
+PASS stage 6 720x1280 button raycast Skill_1
+PASS stage 6 720x1280 button raycast SpeedToggleButton
+PASS stage 6 1280x720 camera aspect
+PASS stage 6 1280x720 money stays inside gameplay viewport
+PASS stage 6 1280x720 passed stays inside gameplay viewport
+PASS stage 6 1280x720 timer stays inside gameplay viewport
+PASS stage 6 1280x720 button raycast Skill_0
+PASS stage 6 1280x720 button raycast RainButton
+PASS stage 6 1280x720 button raycast Skill_1
+PASS stage 6 1280x720 button raycast SpeedToggleButton
+PASS stage 6 rain rejects insufficient coins
+PASS stage 6 rain charges only once
+PASS stage 6 defeat resets rain and pauses
+PASS defeat title stage 6 fits text=処分なし size=124.3 lines=1
+PASS stage select begins with no stale selection
+PASS stage select description 1 fits text=1限目。朝いちばんの授業。登校してくる学生はまだ少ない。道に妨害を置いて、出席を食い止めよう。 size=70 lines=3
+PASS stage start label 1 fits text=1限目へ行く size=100 lines=1
+PASS stage 1 preview and start available
+PASS stage select description 2 fits text=2限目。目が覚めた学生が増えてきた。数が増えるぶん、通す一人の重みも増している。 size=70 lines=3
+PASS stage start label 2 fits text=2限目へ行く size=100 lines=1
+PASS stage 2 preview and start available
+PASS stage select description 3 fits text=3限目。昼が近く、人通りがいちばん多い時間帯。守り切れる本数を見極めたい。 size=70 lines=3
+PASS stage start label 3 fits text=3限目へ行く size=100 lines=1
+PASS stage 3 preview and start available
+PASS stage select description 4 fits text=4限目。昼食を終えた学生が一斉に動きだす。取りこぼしが許されなくなってきた。 size=70 lines=3
+PASS stage start label 4 fits text=4限目へ行く size=100 lines=1
+PASS stage 4 preview and start available
+PASS stage select description 5 fits text=5限目。西日が差しこむ時間。ここまで来た学生は諦めが悪い。 size=70 lines=2
+PASS stage start label 5 fits text=5限目へ行く size=100 lines=1
+PASS stage 5 preview and start available
+PASS stage select description 6 fits text=6限目。最後の講義。日が暮れるまで一人も通さなければ、今日の勝ちだ。 size=70 lines=3
+PASS stage start label 6 fits text=6限目へ行く size=100 lines=1
+PASS stage 6 preview and start available
+PASS stage select button raycast 3限目Button
+PASS stage select button raycast 2限目Button
+PASS stage select button raycast Stage1Button
+PASS stage select button raycast BackToTitleButton
+PASS stage select button raycast 4限目Button
+PASS stage select button raycast 6限目Button
+PASS stage select button raycast 1限目Button
+PASS stage select button raycast 5限目Button
+PASS stage selection carries selected stage
+PASS title return resumes time
+PASS settings sliders change saved values
+PASS settings 1920x1080 button raycast BackButton
+PASS settings 1920x1080 button raycast SpeedButton
+PASS settings 1920x1080 button raycast ResetButton
+PASS settings 1024x768 button raycast BackButton
+PASS settings 1024x768 button raycast SpeedButton
+PASS settings 1024x768 button raycast ResetButton
+PASS settings 2560x1080 button raycast BackButton
+PASS settings 2560x1080 button raycast SpeedButton
+PASS settings 2560x1080 button raycast ResetButton
+PASS settings 720x1280 button raycast BackButton
+PASS settings 720x1280 button raycast SpeedButton
+PASS settings 720x1280 button raycast ResetButton
+PASS settings default reset
+PASS records 1920x1080 button raycast ResetRecordsButton
+PASS records 1920x1080 button raycast BackButton
+PASS records Title fits text=成績確認 size=72 lines=1
+PASS records HeadStage fits text=時限 size=26 lines=1
+PASS records HeadRank fits text=最高記録の処分 size=26 lines=1
+PASS records HeadScore fits text=ベストスコア size=26 lines=1
+PASS records Stage0 fits text=1限目 size=36 lines=1
+PASS records Rank0 fits text=退学処分 size=38 lines=1
+PASS records Score0 fits text=999,999 size=36 lines=1
+PASS records Next0 fits text=最高評価 size=24 lines=1
+PASS records Stage1 fits text=2限目 size=36 lines=1
+PASS records Rank1 fits text=退学処分 size=38 lines=1
+PASS records Score1 fits text=999,999 size=36 lines=1
+PASS records Next1 fits text=最高評価 size=24 lines=1
+PASS records Stage2 fits text=3限目 size=36 lines=1
+PASS records Rank2 fits text=退学処分 size=38 lines=1
+PASS records Score2 fits text=999,999 size=36 lines=1
+PASS records Next2 fits text=最高評価 size=24 lines=1
+PASS records Stage3 fits text=4限目 size=36 lines=1
+PASS records Rank3 fits text=退学処分 size=38 lines=1
+PASS records Score3 fits text=999,999 size=36 lines=1
+PASS records Next3 fits text=最高評価 size=24 lines=1
+PASS records Stage4 fits text=5限目 size=36 lines=1
+PASS records Rank4 fits text=退学処分 size=38 lines=1
+PASS records Score4 fits text=999,999 size=36 lines=1
+PASS records Next4 fits text=最高評価 size=24 lines=1
+PASS records Stage5 fits text=6限目 size=36 lines=1
+PASS records Rank5 fits text=退学処分 size=38 lines=1
+PASS records Score5 fits text=999,999 size=36 lines=1
+PASS records Next5 fits text=最高評価 size=24 lines=1
+PASS records TotalLabel fits text=合計スコア size=28 lines=1
+PASS records TotalValue fits text=5,999,994 size=38 lines=1
+PASS records Summary fits text=6限目までクリア　最も重い処分：退学処分 size=26 lines=1
+PASS records Label fits text=成績を初期化 size=30 lines=1
+PASS records Label fits text=戻る size=34 lines=1
+PASS records 1024x768 button raycast ResetRecordsButton
+PASS records 1024x768 button raycast BackButton
+PASS records Title fits text=成績確認 size=72 lines=1
+PASS records HeadStage fits text=時限 size=26 lines=1
+PASS records HeadRank fits text=最高記録の処分 size=26 lines=1
+PASS records HeadScore fits text=ベストスコア size=26 lines=1
+PASS records Stage0 fits text=1限目 size=36 lines=1
+PASS records Rank0 fits text=退学処分 size=38 lines=1
+PASS records Score0 fits text=999,999 size=36 lines=1
+PASS records Next0 fits text=最高評価 size=24 lines=1
+PASS records Stage1 fits text=2限目 size=36 lines=1
+PASS records Rank1 fits text=退学処分 size=38 lines=1
+PASS records Score1 fits text=999,999 size=36 lines=1
+PASS records Next1 fits text=最高評価 size=24 lines=1
+PASS records Stage2 fits text=3限目 size=36 lines=1
+PASS records Rank2 fits text=退学処分 size=38 lines=1
+PASS records Score2 fits text=999,999 size=36 lines=1
+PASS records Next2 fits text=最高評価 size=24 lines=1
+PASS records Stage3 fits text=4限目 size=36 lines=1
+PASS records Rank3 fits text=退学処分 size=38 lines=1
+PASS records Score3 fits text=999,999 size=36 lines=1
+PASS records Next3 fits text=最高評価 size=24 lines=1
+PASS records Stage4 fits text=5限目 size=36 lines=1
+PASS records Rank4 fits text=退学処分 size=38 lines=1
+PASS records Score4 fits text=999,999 size=36 lines=1
+PASS records Next4 fits text=最高評価 size=24 lines=1
+PASS records Stage5 fits text=6限目 size=36 lines=1
+PASS records Rank5 fits text=退学処分 size=38 lines=1
+PASS records Score5 fits text=999,999 size=36 lines=1
+PASS records Next5 fits text=最高評価 size=24 lines=1
+PASS records TotalLabel fits text=合計スコア size=28 lines=1
+PASS records TotalValue fits text=5,999,994 size=38 lines=1
+PASS records Summary fits text=6限目までクリア　最も重い処分：退学処分 size=26 lines=1
+PASS records Label fits text=成績を初期化 size=30 lines=1
+PASS records Label fits text=戻る size=34 lines=1
+PASS records 2560x1080 button raycast ResetRecordsButton
+PASS records 2560x1080 button raycast BackButton
+PASS records Title fits text=成績確認 size=72 lines=1
+PASS records HeadStage fits text=時限 size=26 lines=1
+PASS records HeadRank fits text=最高記録の処分 size=26 lines=1
+PASS records HeadScore fits text=ベストスコア size=26 lines=1
+PASS records Stage0 fits text=1限目 size=36 lines=1
+PASS records Rank0 fits text=退学処分 size=38 lines=1
+PASS records Score0 fits text=999,999 size=36 lines=1
+PASS records Next0 fits text=最高評価 size=24 lines=1
+PASS records Stage1 fits text=2限目 size=36 lines=1
+PASS records Rank1 fits text=退学処分 size=38 lines=1
+PASS records Score1 fits text=999,999 size=36 lines=1
+PASS records Next1 fits text=最高評価 size=24 lines=1
+PASS records Stage2 fits text=3限目 size=36 lines=1
+PASS records Rank2 fits text=退学処分 size=38 lines=1
+PASS records Score2 fits text=999,999 size=36 lines=1
+PASS records Next2 fits text=最高評価 size=24 lines=1
+PASS records Stage3 fits text=4限目 size=36 lines=1
+PASS records Rank3 fits text=退学処分 size=38 lines=1
+PASS records Score3 fits text=999,999 size=36 lines=1
+PASS records Next3 fits text=最高評価 size=24 lines=1
+PASS records Stage4 fits text=5限目 size=36 lines=1
+PASS records Rank4 fits text=退学処分 size=38 lines=1
+PASS records Score4 fits text=999,999 size=36 lines=1
+PASS records Next4 fits text=最高評価 size=24 lines=1
+PASS records Stage5 fits text=6限目 size=36 lines=1
+PASS records Rank5 fits text=退学処分 size=38 lines=1
+PASS records Score5 fits text=999,999 size=36 lines=1
+PASS records Next5 fits text=最高評価 size=24 lines=1
+PASS records TotalLabel fits text=合計スコア size=28 lines=1
+PASS records TotalValue fits text=5,999,994 size=38 lines=1
+PASS records Summary fits text=6限目までクリア　最も重い処分：退学処分 size=26 lines=1
+PASS records Label fits text=成績を初期化 size=30 lines=1
+PASS records Label fits text=戻る size=34 lines=1
+PASS records 720x1280 button raycast ResetRecordsButton
+PASS records 720x1280 button raycast BackButton
+PASS records Title fits text=成績確認 size=72 lines=1
+PASS records HeadStage fits text=時限 size=26 lines=1
+PASS records HeadRank fits text=最高記録の処分 size=26 lines=1
+PASS records HeadScore fits text=ベストスコア size=26 lines=1
+PASS records Stage0 fits text=1限目 size=36 lines=1
+PASS records Rank0 fits text=退学処分 size=38 lines=1
+PASS records Score0 fits text=999,999 size=36 lines=1
+PASS records Next0 fits text=最高評価 size=24 lines=1
+PASS records Stage1 fits text=2限目 size=36 lines=1
+PASS records Rank1 fits text=退学処分 size=38 lines=1
+PASS records Score1 fits text=999,999 size=36 lines=1
+PASS records Next1 fits text=最高評価 size=24 lines=1
+PASS records Stage2 fits text=3限目 size=36 lines=1
+PASS records Rank2 fits text=退学処分 size=38 lines=1
+PASS records Score2 fits text=999,999 size=36 lines=1
+PASS records Next2 fits text=最高評価 size=24 lines=1
+PASS records Stage3 fits text=4限目 size=36 lines=1
+PASS records Rank3 fits text=退学処分 size=38 lines=1
+PASS records Score3 fits text=999,999 size=36 lines=1
+PASS records Next3 fits text=最高評価 size=24 lines=1
+PASS records Stage4 fits text=5限目 size=36 lines=1
+PASS records Rank4 fits text=退学処分 size=38 lines=1
+PASS records Score4 fits text=999,999 size=36 lines=1
+PASS records Next4 fits text=最高評価 size=24 lines=1
+PASS records Stage5 fits text=6限目 size=36 lines=1
+PASS records Rank5 fits text=退学処分 size=38 lines=1
+PASS records Score5 fits text=999,999 size=36 lines=1
+PASS records Next5 fits text=最高評価 size=24 lines=1
+PASS records TotalLabel fits text=合計スコア size=28 lines=1
+PASS records TotalValue fits text=5,999,994 size=38 lines=1
+PASS records Summary fits text=6限目までクリア　最も重い処分：退学処分 size=26 lines=1
+PASS records Label fits text=成績を初期化 size=30 lines=1
+PASS records Label fits text=戻る size=34 lines=1
+PASS startup Unity then SEAP then title under paused entry
+PASS original scores and unlocks restored
+PASS no runtime errors during full suite
+MANUAL_READY passed=363 failed=0 errors=0
+RESTORED

@@ -1,0 +1,45 @@
+RUN edges-before-freeze
+PASS large money 1920x1080 fits text=999999 size=98.15 lines=1
+PASS large money remains one line 1920x1080
+PASS large money 1920x1080 stays inside gameplay viewport
+PASS large money 1280x800 fits text=999999 size=98.15 lines=1
+PASS large money remains one line 1280x800
+PASS large money 1280x800 stays inside gameplay viewport
+PASS large money 1024x768 fits text=999999 size=98.15 lines=1
+PASS large money remains one line 1024x768
+PASS large money 1024x768 stays inside gameplay viewport
+PASS large money 2560x1080 fits text=999999 size=98.15 lines=1
+PASS large money remains one line 2560x1080
+PASS large money 2560x1080 stays inside gameplay viewport
+PASS large money 1920x540 fits text=999999 size=98.15 lines=1
+PASS large money remains one line 1920x540
+PASS large money 1920x540 stays inside gameplay viewport
+PASS large money 720x1280 fits text=999999 size=98.15 lines=1
+PASS large money remains one line 720x1280
+PASS large money 720x1280 stays inside gameplay viewport
+PASS large money 1280x720 fits text=999999 size=98.15 lines=1
+PASS large money remains one line 1280x720
+PASS large money 1280x720 stays inside gameplay viewport
+PASS Start preserves same-frame upgrade Weapon
+PASS Start preserves same-frame upgrade StrongWeapon
+PASS emergency skill activates
+PASS skill cooldown blocks repeated activation
+PASS one kill grants one reward and one level credit
+PASS pooled HP does not compound stage 1
+PASS pooled HP does not compound stage 2
+PASS pooled HP does not compound stage 3
+PASS pooled HP does not compound stage 4
+PASS pooled HP does not compound stage 5
+PASS pooled HP does not compound stage 6
+PASS professor skill stops current target
+FAIL old freeze release cannot change recycled enemy
+PASS professor skill releases original surviving target
+PASS locked node cannot be selected
+PASS weapon capacity blocks third placement
+PASS rain expiry restores speed
+PASS rain becomes reusable after cooldown
+PASS defeat also closes purchase panel
+PASS corrected final-stage description fits text=6限目。最後の講義。25人に通り抜けられる前に、日が暮れるまで耐え抜こう。 size=70 lines=3
+PASS stage description matches defeat threshold
+EDGES_DONE passed=41 failed=1 errors=0
+RESTORED

@@ -1,0 +1,241 @@
+﻿#if UNITY_EDITOR
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+// 表示確認専用の一時ドライバー。終了時に保存データとエディターの表示設定を復元する。
+public sealed class UiReviewProbe : MonoBehaviour
+{
+    private const string Flag = "UiReviewProbe.Run";
+    private const string Output = "Temp/UiReview";
+    private readonly Dictionary<string, int> values = new Dictionary<string, int>();
+    private readonly HashSet<string> existed = new HashSet<string>();
+    private readonly List<int> customSizes = new List<int>();
+    private EditorWindow gameView;
+    private object sizeGroup;
+    private PropertyInfo selectedSize;
+    private int oldSize;
+    private bool oldMaximized, oldBackground, restored;
+    private float oldSpeed;
+    private float oldVolume;
+    private int failures;
+
+    [InitializeOnLoadMethod]
+    private static void CleanupRequest()
+    {
+        if (!File.Exists(Output + "/cleanup.request")) return;
+        EditorApplication.delayCall += () =>
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            Assembly editor = typeof(EditorWindow).Assembly;
+            Type sizesType = editor.GetType("UnityEditor.GameViewSizes");
+            object sizes = sizesType.GetProperty("instance", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
+            object group = sizesType.GetMethod("GetGroup").Invoke(sizes,
+                new[] { Enum.Parse(editor.GetType("UnityEditor.GameViewSizeGroupType"), "Standalone") });
+            string[] labels = (string[])group.GetType().GetMethod("GetDisplayTexts").Invoke(group, null);
+            int removed = 0;
+            for (int index = labels.Length - 1; index >= 0; index--)
+            {
+                if (!labels[index].StartsWith("UiReview-")) continue;
+                group.GetType().GetMethod("RemoveCustomSize").Invoke(group, new object[] { index });
+                removed++;
+            }
+            labels = (string[])group.GetType().GetMethod("GetDisplayTexts").Invoke(group, null);
+            if (labels.Any(label => label.StartsWith("UiReview-"))) throw new Exception("Temporary sizes remain");
+            File.AppendAllText(Output + "/report.txt", "CLEANUP_FIXED removedTemporarySizes=" + removed + "; original sizes retained\n");
+            File.Delete(Output + "/cleanup.request");
+        };
+    }
+
+    [MenuItem("Shusseki/画面表示を確認 %#u")]
+    private static void Launch()
+    {
+        if (File.Exists(Output + "/cleanup.request")) { CleanupRequest(); return; }
+        if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+        if (SceneManager.GetActiveScene().name != "Stage_1" || SceneManager.GetActiveScene().isDirty)
+            throw new Exception("保存済みStage_1から表示確認を開始してください");
+        Directory.CreateDirectory(Output);
+        foreach (string name in new[] { "report.txt", "records.request" })
+            if (File.Exists(Output + "/" + name)) File.Delete(Output + "/" + name);
+        SessionState.SetBool(Flag, true);
+        EditorApplication.isPlaying = true;
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Inject()
+    {
+        if (SessionState.GetBool(Flag, false)) new GameObject("UiReviewProbe").AddComponent<UiReviewProbe>();
+    }
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+        foreach (string key in new[] { "CLEARED_STAGE", "BEST_SCORE_1", "BEST_SCORE_2", "BEST_SCORE_3", "BEST_SCORE_4", "BEST_SCORE_5", "BEST_SCORE_6" })
+        {
+            values[key] = PlayerPrefs.GetInt(key);
+            if (PlayerPrefs.HasKey(key)) existed.Add(key);
+        }
+        oldSpeed = PlayerPrefs.GetFloat("GAME_SPEED", 1f);
+        if (PlayerPrefs.HasKey("GAME_SPEED")) existed.Add("GAME_SPEED");
+        File.WriteAllLines(Output + "/save-backup.txt", values.Select(p => p.Key + "," + existed.Contains(p.Key) + "," + p.Value)
+            .Concat(new[] { "GAME_SPEED," + existed.Contains("GAME_SPEED") + "," + oldSpeed }));
+        oldVolume = AudioListener.volume;
+        oldBackground = Application.runInBackground;
+        Application.runInBackground = true;
+        gameView = EditorWindow.GetWindow(typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView"));
+        oldMaximized = gameView.maximized;
+        selectedSize = gameView.GetType().GetProperty("selectedSizeIndex", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        oldSize = (int)selectedSize.GetValue(gameView);
+        gameView.maximized = true;
+        gameView.Focus();
+        GameSpeed.Select(GameSpeed.NORMAL);
+        AudioListener.volume = 0f;
+        Application.logMessageReceived += OnLog;
+    }
+
+    private void OnLog(string message, string stack, LogType type)
+    {
+        if (type == LogType.Error || type == LogType.Exception)
+            File.AppendAllText(Output + "/report.txt", "UNITY_ERROR " + message + "\n" + stack + "\n");
+    }
+
+    private void Check(bool passed, string message)
+    {
+        if (!passed) failures++;
+        File.AppendAllText(Output + "/report.txt", (passed ? "PASS " : "FAIL ") + message + "\n");
+    }
+
+    private void Resize(int width, int height)
+    {
+        Assembly editor = typeof(EditorWindow).Assembly;
+        Type sizesType = editor.GetType("UnityEditor.GameViewSizes");
+        object sizes = sizesType.GetProperty("instance", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
+        Type groupType = editor.GetType("UnityEditor.GameViewSizeGroupType");
+        sizeGroup = sizesType.GetMethod("GetGroup").Invoke(sizes, new[] { Enum.Parse(groupType, "Standalone") });
+        Type sizeType = editor.GetType("UnityEditor.GameViewSize");
+        Type modeType = editor.GetType("UnityEditor.GameViewSizeType");
+        object size = Activator.CreateInstance(sizeType, Enum.Parse(modeType, "FixedResolution"), width, height, "UiReview-" + width + "x" + height);
+        sizeGroup.GetType().GetMethod("AddCustomSize").Invoke(sizeGroup, new[] { size });
+        int custom = (int)sizeGroup.GetType().GetMethod("GetCustomCount").Invoke(sizeGroup, null);
+        int builtin = (int)sizeGroup.GetType().GetMethod("GetBuiltinCount").Invoke(sizeGroup, null);
+        customSizes.Add(custom - 1);
+        selectedSize.SetValue(gameView, builtin + custom - 1);
+        gameView.Repaint();
+    }
+
+    private IEnumerator Start()
+    {
+        while (GameManager.Instance == null || GameManager.Instance.IsCountingDown) yield return null;
+        GameManager gm = GameManager.Instance;
+        int target = gm.Stage.rankThresholds[3];
+        CurrencyManager.instance.totalCoins = Mathf.CeilToInt(target / 5f);
+        typeof(GameManager).GetField("gameTimeElapsed", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(gm, 0f);
+        gm.GameClear();
+        TextMeshProUGUI title = (TextMeshProUGUI)typeof(GameManager).GetField("titleText", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(gm);
+        Check(title.text == "無期限停学", "GameClear displays 無期限停学");
+        foreach (Vector2Int size in new[] { new Vector2Int(1920,1080), new Vector2Int(1280,800), new Vector2Int(1024,768) })
+        {
+            Resize(size.x, size.y);
+            for (int frame = 0; frame < 4; frame++) yield return null;
+            foreach (string rank in StageData.Ranks.Concat(new[] { "処分なし" }))
+            {
+                title.text = rank;
+                Canvas.ForceUpdateCanvases();
+                title.ForceMeshUpdate();
+                Bounds bounds = title.textBounds;
+                Rect rect = title.rectTransform.rect;
+                bool fits = title.textInfo.lineCount == 1 && !title.isTextOverflowing
+                    && bounds.min.x >= rect.xMin - 1f && bounds.max.x <= rect.xMax + 1f
+                    && bounds.min.y >= rect.yMin - 1f && bounds.max.y <= rect.yMax + 1f;
+                Check(fits, size.x + "x" + size.y + " " + rank + " lines=" + title.textInfo.lineCount
+                    + " font=" + title.fontSize + " text=" + bounds.size + " box=" + rect.size);
+            }
+            title.text = "無期限停学";
+            title.ForceMeshUpdate();
+            yield return new WaitForEndOfFrame();
+            ScreenCapture.CaptureScreenshot(Output + "/title-" + size.x + "x" + size.y + ".png");
+            yield return null;
+        }
+        Resize(1920, 1080);
+        yield return null;
+        File.AppendAllText(Output + "/report.txt", "TITLE_READY failures=" + failures + "\n");
+        while (!File.Exists(Output + "/records.request")) yield return null;
+
+        // 元のセーブを退避した上で、初期化専用の一時成績を入れて実装を確認する。
+        PlayerPrefs.SetInt("CLEARED_STAGE", 3);
+        for (int i = 1; i <= 6; i++) PlayerPrefs.SetInt("BEST_SCORE_" + i, i * 1000);
+        PlayerPrefs.Save();
+        SceneManager.LoadScene("Records");
+        yield return null;
+        yield return null;
+        RecordsScreen records = FindFirstObjectByType<RecordsScreen>();
+        Button reset = records.GetComponentsInChildren<Button>(true).Single(b => b.name == "ResetRecordsButton");
+        Button back = records.GetComponentsInChildren<Button>(true).Single(b => b.name == "BackButton");
+        reset.onClick.Invoke();
+        yield return null;
+        Transform dialog = records.GetComponentsInChildren<Transform>(true).Single(t => t.name == "ResetConfirmation");
+        Check(dialog.gameObject.activeInHierarchy && !reset.interactable && !back.interactable, "reset confirmation blocks background buttons");
+        yield return new WaitForEndOfFrame();
+        ScreenCapture.CaptureScreenshot(Output + "/records-confirmation.png");
+        dialog.Find("CancelResetButton").GetComponent<Button>().onClick.Invoke();
+        Check(!dialog.gameObject.activeSelf && reset.interactable && back.interactable, "cancel returns to records");
+        Check(Enumerable.Range(1, 6).All(i => StageProgress.GetBestScore(i) == i * 1000), "cancel preserves all six scores");
+        reset.onClick.Invoke();
+        dialog.Find("ConfirmResetButton").GetComponent<Button>().onClick.Invoke();
+        yield return null;
+        Check(Enumerable.Range(1, 6).All(i => StageProgress.GetBestScore(i) == 0 && !PlayerPrefs.HasKey("BEST_SCORE_" + i)), "confirm removes all six scores");
+        Check(StageProgress.ClearedUpTo == 3 && StageProgress.IsUnlocked(4) && !StageProgress.IsUnlocked(5), "reset preserves stage unlocks");
+        Check(records.GetComponentsInChildren<Button>(true).Count(b => b.name == "ResetRecordsButton") == 1, "reset rebuilds records without duplicate buttons");
+        Check(records.GetComponentsInChildren<TextMeshProUGUI>().Single(t => t.name == "TotalValue").text == "0", "total score refreshed to zero");
+        Check(records.GetComponentsInChildren<TextMeshProUGUI>().Single(t => t.name == "Rank0").text == "記録なし", "rank refreshed to 記録なし");
+        yield return new WaitForEndOfFrame();
+        ScreenCapture.CaptureScreenshot(Output + "/records-reset-fixture.png");
+        RestorePrefs();
+        SceneManager.LoadScene("Records");
+        yield return null;
+        yield return null;
+        Check(values.All(p => PlayerPrefs.HasKey(p.Key) == existed.Contains(p.Key) && PlayerPrefs.GetInt(p.Key) == p.Value), "original progress and scores restored");
+        File.AppendAllText(Output + "/report.txt", "RECORDS_READY failures=" + failures + "\n");
+    }
+
+    private void RestorePrefs()
+    {
+        foreach (var pair in values)
+        {
+            if (existed.Contains(pair.Key)) PlayerPrefs.SetInt(pair.Key, pair.Value);
+            else PlayerPrefs.DeleteKey(pair.Key);
+        }
+        if (existed.Contains("GAME_SPEED")) PlayerPrefs.SetFloat("GAME_SPEED", oldSpeed);
+        else PlayerPrefs.DeleteKey("GAME_SPEED");
+        PlayerPrefs.Save();
+    }
+
+    private void OnDestroy()
+    {
+        if (restored) return;
+        restored = true;
+        RestorePrefs();
+        if (gameView != null)
+        {
+            selectedSize.SetValue(gameView, oldSize);
+            if (sizeGroup != null)
+                foreach (int index in customSizes.OrderByDescending(i => i))
+                    sizeGroup.GetType().GetMethod("RemoveCustomSize").Invoke(sizeGroup, new object[] { index + (int)sizeGroup.GetType().GetMethod("GetBuiltinCount").Invoke(sizeGroup, null) });
+            gameView.maximized = oldMaximized;
+        }
+        Application.runInBackground = oldBackground;
+        AudioListener.volume = oldVolume;
+        Application.logMessageReceived -= OnLog;
+        SessionState.SetBool(Flag, false);
+        File.AppendAllText(Output + "/report.txt", "RESTORED\n");
+    }
+}
+#endif
