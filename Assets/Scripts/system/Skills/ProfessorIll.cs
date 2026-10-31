@@ -1,56 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
-/// 教授の急病 ── 一定時間、画面上の敵をその場に止める。
+/// 時間停止（旧称：教授の急病）── 一定時間、すべての敵の動きを止める。
 ///
-/// コルーチンを使う見本。PlayerSkill はアセットなので自分では
-/// StartCoroutine できない。SkillContext.Runner（発動側の MonoBehaviour）を
-/// 借りて回す。
+/// 画面上の敵だけでなく、止めている間に湧く敵も止まる。さらに既定では、新しい敵が湧く時刻表も
+/// 止めた分だけ後ろへずれる（pauseSpawns）。時限の時計は止まらないので、
+/// 止めた分だけ、その時限で湧く人数が減る。武器は止まっている敵を撃てる。
 ///
-/// 待ち時間は WaitForSecondsRealtime にしていない。倍速中は
-/// ゲーム内の時間が速く進むので、止まっている長さも同じ割合で
-/// 短くなる方が体感として揃う。
+/// 止める・動かすは、時刻（Time.time）を 1 つ持つだけで済ませている。
+/// 敵ごとに解除を覚えておく必要がなく、倍速でも、止まっている長さが同じ割合で変わる
+/// （ゲーム内の時間で数える）。
+///
+/// クラス名（ProfessorIll）は、アセットの参照を壊さないために、そのまま残している。
 /// </summary>
-[CreateAssetMenu(menuName = "Shusseki/Skill/教授の急病")]
+[CreateAssetMenu(menuName = "Shusseki/Skill/時間停止")]
 public class ProfessorIll : PlayerSkill
 {
     [Tooltip("止めておく秒数")]
     [Min(0.1f)] public float duration = 3f;
 
+    [Tooltip("ON：止めている間は、新しい敵も湧かない（湧く時刻表を、止めた分だけ後ろへずらす）。"
+           + "OFF：止まっている敵の列に、新しい敵が湧き続けて溜まる")]
+    public bool pauseSpawns = true;
+
     public override void Activate(SkillContext context)
     {
-        if (context == null || context.Runner == null) return;
+        float until = Time.time + duration;
 
-        context.Runner.StartCoroutine(Freeze(context));
-    }
-
-    private IEnumerator Freeze(SkillContext context)
-    {
-        // 発動時点で居た敵だけを止める。あとから湧いた敵は対象外。
-        List<Enemy> targets = context.ActiveEnemies();
-        var versions = new Dictionary<Enemy, uint>();
-
-        foreach (Enemy e in targets)
-        {
-            if (e == null || e.enemyHP == null) continue;
-            versions[e] = e.enemyHP.SpawnVersion;
-            e.BeginSkillStop();
-        }
-
-        yield return new WaitForSeconds(duration);
-
-        foreach (Enemy e in targets)
-        {
-            // 途中で倒された個体は動かさない。プールへ返却済みのものを
-            // 動かすと、次に湧いた別の敵の速度を書き換えてしまう。
-            if (e == null || !e.isActiveAndEnabled) continue;
-            if (e.enemyHP == null || e.enemyHP.currentHP <= 0f) continue;
-            // 同じGameObjectでも、再出現した敵へ古い解除処理を適用しない。
-            if (!versions.TryGetValue(e, out uint version) || e.enemyHP.SpawnVersion != version) continue;
-
-            e.EndSkillStop();
-        }
+        // 重ねて使っても、長い方に合わせる（短くはならない）
+        Enemy.TimeStopUntil = Mathf.Max(Enemy.TimeStopUntil, until);
+        if (pauseSpawns) Spawner.SpawnPausedUntil = Mathf.Max(Spawner.SpawnPausedUntil, until);
     }
 }

@@ -12,7 +12,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float nextPointThreshold = 0.2f;
 
     private float moveSpeed;
-    private int skillMovementStops;
     [NonSerialized] public MovePoint movePoint;
     private int currentMovePointIndex;
 
@@ -46,7 +45,6 @@ public class Enemy : MonoBehaviour
     void OnEnable()
     {
         currentMovePointIndex = 0;
-        skillMovementStops = 0;
         // 被弾アニメーションのOnEnableより先でも、前回の停止を持ち越さない。
         SetMoveSpeed(true);
 
@@ -64,20 +62,23 @@ public class Enemy : MonoBehaviour
     public void SetMoveSpeed(bool ignoreHitStop = false)
     {
         bool hitStopped = !ignoreHitStop && enemyAnimations != null && enemyAnimations.IsHitStopped;
-        moveSpeed = skillMovementStops > 0 || hitStopped ? 0f : setMoveSpeed;
+        moveSpeed = hitStopped ? 0f : setMoveSpeed;
     }
 
-    /// <summary>必殺技の停止を別に数え、被弾演出の終了で解除されないようにする。</summary>
-    public void BeginSkillStop()
-    {
-        skillMovementStops++;
-        StopMovement();
-    }
+    /// <summary>
+    /// 時間停止（必殺技）が、この時刻（Time.time）まで続く。全員が対象で、止めている間に
+    /// 湧いた敵も止まる。個体の moveSpeed には触らないので、被弾の足止めや雨と干渉せず、
+    /// 解除の処理も要らない（時刻が過ぎれば、自然に動き出す）。
+    /// </summary>
+    public static float TimeStopUntil;
 
-    public void EndSkillStop()
+    /// <summary>いま時間停止中か</summary>
+    public static bool IsTimeStopped => Time.time < TimeStopUntil;
+
+    /// <summary>ステージの開始時に呼ぶ。前のステージの時間停止を持ち越さない</summary>
+    public static void ClearTimeStop()
     {
-        skillMovementStops = Mathf.Max(0, skillMovementStops - 1);
-        SetMoveSpeed();
+        TimeStopUntil = 0f;
     }
 
     /// <summary>
@@ -104,6 +105,7 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         if (movePoint == null || enemyHP == null || !enemyHP.IsAlive) return;
+        if (IsTimeStopped) return;
         Move();
         if (NextPointReached())
         {

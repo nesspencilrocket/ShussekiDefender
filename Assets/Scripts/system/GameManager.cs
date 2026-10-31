@@ -107,6 +107,10 @@ public class GameManager : MonoBehaviour
         IsCountingDown = true;
         GameSpeed.Resume();
 
+        // 前のステージの時間停止を持ち越さない（Time.time は、シーンをまたいで進み続ける）
+        Enemy.ClearTimeStop();
+        Spawner.SpawnPausedUntil = 0f;
+
         // 【重要】StageData を解決するのはこの 1 箇所だけ。
         // Awake はすべての Start より先に走るので、他のコンポーネントは
         // Start で GameManager.Instance.Stage を読めば必ず解決済みになる。

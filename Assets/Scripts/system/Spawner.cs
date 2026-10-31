@@ -48,6 +48,14 @@ public class Spawner : MonoBehaviour
 
     public static Action OnWaveCompleted;
 
+    /// <summary>
+    /// 時間停止（必殺技）で、新しい敵を湧かせない時刻（Time.time）。
+    /// 止めている間、湧く時刻表を止めた分だけ後ろへずらす（時限の時計は止まらない）。
+    /// </summary>
+    public static float SpawnPausedUntil;
+
+    public static bool IsSpawnPaused => Time.time < SpawnPausedUntil;
+
     private void Awake()
     {
         pooler = ObjectPooler.Instance;
@@ -140,6 +148,14 @@ public class Spawner : MonoBehaviour
             // 指定数の敵をすべてスポーンさせる
             while (spawned < currentWave.enemyCount)
             {
+                // 時間停止中は、湧く時刻表を止めた分だけ後ろへずらす
+                if (IsSpawnPaused)
+                {
+                    nextSpawnAt += Time.deltaTime;
+                    yield return null;
+                    continue;
+                }
+
                 // 時刻に遅れた分は、同じフレームで続けて湧かせる
                 while (spawned < currentWave.enemyCount && Time.time >= nextSpawnAt)
                 {
@@ -153,7 +169,11 @@ public class Spawner : MonoBehaviour
             }
 
             // 最後の 1 体のあとの間隔まで待ってから、波の終わりを知らせる（従来と同じ順序）
-            while (Time.time < nextSpawnAt) yield return null;
+            while (Time.time < nextSpawnAt)
+            {
+                if (IsSpawnPaused) nextSpawnAt += Time.deltaTime;
+                yield return null;
+            }
 
             // 敵の全滅は待たない。波は「スポーンの時刻表」として扱う。
             OnWaveCompleted?.Invoke();

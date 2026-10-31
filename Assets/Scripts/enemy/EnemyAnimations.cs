@@ -128,6 +128,8 @@ public class EnemyAnimations : MonoBehaviour
     void Update()
     {
         if (!walking || framePattern == null || framePattern.Length == 0) return;
+        // 時間停止中は、歩くコマも止める
+        if (Enemy.IsTimeStopped) return;
 
         frameTimer += Time.deltaTime;
         if (frameTimer < secondsPerFrame) return;
