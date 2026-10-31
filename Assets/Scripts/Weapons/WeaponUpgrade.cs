@@ -18,8 +18,8 @@ public class WeaponUpgrade : MonoBehaviour
     [Min(0)]
     [SerializeField] private int finalUpgradeExtraCost = 0;
 
-    [Tooltip("最後の強化で、発射間隔をさらに短くする秒数。0 なら、ほかの強化と同じ")]
-    [Min(0f)]
+    [Tooltip("最後の強化で、発射間隔をさらに短くする秒数。0 なら、ほかの強化と同じ。"
+           + "マイナスなら、最後の強化だけ短縮を小さくする（最大レベルの連射を少し遅くする）")]
     [SerializeField] private float finalUpgradeExtraIntervalCut = 0f;
 
     [Header("上限")]

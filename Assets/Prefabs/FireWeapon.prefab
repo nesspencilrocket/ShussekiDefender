@@ -153,6 +153,7 @@ MonoBehaviour:
   addDamage: 1
   decreaseInterval: 0.0667
   firstUpgradeMultiplier: 1.2
+  finalUpgradeExtraIntervalCut: -0.02
 --- !u!1 &3770819046793241999
 GameObject:
   m_ObjectHideFlags: 0
