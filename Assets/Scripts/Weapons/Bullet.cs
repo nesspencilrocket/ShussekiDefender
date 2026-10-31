@@ -6,6 +6,13 @@ public class Bullet : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private float damageDistance = 0.1f;
+
+    [Tooltip("ON: 当たり判定の半径を、見えている球の大きさ（スプライトの大きさ × スケール）から決める。"
+           + "見た目と当たり判定がずれず、スケールを変えれば当たり判定も変わる。damageDistance は使わない")]
+    [SerializeField] private bool hitRadiusFromSprite;
+
+    [Tooltip("スプライトの外枠のうち、球として見えている部分の割合。余白の分だけ当たり判定を小さくする")]
+    [Range(0.5f, 1f)] [SerializeField] private float visibleFill = 0.93f;
     [Min(0.1f)] [SerializeField] private float maxLifetime = 3f;
 
     private EnemyHP targetHP;
@@ -37,6 +44,14 @@ public class Bullet : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // 球の見た目と当たり判定を同じ大きさにそろえる。
+        // 見た目はスプライトの大きさとスケールで決まるので、そこから半径を求める。
+        if (hitRadiusFromSprite && spriteRenderer != null && spriteRenderer.sprite != null)
+        {
+            float halfSize = spriteRenderer.sprite.bounds.extents.x * Mathf.Abs(transform.lossyScale.x);
+            damageDistance = halfSize * visibleFill;
+        }
     }
 
     private void OnDisable()
