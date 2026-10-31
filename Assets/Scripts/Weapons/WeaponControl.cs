@@ -67,14 +67,35 @@ public class WeaponControl : MonoBehaviour
         // ★★★ ロジックを大幅にシンプル化 ★★★
         // 1. 次の発射時間が来ているか？
         // 2. 攻撃対象の敵は存在するか？
-        if (Time.time > nextFireTime && weapon.currentEnemyTarget != null
-            && weapon.currentEnemyTarget.enemyHP != null && weapon.currentEnemyTarget.enemyHP.IsAlive)
+        if (!HasLiveTarget())
         {
-            // 上記２つを満たしたら、発射処理を呼び出す
-            Fire();
-            // 次の発射時間を更新
-            nextFireTime = Time.time + delay;
+            return;
         }
+
+        // 長く撃っていなかった（標的がいなかった）あとは、溜まった分を撃たず、今から数える
+        if (Time.time - nextFireTime > delay) nextFireTime = Time.time;
+
+        // 発射の時刻を時刻表（nextFireTime）で管理する。
+        // 以前は「撃った時刻 + 間隔」まで待っていたので、1 フレームに 1 発しか撃てず、
+        // 間隔が短いほど（強化したほど）・倍速やフレームレートが低いほど、間隔が長めに丸められて
+        // 連射が遅くなっていた（間隔 0.134 秒・60fps で約 12%、倍速 ×1.5 ではさらに）。
+        // 時刻に遅れた分は、同じフレームで続けて撃つ。前の弾がまだ飛んでいても、撃ってよい。
+        int shots = 0;
+        while (Time.time >= nextFireTime && shots < MaxShotsPerFrame && HasLiveTarget())
+        {
+            Fire();
+            nextFireTime += delay;
+            shots++;
+        }
+    }
+
+    // 1 フレームに続けて撃てる最大の数（フレームが大きく遅れたときの暴発を防ぐ）
+    private const int MaxShotsPerFrame = 3;
+
+    private bool HasLiveTarget()
+    {
+        Enemy target = weapon.currentEnemyTarget;
+        return target != null && target.enemyHP != null && target.enemyHP.IsAlive;
     }
 
     /// <summary>
