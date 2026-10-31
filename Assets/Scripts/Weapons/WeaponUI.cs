@@ -38,7 +38,6 @@ public class WeaponUI : MonoBehaviour
 
     // 直前に出した値段と上限の状態。変わったときだけ文字を作り直す
     private int shownPrice = -1;
-    private bool shownFull;
 
     private Button button;
 
@@ -55,8 +54,7 @@ public class WeaponUI : MonoBehaviour
 
     /// <summary>
     /// 値段の表示と、押せるかどうかを合わせる。
-    /// ステージの設置上限に達していたら「上限」と出し、
-    /// お金が足りないときと合わせてカードを押せなくする（色が暗くなる）。
+    /// お金が足りないときはカードを押せなくする（色が暗くなる）。
     /// </summary>
     private void RefreshPrice()
     {
@@ -64,20 +62,18 @@ public class WeaponUI : MonoBehaviour
 
         WeaponShopManager shop = WeaponShopManager.Instance;
         int price = (shop != null) ? shop.PriceOf(weaponSettings) : weaponSettings.TurretShopCost;
-        bool full = shop != null && shop.IsAtCapacity;
 
-        if (price != shownPrice || full != shownFull)
+        if (price != shownPrice)
         {
             shownPrice = price;
-            shownFull = full;
-            weaponCost.text = full ? "上限" : Money.Yen(price);
+            weaponCost.text = Money.Yen(price);
         }
 
         if (button != null)
         {
             CurrencyManager wallet = CurrencyManager.instance;
             bool affordable = wallet != null && wallet.totalCoins >= price;
-            button.interactable = !full && affordable;
+            button.interactable = affordable;
         }
     }
 

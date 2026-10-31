@@ -52,30 +52,6 @@ public class WeaponShopManager : MonoBehaviour
         return weapon.PriceFor(PlacedCount(weapon));
     }
 
-    /// <summary>種類を問わず、いま置いてある武器の数</summary>
-    public int TotalPlaced()
-    {
-        int count = 0;
-        foreach (Node n in nodes)
-        {
-            if (n != null && n.weapon != null) count++;
-        }
-        return count;
-    }
-
-    /// <summary>このステージで同時に置ける武器の数。0 なら上限なし</summary>
-    public int MaxWeapons
-    {
-        get
-        {
-            StageData stage = (GameManager.Instance != null) ? GameManager.Instance.Stage : null;
-            return (stage != null) ? stage.maxWeapons : 0;
-        }
-    }
-
-    /// <summary>上限に達していて、これ以上置けないか</summary>
-    public bool IsAtCapacity => MaxWeapons > 0 && TotalPlaced() >= MaxWeapons;
-
 
 
     void Start()
@@ -188,9 +164,6 @@ public class WeaponShopManager : MonoBehaviour
             UIManager.instance.CloseTurretShopPanel();
             return;
         }
-
-        // ステージの設置上限に達していたら置かない
-        if (IsAtCapacity) return;
 
         // お金が足りなければ何もしない。パネルは開いたままにして、別の武器を選べるようにする
         CurrencyManager wallet = CurrencyManager.instance;
