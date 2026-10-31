@@ -29,6 +29,8 @@ public class Spawner : MonoBehaviour
 
     // 波の内容は StageData から受け取る。シーンには持たせない。
     private List<WaveData> waves;
+    private float enemyHPMultiplier = 1f;
+    private int waveSpawnRampCount;
 
     private int currentWaveIndex = 0;
     private float spawnTimer;
@@ -70,6 +72,8 @@ public class Spawner : MonoBehaviour
         }
 
         waves = stage.waves;
+        enemyHPMultiplier = stage.enemyHPMultiplier;
+        waveSpawnRampCount = stage.waveSpawnRampCount;
 
         CollectRoutes();
         if (routes.Count == 0)
@@ -197,7 +201,7 @@ public class Spawner : MonoBehaviour
         // EnemyData の HP・速度・報酬をこの個体へ反映する。
         // SetActive(true) より前に呼ぶ必要がある（OnEnable が currentHP = hp を読むため）。
         // data が null（旧形式の波）なら何もせず、プレハブの値のまま湧く。
-        enemyHP.Apply(data);
+        enemyHP.Apply(data, enemyHPMultiplier);
         enemy.Apply(data);
 
         enemyHP.originalPrefab = prefabToSpawn;
@@ -211,9 +215,23 @@ public class Spawner : MonoBehaviour
 
     private float GetSpawnDelay(WaveData currentWave)
     {
-        return spawnMode == SpawnModes.constant
-            ? currentWave.constantSpawnTime
-            : Random.Range(currentWave.minRandomDelay, currentWave.maxRandomDelay);
+        float constant = currentWave.constantSpawnTime;
+        float min = currentWave.minRandomDelay;
+        float max = currentWave.maxRandomDelay;
+
+        // 波が切り替わった瞬間に密度が跳ねないよう、最初の数体で次の間隔へ寄せる。
+        // ランダム値そのものを混ぜず範囲を補間することで、途中も同じ密度で抽選できる。
+        if (currentWaveIndex > 0 && waveSpawnRampCount > 0)
+        {
+            WaveData previous = waves[currentWaveIndex - 1];
+            float progress = Mathf.SmoothStep(0f, 1f, (spawned - 1f) / waveSpawnRampCount);
+            constant = Mathf.Lerp(previous.constantSpawnTime, constant, progress);
+            min = Mathf.Lerp(previous.minRandomDelay, min, progress);
+            max = Mathf.Lerp(previous.maxRandomDelay, max, progress);
+        }
+
+        return Mathf.Max(0.01f, spawnMode == SpawnModes.constant
+            ? constant : Random.Range(min, max));
     }
 
     /// <summary>
