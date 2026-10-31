@@ -76,7 +76,7 @@ public class SkillBar : MonoBehaviour
         // 左下原点で右へ並べる。pivot が左下なので pos は左下角の位置
         Vector2 pos = new Vector2(index * (buttonSize.x + spacing), 0f);
         string hint = (index < Hotkeys.Length) ? $"[{index + 1}] " : "";
-        string label = ButtonText(hint, skill, skill.CostAfter(0));
+        string label = ButtonText(hint, skill, skill.CostAfter(0), skill.maxUses > 0 ? skill.maxUses : -1);
 
         Button btn = MenuUI.TextButton(parent, $"Skill_{index}", label,
                                        Vector2.zero, buttonSize, 28f,
@@ -143,7 +143,7 @@ public class SkillBar : MonoBehaviour
 
             // 値段が使うたびに増える技は、いまの値段を出す
             string hint = (i < Hotkeys.Length) ? $"[{i + 1}] " : "";
-            string name = ButtonText(hint, controller.Skills[i], controller.CurrentCost(i));
+            string name = ButtonText(hint, controller.Skills[i], controller.CurrentCost(i), controller.RemainingUses(i));
             if (shownNames[i] != name)
             {
                 shownNames[i] = name;
@@ -154,10 +154,15 @@ public class SkillBar : MonoBehaviour
         ReadHotkeys();
     }
 
-    private static string ButtonText(string hint, PlayerSkill skill, int cost)
+    // remaining は、あと何回使えるか。回数の制限がない技は -1
+    private static string ButtonText(string hint, PlayerSkill skill, int cost, int remaining)
     {
         string label = hint + skill.displayName;
-        if (cost > 0) label += $"\n{cost}円";
+        if (remaining == 0) return label + "\n<size=70%>使用済み</size>";
+
+        string counter = remaining > 0 ? $"  <size=70%>あと {remaining} 回</size>" : "";
+        if (cost > 0) label += $"\n{cost}円{counter}";
+        else if (remaining > 0) label += $"\n{counter.TrimStart()}";
         return label;
     }
 

@@ -46,6 +46,15 @@ public abstract class PlayerSkill : ScriptableObject
     [Tooltip("使うたびに長くなる待ち時間（秒）。2 回目の後は cooldown + この値、…。0 なら増えない")]
     [Min(0f)] public float cooldownIncreasePerUse = 0f;
 
+    [Tooltip("1 つのステージで使える回数。0 なら回数の制限なし。使い切ると、ボタンは「使用済み」になる")]
+    [Min(0)] public int maxUses = 0;
+
+    /// <summary>uses 回使って、もう使えないか</summary>
+    public bool IsExhausted(int uses)
+    {
+        return maxUses > 0 && uses >= maxUses;
+    }
+
     /// <summary>uses 回使ったあとの、次の発動に必要なコイン</summary>
     public int CostAfter(int uses)
     {

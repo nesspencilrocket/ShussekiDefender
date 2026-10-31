@@ -105,6 +105,14 @@ public class PlayerSkillController : MonoBehaviour
         return Mathf.Clamp01(CooldownRemaining(index) / cd);
     }
 
+    /// <summary>あと何回使えるか。回数の制限がない技は -1</summary>
+    public int RemainingUses(int index)
+    {
+        if (index < 0 || index >= skills.Count) return 0;
+        if (skills[index].maxUses <= 0) return -1;
+        return Mathf.Max(0, skills[index].maxUses - uses[index]);
+    }
+
     /// <summary>いま発動するのに必要なコイン（使うたびに増える分を含む）</summary>
     public int CurrentCost(int index)
     {
@@ -120,6 +128,8 @@ public class PlayerSkillController : MonoBehaviour
     {
         if (index < 0 || index >= skills.Count) return false;
         if (!GameManager.IsGameActive) return false;
+        // 回数を使い切った技は、使えない
+        if (skills[index].IsExhausted(uses[index])) return false;
         if (CooldownRemaining(index) > 0f) return false;
         return skills[index].CanActivate(context, CurrentCost(index));
     }
