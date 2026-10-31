@@ -113,6 +113,13 @@ public class Spawner : MonoBehaviour
         // 開始前カウントダウン（3・2・1・GO）が明けるまで湧かせない
         yield return new WaitUntil(() => GameManager.IsGameActive);
 
+        // 次に湧かせる時刻（ゲーム内の時間 = Time.time。倍速に合わせて進む）。
+        // 「湧かせてから間隔だけ待つ」のではなく、時刻表どおりに湧かせる。
+        // WaitForSeconds は 1 フレームに 1 回しか戻れないので、間隔が短い波ほど、
+        // 倍速やフレームレートが低いほど、間隔が長めに丸められて湧く人数が減っていた
+        // （5限目で 倍速 ×1.5・60fps のとき約 10% 少ない）。
+        float nextSpawnAt = Time.time;
+
         while (currentWaveIndex < waves.Count)
         {
             WaveData currentWave = waves[currentWaveIndex];
@@ -133,19 +140,29 @@ public class Spawner : MonoBehaviour
             // 指定数の敵をすべてスポーンさせる
             while (spawned < currentWave.enemyCount)
             {
-                spawned++;
-                SpawnEnemy(currentWave);
-                spawnTimer = GetSpawnDelay(currentWave);
-                yield return new WaitForSeconds(spawnTimer);
+                // 時刻に遅れた分は、同じフレームで続けて湧かせる
+                while (spawned < currentWave.enemyCount && Time.time >= nextSpawnAt)
+                {
+                    spawned++;
+                    SpawnEnemy(currentWave);
+                    spawnTimer = GetSpawnDelay(currentWave);
+                    nextSpawnAt += spawnTimer;
+                }
+
+                if (spawned < currentWave.enemyCount) yield return null;
             }
+
+            // 最後の 1 体のあとの間隔まで待ってから、波の終わりを知らせる（従来と同じ順序）
+            while (Time.time < nextSpawnAt) yield return null;
 
             // 敵の全滅は待たない。波は「スポーンの時刻表」として扱う。
             OnWaveCompleted?.Invoke();
             currentWaveIndex++;
 
+            // 次の波の最初の 1 体までの待ち時間。時刻表に足すだけで、ここでは待たない
             if (currentWaveIndex < waves.Count)
             {
-                yield return new WaitForSeconds(waves[currentWaveIndex - 1].wavesDelayTime);
+                nextSpawnAt += waves[currentWaveIndex - 1].wavesDelayTime;
             }
         }
     }
