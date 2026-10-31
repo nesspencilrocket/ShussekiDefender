@@ -15,8 +15,12 @@
 public static class GameSpeed
 {
     public const float SLOW = 0.5f;
+    public const float SLIGHTLY_SLOW = 0.8f;
     public const float NORMAL = 1f;
     public const float FAST = 1.5f;
+
+    /// <summary>選べる速度。遅い順。ボタンは、この順に 1 つずつ進む（最後の次は最初に戻る）</summary>
+    public static readonly float[] Options = { SLOW, SLIGHTLY_SLOW, NORMAL, FAST };
 
     private const string SAVE_KEY = "GAME_SPEED";
 
@@ -36,10 +40,14 @@ public static class GameSpeed
         }
     }
 
-    /// <summary>いま倍速が選ばれているか。ボタンの見た目切り替えに使う</summary>
-    public static bool IsFast => Mathf.Approximately(Selected, FAST);
+    /// <summary>ボタンなどに出す文字（例：×0.8）</summary>
+    public static string Label(float speed)
+    {
+        return "×" + speed.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+    }
 
-    public static bool IsSlow => Mathf.Approximately(Selected, SLOW);
+    /// <summary>いま選ばれている速度の文字</summary>
+    public static string SelectedLabel => Label(Selected);
 
     /// <summary>進行が止まっているか</summary>
     public static bool IsPaused => Time.timeScale == 0f;
@@ -58,17 +66,33 @@ public static class GameSpeed
         if (!IsPaused) Time.timeScale = selected;
     }
 
-    /// <summary>標準 → 早送り → ゆっくり の順に切り替える。</summary>
+    /// <summary>×0.5 → ×0.8 → ×1.0 → ×1.5 の順に、次の速度へ切り替える。×1.5 の次は ×0.5 に戻る</summary>
     public static void Toggle()
     {
-        Select(IsFast ? SLOW : IsSlow ? NORMAL : FAST);
+        int index = IndexOf(Selected);
+        Select(Options[(index + 1) % Options.Length]);
     }
 
+    // 選べる速度のうち、いちばん近いものに丸める。想定外の値が保存されていても壊れない
     private static float Normalize(float speed)
     {
-        if (Mathf.Approximately(speed, SLOW)) return SLOW;
-        if (Mathf.Approximately(speed, FAST)) return FAST;
-        return NORMAL;
+        return Options[IndexOf(speed)];
+    }
+
+    private static int IndexOf(float speed)
+    {
+        int best = 0;
+        float bestGap = float.MaxValue;
+        for (int i = 0; i < Options.Length; i++)
+        {
+            float gap = Mathf.Abs(Options[i] - speed);
+            if (gap < bestGap)
+            {
+                bestGap = gap;
+                best = i;
+            }
+        }
+        return best;
     }
 
     /// <summary>進行を止める（勝敗表示など）</summary>
