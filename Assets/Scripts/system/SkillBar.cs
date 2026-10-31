@@ -74,7 +74,7 @@ public class SkillBar : MonoBehaviour
         Vector2 pos = new Vector2(index * (buttonSize.x + spacing), 0f);
         string hint = (index < Hotkeys.Length) ? $"[{index + 1}] " : "";
         string label = hint + skill.displayName;
-        if (skill.coinCost > 0) label += $"\n{skill.coinCost} コイン";
+        if (skill.coinCost > 0) label += $"\n{skill.coinCost}円";
 
         Button btn = MenuUI.TextButton(parent, $"Skill_{index}", label,
                                        Vector2.zero, buttonSize, 28f,
