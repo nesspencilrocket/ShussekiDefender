@@ -15,9 +15,6 @@ public class Bullet : MonoBehaviour
     [Range(0.5f, 1f)] [SerializeField] private float visibleFill = 0.93f;
     [Min(0.1f)] [SerializeField] private float maxLifetime = 3f;
 
-    [Tooltip("当たり判定を見た目から決める弾（黄色）が、狙った敵を失ったとき、次の敵を探す半径")]
-    [Min(0f)] [SerializeField] private float retargetRadius = 3f;
-
     private EnemyHP targetHP;
     private uint targetSpawnVersion;
     private WeaponControl bulletControl;
@@ -81,12 +78,13 @@ public class Bullet : MonoBehaviour
         if (targetHP == null || !targetHP.IsAlive || targetHP.SpawnVersion != targetSpawnVersion)
         {
             // 狙った敵が、ほかの武器に倒された・ゴールした・入れ替わったとき。
-            // 黄色の弾は、何にも当たらないまま消えないよう、近くの別の敵へ向きなおし、
-            // いなければ今の向きのまま飛び続ける（途中の敵には貫通の判定で当たる）。
+            // 黄色の弾は、別の敵へ曲がったりせず、何にも当たらないまま消えもせず、
+            // 今の向きのまま真っすぐ飛び続ける（進路上の敵には貫通の判定で当たる）。
             // 赤の弾は、従来どおり消える。
             if (hitRadiusFromSprite)
             {
-                if (!TryRetarget()) { targetHP = null; piercing = true; }
+                targetHP = null;
+                piercing = true;
                 return;
             }
             ResetAndReturnToPool();
@@ -130,38 +128,6 @@ public class Bullet : MonoBehaviour
         Vector2 next = from + flightDirection * distance;
         transform.position = new Vector3(next.x, next.y, transform.position.z);
         travelled += distance;
-    }
-
-    /// <summary>今の位置の近く（retargetRadius 以内）で、まだ当たっていない生きた敵のうち、いちばん近い敵を狙いなおす</summary>
-    private bool TryRetarget()
-    {
-        if (retargetRadius <= 0f) return false;
-
-        overlaps.Clear();
-        Physics2D.OverlapCircle(transform.position, retargetRadius, collisionFilter, overlaps);
-
-        EnemyHP best = null;
-        float bestDistance = float.MaxValue;
-        foreach (Collider2D collider in overlaps)
-        {
-            EnemyHP hp = collider.GetComponentInParent<EnemyHP>();
-            if (hp == null || !hp.IsAlive || directHits.Contains(hp)) continue;
-
-            float d = ((Vector2)hp.transform.position - (Vector2)transform.position).sqrMagnitude;
-            if (d < bestDistance)
-            {
-                bestDistance = d;
-                best = hp;
-            }
-        }
-
-        if (best == null) return false;
-
-        targetHP = best;
-        targetSpawnVersion = best.SpawnVersion;
-        Vector2 direction = (Vector2)best.transform.position - (Vector2)transform.position;
-        if (direction.sqrMagnitude > 0.000001f) flightDirection = direction.normalized;
-        return true;
     }
 
     private bool SweepHits(Vector2 from, float distance)
