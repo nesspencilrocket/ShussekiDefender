@@ -20,8 +20,8 @@ public class SkillBar : MonoBehaviour
     [Tooltip("ボタンの文字。日本語が出るフォントを指定する")]
     [SerializeField] private TMP_FontAsset font;
 
-    [Tooltip("左下からの位置")]
-    [SerializeField] private Vector2 origin = new Vector2(40f, 40f);
+    [Tooltip("左下からの位置。いちばん左はリスタートボタン（RestartButton）なので、その幅（150）と間隔の分だけ右にずらしてある")]
+    [SerializeField] private Vector2 origin = new Vector2(206f, 40f);
 
     [SerializeField] private Vector2 buttonSize = new Vector2(230f, 96f);
     [SerializeField] private float spacing = 16f;
