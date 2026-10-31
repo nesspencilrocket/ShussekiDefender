@@ -2,7 +2,7 @@
 using TMPro;
 
 /// <summary>
-/// 等速と ×1.2 を切り替えるボタン。
+/// ×1.0・×1.5・×0.8 を切り替えるボタン。
 ///
 /// GameSpeed は静的クラスなので UnityEvent から直接は呼べない。
 /// ボタンの OnClick はこのコンポーネントの Toggle() を指す。
@@ -14,6 +14,7 @@ public class GameSpeedButton : MonoBehaviour
 
     [SerializeField] private string normalText = "×1.0";
     [SerializeField] private string fastText = "×1.5";
+    [SerializeField] private string slowText = "×0.8";
 
     void Awake()
     {
@@ -37,7 +38,7 @@ public class GameSpeedButton : MonoBehaviour
     {
         if (label != null)
         {
-            label.text = GameSpeed.IsFast ? fastText : normalText;
+            label.text = GameSpeed.IsSlow ? slowText : GameSpeed.IsFast ? fastText : normalText;
         }
     }
 }
