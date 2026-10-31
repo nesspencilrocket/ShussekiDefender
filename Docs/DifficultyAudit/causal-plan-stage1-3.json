@@ -1,0 +1,83 @@
+{
+  "cases": [
+    {
+      "changeMoney": true,
+      "money": 120,
+      "stage": 2,
+      "observe": false,
+      "fps": 60,
+      "nodes": [],
+      "policy": "ReactiveNormal",
+      "seed": 17,
+      "period": 2,
+      "delay": 5,
+      "id": "cf-s2-money120-17"
+    },
+    {
+      "changeMoney": true,
+      "money": 100,
+      "stage": 3,
+      "observe": false,
+      "fps": 60,
+      "nodes": [],
+      "policy": "ReactiveNormal",
+      "seed": 17,
+      "period": 2,
+      "delay": 5,
+      "id": "cf-s3-money100-17"
+    },
+    {
+      "changeMoney": true,
+      "money": 120,
+      "stage": 2,
+      "observe": false,
+      "fps": 60,
+      "nodes": [],
+      "policy": "ReactiveNormal",
+      "seed": 101,
+      "period": 2,
+      "delay": 5,
+      "id": "cf-s2-money120-101"
+    },
+    {
+      "changeMoney": true,
+      "money": 100,
+      "stage": 3,
+      "observe": false,
+      "fps": 60,
+      "nodes": [],
+      "policy": "ReactiveNormal",
+      "seed": 101,
+      "period": 2,
+      "delay": 5,
+      "id": "cf-s3-money100-101"
+    },
+    {
+      "changeMoney": true,
+      "money": 120,
+      "stage": 2,
+      "observe": false,
+      "fps": 60,
+      "nodes": [],
+      "policy": "ReactiveNormal",
+      "seed": 2027,
+      "period": 2,
+      "delay": 5,
+      "id": "cf-s2-money120-2027"
+    },
+    {
+      "changeMoney": true,
+      "money": 100,
+      "stage": 3,
+      "observe": false,
+      "fps": 60,
+      "nodes": [],
+      "policy": "ReactiveNormal",
+      "seed": 2027,
+      "period": 2,
+      "delay": 5,
+      "id": "cf-s3-money100-2027"
+    }
+  ],
+  "output": "Temp/DifficultyAudit/causal1to3"
+}
